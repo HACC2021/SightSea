@@ -1,6 +1,6 @@
 # SightSea
 
-## Overview
+## Overview 
 
 ## Team members
 * Jake Imanaka
