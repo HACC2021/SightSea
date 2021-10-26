@@ -5,6 +5,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SightForm from "./screens/Form";
 import HomeScreen from "./screens/Home";
+import StaffPage from "./screens/Staff Page"
 
 const Stack = createNativeStackNavigator();
 
@@ -18,6 +19,11 @@ export default function App() {
           name="Form"
           component={SightForm}
           options={{ headerLeft: null }}
+        />
+        <Stack.Screen
+            name="StaffPage"
+            component={StaffPage}
+            options={{ headerLeft: null }}
         />
       </Stack.Navigator>
     </NavigationContainer>
