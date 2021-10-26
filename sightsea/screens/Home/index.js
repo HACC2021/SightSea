@@ -1,5 +1,5 @@
 import React from "react";
-import { StyleSheet, Text, View, Button, StatusBar } from "react-native";
+import { StyleSheet, Text, View, Button, StatusBar, TouchableOpacity } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 
 const styles = StyleSheet.create({
@@ -16,18 +16,27 @@ const styles = StyleSheet.create({
     textAlign: "center",
     paddingTop: "10%"
   },
+  buttonText: {
+    fontSize: 20,
+  },
   buttonGroup: {
     position: "relative",
-    marginTop: 10,
-    height: "20%",
-    justifyContent: "space-between",
+    flex: 1,
     alignItems: "center",
+    marginTop: "30%"
   },
   navButton : {
-    width: "100%",
-    marginTop: "5%",
-    height: "5%",
-  }
+    textAlign: "center",
+    justifyContent: "center",
+    width: "160%",
+    height: 75,
+    backgroundColor: "#DDDDDD",
+    padding: "5%",
+    borderWidth: 1,
+    borderRadius: 50,
+    borderColor:'rgba(0,0,0,0.2)',
+    marginTop: "10%",
+  },
 });
 
 const HomeScreen = ({ navigation }) => {
@@ -35,15 +44,22 @@ const HomeScreen = ({ navigation }) => {
     <View style={styles.container}>
       <Text style={styles.titleText}>Welcome to SightSea!</Text>
       <View style={styles.buttonGroup}>
-      <Button
+      <TouchableOpacity
         style={styles.navButton}
-        title="Report an Animal Sighting"
         onPress={() => navigation.navigate("Form")}
-      ></Button>
-      <Button
+      >
+        <Text style={styles.buttonText}>Report an Animal Sighting</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
         style={styles.navButton}
-        title="Report a Distressed Animal"
-      ></Button>
+      >
+        <Text style={styles.buttonText}>Report a Distressed Animal</Text>
+      </TouchableOpacity>
+      <TouchableOpacity
+        style={styles.navButton}
+      >
+        <Text style={styles.buttonText}>Staff Portal</Text>
+      </TouchableOpacity>
       </View>
     </View>
   );
