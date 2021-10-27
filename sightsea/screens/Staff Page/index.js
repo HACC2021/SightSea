@@ -7,7 +7,10 @@ import {
   TextInput,
   Button,
 } from "react-native";
-import { Table, Row, Rows } from 'react-native-table-component';
+import Component from 'react';
+import Proptypes from 'prop-types';
+import { DataTable } from 'react-native-paper';
+
 
 const styles = StyleSheet.create({
   container: {
@@ -29,11 +32,28 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontWeight: "bold",
     borderWidth: 3,
-
+    textAlign: 'center',
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
 
   },
+  table : {
+    marginTop: 10,
+
+
+  },
+  columns : {
+    width: 100,
+    flex: 1,
+    justifyContent: 'space-between',
+
+  },
+  row: {
+    width: 100,
+    flex: 1,
+    justifyContent: 'space-between',
+  },
+
 });
 
 //searchable table of reports
@@ -55,30 +75,36 @@ const StaffPage = () => {
 
   return (
       <View style={styles.container}>
-        <View >
+        <View>
           <Text style={styles.header}>Staff Page</Text>
 
+          <DataTable style= {styles.table}>
 
-          {/*<Text>Contact Info:</Text>*/}
-          {/*<TextInput*/}
-          {/*    style={styles.input}*/}
-          {/*    onChangeText={setInput}*/}
-          {/*    value={Input}*/}
-          {/*    placeholder="Enter First Name"*/}
-          {/*/>*/}
-          {/*<TextInput*/}
-          {/*    style={styles.input}*/}
-          {/*    onChangeText={setInput}*/}
-          {/*    value={Input}*/}
-          {/*    placeholder="Enter Last Name"*/}
-          {/*/>*/}
-          {/*<TextInput*/}
-          {/*    style={styles.input}*/}
-          {/*    onChangeText={setInput}*/}
-          {/*    value={Input}*/}
-          {/*    placeholder="Enter Phone Number"*/}
-          {/*/>*/}
-          {/*<Button title="Submit" onPress={handleSubmit}></Button>*/}
+            <DataTable.Header>
+              <DataTable.Title style={styles.columns} >Date & Time</DataTable.Title>
+              <DataTable.Title style={styles.columns} >Location</DataTable.Title>
+              <DataTable.Title style={styles.columns} >Identifying Markings</DataTable.Title>
+              <DataTable.Title style={styles.columns} >Behavior</DataTable.Title>
+              <DataTable.Title style={styles.columns}>Crowd Size</DataTable.Title>
+              <DataTable.Title style={styles.columns}>Name</DataTable.Title>
+              <DataTable.Title style={styles.columns}> Phone #</DataTable.Title>
+              <DataTable.Title style={styles.columns}>Images</DataTable.Title>
+            </DataTable.Header>
+
+            <DataTable.Row>
+              <DataTable.Cell>Today 1:00 PM</DataTable.Cell>
+              <DataTable.Cell>Sandys</DataTable.Cell>
+              <DataTable.Cell>Spot on Head</DataTable.Cell>
+              <DataTable.Cell>Erratic</DataTable.Cell>
+              <DataTable.Cell>40 People</DataTable.Cell>
+              <DataTable.Cell>Patrick</DataTable.Cell>
+              <DataTable.Cell>123-4567</DataTable.Cell>
+              <DataTable.Cell>None.</DataTable.Cell>
+
+            </DataTable.Row>
+
+          </DataTable>
+
 
         </View>
       </View>
