@@ -5,6 +5,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SightForm from "./screens/Form";
 import HomeScreen from "./screens/Home";
+import StaffLogin from "./screens/StaffLogin";
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
@@ -34,11 +35,8 @@ export default function App() {
       {/* set Home as the landing page */}
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen
-          name="Form"
-          component={SightForm}
-          options={{ headerLeft: null }}
-        />
+        <Stack.Screen name="Form" component={SightForm} options={{ headerLeft: null }}/>
+        <Stack.Screen name="StaffLogin" component={StaffLogin} options={{ headerLeft: null }}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
