@@ -7,6 +7,7 @@ import {
   TextInput,
   Button,
 } from "react-native";
+import { Table, Row, Rows } from 'react-native-table-component';
 
 const styles = StyleSheet.create({
   container: {

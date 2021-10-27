@@ -44,24 +44,22 @@ const HomeScreen = ({ navigation }) => {
       <View style={styles.container}>
         <Text style={styles.titleText}>Welcome to SightSea!</Text>
         <View style={styles.buttonGroup}>
-          <TouchableOpacity
-            style={styles.navButton}
-            onPress={() => navigation.navigate("Form")}
-          >
-
+          <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate("Form")}>
 
             <Text style={styles.buttonText}>Report an Animal Sighting</Text>
           </TouchableOpacity>
+
           <TouchableOpacity style={styles.navButton}>
             <Text style={styles.buttonText}>Report a Distressed Animal</Text>
           </TouchableOpacity>
+
           <TouchableOpacity style={styles.navButton} onPress={() => navigation.navigate("StaffPage")}>
             <Text style={styles.buttonText}>Staff Portal</Text>
           </TouchableOpacity>
+
         </View>
       </View>
-  )
-      ;
+  );
 };
 
 export default HomeScreen;
