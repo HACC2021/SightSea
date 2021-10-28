@@ -40,11 +40,11 @@ export default function App() {
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen name="Home" component={HomeScreen} />
 
-        <Stack.Screen
-          name="Form"
-          component={SightForm}
-          options={{ headerLeft: null }}
-        />
+        {/*<Stack.Screen*/}
+        {/*  name="Form"*/}
+        {/*  component={SightForm}*/}
+        {/*  options={{ headerLeft: null }}*/}
+        {/*/>*/}
         <Stack.Screen
             name="StaffPage"
             component={StaffPage}
