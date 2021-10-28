@@ -58,7 +58,7 @@ const HomeScreen = ({ navigation }) => {
           </TouchableOpacity>
           <TouchableOpacity
               style={styles.navButton}
-              onPress={() => navigation.navigate("StaffLogin")}
+              onPress={() => navigation.navigate("StaffPage")}
           >
             <Text style={styles.buttonText}>Staff Portal</Text>
           </TouchableOpacity>
