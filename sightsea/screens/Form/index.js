@@ -1,21 +1,42 @@
 import React from "react";
-import { StyleSheet, Text, View, StatusBar, Platform } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  StatusBar,
+  Platform,
+  Dimensions,
+} from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { TextInput, Button } from "react-native-paper";
-import { black, white } from "@jest/types/node_modules/chalk";
+import {
+  TextInput,
+  Button,
+  Headline,
+  Subheading,
+  Title,
+} from "react-native-paper";
+
+//get window size of current device
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
+  },
+  form: {
+    flex: 1,
+    alignItems: "center",
   },
   input: {
-    alignItems: "center",
-    justifyContent: "center",
+    width: windowWidth * 0.8,
   },
-  btn: {},
+  btn: {
+    margin: 10,
+    width: windowWidth * 0.5,
+  },
 });
 
 const SightForm = () => {
@@ -23,7 +44,7 @@ const SightForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(Input);
+    window.alert(Input);
   };
 
   const [date, setDate] = React.useState(new Date(1598051730000));
@@ -51,11 +72,15 @@ const SightForm = () => {
 
   return (
     <View style={styles.container}>
-      <View>
-        <Text>Contact Info:</Text>
-        {/* <Button onPress={showDatepicker} title="Show date picker!" />
+      <View style={styles.form}>
+        <Headline>Report a Sighting</Headline>
+        <Subheading>
+          Fill out the form below to submit a sighting and our staffs will
+          review the submitted form shortly.
+        </Subheading>
+        <Button onPress={showDatepicker}>Select Date</Button>
 
-        <Button onPress={showTimepicker} title="Show time picker!" />
+        <Button onPress={showTimepicker}>Select Time</Button>
 
         {show && (
           <DateTimePicker
@@ -66,20 +91,16 @@ const SightForm = () => {
             display="default"
             onChange={onChange}
           />
-        )} */}
+        )}
 
-        {/* <TextInput
+        <TextInput
           style={styles.input}
           onChangeText={setInput}
           value={Input}
           mode="outlined"
           label="Enter First Name"
-        /> */}
-        <Button
-          style={styles.btn}
-          mode="contained"
-          onPress={() => handleSubmit}
-        >
+        />
+        <Button style={styles.btn} mode="contained" onPress={handleSubmit}>
           Submit
         </Button>
       </View>
