@@ -6,6 +6,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SightForm from "./screens/Form";
 import HomeScreen from "./screens/Home";
 import StaffLogin from "./screens/StaffLogin";
+import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
@@ -20,22 +21,43 @@ const firebaseConfig = {
   storageBucket: "sightsea-57e15.appspot.com",
   messagingSenderId: "540196098412",
   appId: "1:540196098412:web:a53a48f2c8e7461ddf6349",
-  measurementId: "G-HPGWR7KS9T"
+  measurementId: "G-HPGWR7KS9T",
 };
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
 const Stack = createNativeStackNavigator();
 
+//apply global theme to paper elements
+const theme = {
+  ...DefaultTheme,
+  roundness: 6,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: "#5a8ee0",
+    accent: "#f1c40f",
+  },
+};
+
 export default function App() {
   return (
-    <NavigationContainer>
-      {/* set Home as the landing page */}
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Form" component={SightForm} options={{ headerLeft: null }}/>
-        <Stack.Screen name="StaffLogin" component={StaffLogin} options={{ headerLeft: null }}/>
-      </Stack.Navigator>
-    </NavigationContainer>
+    <PaperProvider theme={theme}>
+      <NavigationContainer>
+        {/* set Home as the landing page */}
+        <Stack.Navigator initialRouteName="SightSea">
+          <Stack.Screen name="SightSea" component={HomeScreen} />
+          <Stack.Screen
+            name="Form"
+            component={SightForm}
+            options={{ headerLeft: null }}
+          />
+          <Stack.Screen
+            name="StaffLogin"
+            component={StaffLogin}
+            options={{ headerLeft: null }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </PaperProvider>
   );
 }
