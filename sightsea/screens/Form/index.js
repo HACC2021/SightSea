@@ -14,6 +14,7 @@ import {
   Headline,
   Subheading,
   Title,
+  Paragraph,
 } from "react-native-paper";
 
 //get window size of current device
@@ -38,7 +39,6 @@ const styles = StyleSheet.create({
     width: windowWidth * 0.5,
   },
 });
-
 const SightForm = () => {
   const [Input, setInput] = React.useState("");
 
@@ -47,7 +47,7 @@ const SightForm = () => {
     window.alert(Input);
   };
 
-  const [date, setDate] = React.useState(new Date(1598051730000));
+  const [date, setDate] = React.useState(new Date());
   const [mode, setMode] = React.useState("date");
   const [show, setShow] = React.useState(false);
 
@@ -69,7 +69,6 @@ const SightForm = () => {
   const showTimepicker = () => {
     showMode("time");
   };
-
   return (
     <View style={styles.container}>
       <View style={styles.form}>
@@ -78,21 +77,31 @@ const SightForm = () => {
           Fill out the form below to submit a sighting and our staffs will
           review the submitted form shortly.
         </Subheading>
-        {/* buttons and datatimepicker must be wrapped in a view to work */}
+        {/*  datatimepicker must be wrapped in a view to work */}
         <View>
-          <Button onPress={showDatepicker}>Choose Date</Button>
-          <Button onPress={showTimepicker}>Choose Time</Button>
-
-          {show && (
-            <DateTimePicker
-              testID="dateTimePicker"
-              value={date}
-              mode={mode}
-              is24Hour={true}
-              display="default"
-              onChange={onChange}
-            />
-          )}
+          <Title>Select Date and Time:</Title>
+          <View style={{ flexDirection: "row" }}>
+            <View style={{ flex: 0.5, flexDirection: "column" }}>
+              <DateTimePicker
+                testID="dateTimePicker"
+                value={date}
+                mode="date"
+                is24Hour={true}
+                display="default"
+                onChange={onChange}
+              />
+            </View>
+            <View style={{ flex: 0.5, flexDirection: "column" }}>
+              <DateTimePicker
+                testID="dateTimePicker"
+                value={date}
+                mode="time"
+                is24Hour={true}
+                display="default"
+                onChange={onChange}
+              />
+            </View>
+          </View>
         </View>
         <TextInput
           style={styles.input}
