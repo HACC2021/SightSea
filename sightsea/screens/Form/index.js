@@ -1,12 +1,8 @@
 import React from "react";
-import {
-  StyleSheet,
-  Text,
-  View,
-  StatusBar,
-  TextInput,
-  Button,
-} from "react-native";
+import { StyleSheet, Text, View, StatusBar, Platform } from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import { TextInput, Button } from "react-native-paper";
+import { black, white } from "@jest/types/node_modules/chalk";
 
 const styles = StyleSheet.create({
   container: {
@@ -16,13 +12,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
     alignItems: "center",
     justifyContent: "center",
   },
+  btn: {},
 });
 
 const SightForm = () => {
@@ -33,28 +26,63 @@ const SightForm = () => {
     console.log(Input);
   };
 
+  const [date, setDate] = React.useState(new Date(1598051730000));
+  const [mode, setMode] = React.useState("date");
+  const [show, setShow] = React.useState(false);
+
+  const onChange = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+    setShow(Platform.OS === "ios");
+    setDate(currentDate);
+  };
+
+  const showMode = (currentMode) => {
+    setShow(true);
+    setMode(currentMode);
+  };
+
+  const showDatepicker = () => {
+    showMode("date");
+  };
+
+  const showTimepicker = () => {
+    showMode("time");
+  };
+
   return (
     <View style={styles.container}>
-      <Text>Contact Info:</Text>
-      <TextInput
-        style={styles.input}
-        onChangeText={setInput}
-        value={Input}
-        placeholder="Enter First Name"
-      />
-      <TextInput
-        style={styles.input}
-        onChangeText={setInput}
-        value={Input}
-        placeholder="Enter Last Name"
-      />
-      <TextInput
-        style={styles.input}
-        onChangeText={setInput}
-        value={Input}
-        placeholder="Enter Phone Number"
-      />
-      <Button title="Submit" onPress={handleSubmit}></Button>
+      <View>
+        <Text>Contact Info:</Text>
+        {/* <Button onPress={showDatepicker} title="Show date picker!" />
+
+        <Button onPress={showTimepicker} title="Show time picker!" />
+
+        {show && (
+          <DateTimePicker
+            testID="dateTimePicker"
+            value={date}
+            mode={mode}
+            is24Hour={true}
+            display="default"
+            onChange={onChange}
+          />
+        )} */}
+
+        {/* <TextInput
+          style={styles.input}
+          onChangeText={setInput}
+          value={Input}
+          mode="outlined"
+          label="Enter First Name"
+        /> */}
+        <Button
+          style={styles.btn}
+          mode="contained"
+          onPress={() => handleSubmit}
+        >
+          Submit
+        </Button>
+      </View>
     </View>
   );
 };
