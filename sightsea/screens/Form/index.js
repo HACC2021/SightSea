@@ -78,21 +78,22 @@ const SightForm = () => {
           Fill out the form below to submit a sighting and our staffs will
           review the submitted form shortly.
         </Subheading>
-        <Button onPress={showDatepicker}>Select Date</Button>
+        {/* buttons and datatimepicker must be wrapped in a view to work */}
+        <View>
+          <Button onPress={showDatepicker}>Choose Date</Button>
+          <Button onPress={showTimepicker}>Choose Time</Button>
 
-        <Button onPress={showTimepicker}>Select Time</Button>
-
-        {show && (
-          <DateTimePicker
-            testID="dateTimePicker"
-            value={date}
-            mode={mode}
-            is24Hour={true}
-            display="default"
-            onChange={onChange}
-          />
-        )}
-
+          {show && (
+            <DateTimePicker
+              testID="dateTimePicker"
+              value={date}
+              mode={mode}
+              is24Hour={true}
+              display="default"
+              onChange={onChange}
+            />
+          )}
+        </View>
         <TextInput
           style={styles.input}
           onChangeText={setInput}
