@@ -1,32 +1,53 @@
 import React from "react";
-import { StyleSheet, Text, View, StatusBar, Platform } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  StatusBar,
+  Platform,
+  Dimensions,
+} from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import { TextInput, Button } from "react-native-paper";
-import { black, white } from "@jest/types/node_modules/chalk";
+import {
+  TextInput,
+  Button,
+  Headline,
+  Subheading,
+  Title,
+  Paragraph,
+} from "react-native-paper";
+
+//get window size of current device
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
+  },
+  form: {
+    flex: 1,
+    alignItems: "center",
   },
   input: {
-    alignItems: "center",
-    justifyContent: "center",
+    width: windowWidth * 0.8,
   },
-  btn: {},
+  btn: {
+    margin: 10,
+    width: windowWidth * 0.5,
+  },
 });
-
 const SightForm = () => {
   const [Input, setInput] = React.useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(Input);
+    window.alert(Input);
   };
 
-  const [date, setDate] = React.useState(new Date(1598051730000));
+  const [date, setDate] = React.useState(new Date());
   const [mode, setMode] = React.useState("date");
   const [show, setShow] = React.useState(false);
 
@@ -48,38 +69,48 @@ const SightForm = () => {
   const showTimepicker = () => {
     showMode("time");
   };
-
   return (
     <View style={styles.container}>
-      <View>
-        <Text>Contact Info:</Text>
-        {/* <Button onPress={showDatepicker} title="Show date picker!" />
-
-        <Button onPress={showTimepicker} title="Show time picker!" />
-
-        {show && (
-          <DateTimePicker
-            testID="dateTimePicker"
-            value={date}
-            mode={mode}
-            is24Hour={true}
-            display="default"
-            onChange={onChange}
-          />
-        )} */}
-
-        {/* <TextInput
+      <View style={styles.form}>
+        <Headline>Report a Sighting</Headline>
+        <Subheading>
+          Fill out the form below to submit a sighting and our staffs will
+          review the submitted form shortly.
+        </Subheading>
+        {/*  datatimepicker must be wrapped in a view to work */}
+        <View>
+          <Title>Select Date and Time:</Title>
+          <View style={{ flexDirection: "row" }}>
+            <View style={{ flex: 0.5, flexDirection: "column" }}>
+              <DateTimePicker
+                testID="dateTimePicker"
+                value={date}
+                mode="date"
+                is24Hour={true}
+                display="default"
+                onChange={onChange}
+              />
+            </View>
+            <View style={{ flex: 0.5, flexDirection: "column" }}>
+              <DateTimePicker
+                testID="dateTimePicker"
+                value={date}
+                mode="time"
+                is24Hour={true}
+                display="default"
+                onChange={onChange}
+              />
+            </View>
+          </View>
+        </View>
+        <TextInput
           style={styles.input}
           onChangeText={setInput}
           value={Input}
           mode="outlined"
           label="Enter First Name"
-        /> */}
-        <Button
-          style={styles.btn}
-          mode="contained"
-          onPress={() => handleSubmit}
-        >
+        />
+        <Button style={styles.btn} mode="contained" onPress={handleSubmit}>
           Submit
         </Button>
       </View>
