@@ -1,7 +1,7 @@
 import { StatusBar } from "expo-status-bar";
 import React from "react";
 import { StyleSheet, Text, View, Button } from "react-native";
-import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SightForm from "./screens/Form";
 import HomeScreen from "./screens/Home";
@@ -36,6 +36,17 @@ const theme = {
     ...DefaultTheme.colors,
     primary: "#5a8ee0",
     accent: "#f1c40f",
+    skyblue: "#6DB9D5",
+    brightblue: "#2196f3",
+    deepblue: "#006994",
+    blue: "#5A88D4",
+    teal: "#008080",
+    lightblue: "rgb(97, 166, 200)",
+    tan: "#f9f4ef",
+    green: "rgb(75, 161, 117)",
+    lightgreen: "#96DA91",
+    seafoamgreen: "#93E9BE",
+    red: "#ff0000",
   },
 };
 
