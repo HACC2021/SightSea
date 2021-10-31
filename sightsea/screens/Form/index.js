@@ -7,8 +7,6 @@ import {
   Platform,
   Dimensions,
 } from "react-native";
-//import { Picker } from "@react-native-picker/picker";
-import RNPickerSelect from "react-native-picker-select";
 import DropDown from "react-native-paper-dropdown";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import {
@@ -125,17 +123,6 @@ const SightForm = () => {
           label="Enter First Name"
         />
         <View>
-          {/*
-          <Text>Select an Animal Type</Text>
-          <RNPickerSelect
-            onValueChange={(value) => setAnimalType(value)}
-            items={[
-              { label: "Turtle", value: "turtle" },
-              { label: "Bird", value: "bird" },
-              { label: "Seal", value: "seal" },
-            ]}
-          />
-          */}
           <DropDown
             label={"Animal Type"}
             mode={"outlined"}
