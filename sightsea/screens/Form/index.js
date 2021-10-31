@@ -7,6 +7,7 @@ import {
   Platform,
   Dimensions,
 } from "react-native";
+import DropDown from "react-native-paper-dropdown";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import {
   TextInput,
@@ -15,7 +16,9 @@ import {
   Subheading,
   Title,
   Paragraph,
+  List,
 } from "react-native-paper";
+import PhoneInput from "react-native-phone-input";
 
 //get window size of current device
 const windowWidth = Dimensions.get("window").width;
@@ -40,16 +43,25 @@ const styles = StyleSheet.create({
   },
 });
 const SightForm = () => {
-  const [Input, setInput] = React.useState("");
+  const [name, setName] = React.useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    window.alert(Input);
+    window.alert(name);
   };
 
   const [date, setDate] = React.useState(new Date());
   const [mode, setMode] = React.useState("date");
   const [show, setShow] = React.useState(false);
+  const [animalType, setAnimalType] = React.useState("turtle");
+  const [showAnimalDropDown, setShowAnimalDropDown] = React.useState(false);
+  const animalTypes = [
+    { label: "Turtle", value: "turtle" },
+    { label: "Bird", value: "bird" },
+    { label: "Seal", value: "Seal" },
+  ];
+  const [phoneNum, setPhoneNum] = React.useState("");
+  const [validPhone, setValidPhone] = React.useState(false);
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -69,6 +81,7 @@ const SightForm = () => {
   const showTimepicker = () => {
     showMode("time");
   };
+
   return (
     <View style={styles.container}>
       <View style={styles.form}>
@@ -103,13 +116,59 @@ const SightForm = () => {
             </View>
           </View>
         </View>
-        <TextInput
-          style={styles.input}
-          onChangeText={setInput}
-          value={Input}
-          mode="outlined"
-          label="Enter First Name"
-        />
+        <View>
+          <DropDown
+            label={"Animal Type"}
+            mode={"outlined"}
+            visible={showAnimalDropDown}
+            showDropDown={() => setShowAnimalDropDown(true)}
+            onDismiss={() => setShowAnimalDropDown(false)}
+            value={animalType}
+            setValue={setAnimalType}
+            list={animalTypes}
+          />
+          <TextInput
+            style={styles.input}
+            onChangeText={(itemValue, itemIndex) => setName(itemValue)}
+            value={name}
+            mode="outlined"
+            label="Enter First Name"
+          />
+          <TextInput
+            style={styles.input}
+            mode="outlined"
+            label="Phone number"
+          />
+          <TextInput
+            style={styles.input}
+            mode="outlined"
+            label="Is the animal on the beach or in the water?"
+          />
+          {animalType === "Seal" ? null : (
+            <View>
+              <TextInput
+                style={styles.input}
+                mode="outlined"
+                label="Describe any visible wounds (size/color)"
+              />
+              <TextInput
+                style={styles.input}
+                mode="outlined"
+                label="Describe any previous wounds (ex. amputated flipper)"
+              />
+              <TextInput
+                style={styles.input}
+                mode="outlined"
+                label="Describe the animal's behavior (ex. is it lethargic?)"
+              />
+              <TextInput
+                style={styles.input}
+                mode="outlined"
+                label="About what size is the animal?"
+              />
+            </View>
+          )}
+        </View>
         <Button style={styles.btn} mode="contained" onPress={handleSubmit}>
           Submit
         </Button>
