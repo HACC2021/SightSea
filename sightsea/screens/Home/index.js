@@ -15,7 +15,7 @@ const HomeScreen = ({ navigation }) => {
     container: {
       flex: 1,
       flexDirection: "column",
-      backgroundColor: "aliceblue",
+      backgroundColor: colors.tan,
       alignItems: "center",
       //justifyContent: "center",
     },
@@ -45,7 +45,7 @@ const HomeScreen = ({ navigation }) => {
       borderRadius: 50,
       borderColor: "rgba(0,0,0,0.2)",
       marginTop: "10%",
-      backgroundColor: colors.primary,
+      backgroundColor: colors.lightblue,
     },
   });
 

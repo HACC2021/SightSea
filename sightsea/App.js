@@ -20,7 +20,7 @@ const firebaseConfig = {
   storageBucket: "sightsea-57e15.appspot.com",
   messagingSenderId: "540196098412",
   appId: "1:540196098412:web:a53a48f2c8e7461ddf6349",
-  measurementId: "G-HPGWR7KS9T"
+  measurementId: "G-HPGWR7KS9T",
 };
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -31,7 +31,17 @@ const MyTheme = {
   ...DefaultTheme,
   colors: {
     ...DefaultTheme.colors,
-    primary: 'rgb(10, 147, 150)',
+    skyblue: "#6DB9D5",
+    brightblue: "#2196f3",
+    deepblue: "#006994",
+    blue: "#5A88D4",
+    teal: "#008080",
+    lightblue: "rgb(97, 166, 200)",
+    tan: "#ECE9D2",
+    green: "rgb(75, 161, 117)",
+    lightgreen: "#96DA91",
+    seafoamgreen: "#93E9BE",
+    red: "#ff0000",
   },
 };
 
@@ -41,8 +51,16 @@ export default function App() {
       {/* set Home as the landing page */}
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Form" component={SightForm} options={{ headerLeft: null }}/>
-        <Stack.Screen name="StaffLogin" component={StaffLogin} options={{ headerLeft: null }}/>
+        <Stack.Screen
+          name="Form"
+          component={SightForm}
+          options={{ headerLeft: null }}
+        />
+        <Stack.Screen
+          name="StaffLogin"
+          component={StaffLogin}
+          options={{ headerLeft: null }}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
