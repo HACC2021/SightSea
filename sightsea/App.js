@@ -37,7 +37,7 @@ const MyTheme = {
     blue: "#5A88D4",
     teal: "#008080",
     lightblue: "rgb(97, 166, 200)",
-    tan: "#ECE9D2",
+    tan: "#f9f4ef",
     green: "rgb(75, 161, 117)",
     lightgreen: "#96DA91",
     seafoamgreen: "#93E9BE",

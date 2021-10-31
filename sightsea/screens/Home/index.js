@@ -45,7 +45,7 @@ const HomeScreen = ({ navigation }) => {
       borderRadius: 50,
       borderColor: "rgba(0,0,0,0.2)",
       marginTop: "10%",
-      backgroundColor: colors.lightblue,
+      backgroundColor: colors.deepblue,
     },
   });
 
