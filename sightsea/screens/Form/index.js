@@ -6,8 +6,10 @@ import {
   StatusBar,
   Platform,
   Dimensions,
-  Picker,
 } from "react-native";
+//import { Picker } from "@react-native-picker/picker";
+import RNPickerSelect from "react-native-picker-select";
+import DropDown from "react-native-paper-dropdown";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import {
   TextInput,
@@ -16,6 +18,7 @@ import {
   Subheading,
   Title,
   Paragraph,
+  List,
 } from "react-native-paper";
 
 //get window size of current device
@@ -52,6 +55,14 @@ const SightForm = () => {
   const [mode, setMode] = React.useState("date");
   const [show, setShow] = React.useState(false);
   const [animalType, setAnimalType] = React.useState("turtle");
+  const [showAnimalDropDown, setShowAnimalDropDown] = React.useState(false);
+  const animalTypes = [
+    { label: "Turtle", value: "turtle" },
+    { label: "Bird", value: "bird" },
+    { label: "Seal", value: "Seal" },
+  ];
+  const [phoneNum, setPhoneNum] = React.useState("");
+  const [validPhone, setValidPhone] = React.useState(false);
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -71,6 +82,7 @@ const SightForm = () => {
   const showTimepicker = () => {
     showMode("time");
   };
+
   return (
     <View style={styles.container}>
       <View style={styles.form}>
@@ -112,14 +124,29 @@ const SightForm = () => {
           mode="outlined"
           label="Enter First Name"
         />
-        <Picker
-          selectedValue={animalType}
-          onValueChange={(itemValue, itemIndex) => setAnimalType(itemValue)}
-        >
-          <Picker.Item label="Turtle" value="turtle" />
-          <Picker.Item label="Bird" value="bird" />
-          <Picker.Item label="Seal" value="seal" />
-        </Picker>
+        <View>
+          {/*
+          <Text>Select an Animal Type</Text>
+          <RNPickerSelect
+            onValueChange={(value) => setAnimalType(value)}
+            items={[
+              { label: "Turtle", value: "turtle" },
+              { label: "Bird", value: "bird" },
+              { label: "Seal", value: "seal" },
+            ]}
+          />
+          */}
+          <DropDown
+            label={"Animal Type"}
+            mode={"outlined"}
+            visible={showAnimalDropDown}
+            showDropDown={() => setShowAnimalDropDown(true)}
+            onDismiss={() => setShowAnimalDropDown(false)}
+            value={animalType}
+            setValue={setAnimalType}
+            list={animalTypes}
+          />
+        </View>
         <Button style={styles.btn} mode="contained" onPress={handleSubmit}>
           Submit
         </Button>
