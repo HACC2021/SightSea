@@ -18,6 +18,7 @@ import {
   Paragraph,
   List,
 } from "react-native-paper";
+import PhoneInput from "react-native-phone-input";
 
 //get window size of current device
 const windowWidth = Dimensions.get("window").width;
@@ -115,13 +116,6 @@ const SightForm = () => {
             </View>
           </View>
         </View>
-        <TextInput
-          style={styles.input}
-          onChangeText={(itemValue, itemIndex) => setName(itemValue)}
-          value={name}
-          mode="outlined"
-          label="Enter First Name"
-        />
         <View>
           <DropDown
             label={"Animal Type"}
@@ -133,6 +127,47 @@ const SightForm = () => {
             setValue={setAnimalType}
             list={animalTypes}
           />
+          <TextInput
+            style={styles.input}
+            onChangeText={(itemValue, itemIndex) => setName(itemValue)}
+            value={name}
+            mode="outlined"
+            label="Enter First Name"
+          />
+          <TextInput
+            style={styles.input}
+            mode="outlined"
+            label="Phone number"
+          />
+          <TextInput
+            style={styles.input}
+            mode="outlined"
+            label="Is the animal on the beach or in the water?"
+          />
+          {animalType === "Seal" ? null : (
+            <View>
+              <TextInput
+                style={styles.input}
+                mode="outlined"
+                label="Describe any visible wounds (size/color)"
+              />
+              <TextInput
+                style={styles.input}
+                mode="outlined"
+                label="Describe any previous wounds (ex. amputated flipper)"
+              />
+              <TextInput
+                style={styles.input}
+                mode="outlined"
+                label="Describe the animal's behavior (ex. is it lethargic?)"
+              />
+              <TextInput
+                style={styles.input}
+                mode="outlined"
+                label="About what size is the animal?"
+              />
+            </View>
+          )}
         </View>
         <Button style={styles.btn} mode="contained" onPress={handleSubmit}>
           Submit
