@@ -6,6 +6,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SightForm from "./screens/Form";
 import HomeScreen from "./screens/Home";
 import StaffLogin from "./screens/StaffLogin";
+import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
@@ -27,41 +28,36 @@ const app = initializeApp(firebaseConfig);
 
 const Stack = createNativeStackNavigator();
 
-const MyTheme = {
+//apply global theme to paper elements
+const theme = {
   ...DefaultTheme,
+  roundness: 6,
   colors: {
     ...DefaultTheme.colors,
-    skyblue: "#6DB9D5",
-    brightblue: "#2196f3",
-    deepblue: "#006994",
-    blue: "#5A88D4",
-    teal: "#008080",
-    lightblue: "rgb(97, 166, 200)",
-    tan: "#f9f4ef",
-    green: "rgb(75, 161, 117)",
-    lightgreen: "#96DA91",
-    seafoamgreen: "#93E9BE",
-    red: "#ff0000",
+    primary: "#5a8ee0",
+    accent: "#f1c40f",
   },
 };
 
 export default function App() {
   return (
-    <NavigationContainer theme={MyTheme}>
-      {/* set Home as the landing page */}
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen
-          name="Form"
-          component={SightForm}
-          options={{ headerLeft: null }}
-        />
-        <Stack.Screen
-          name="StaffLogin"
-          component={StaffLogin}
-          options={{ headerLeft: null }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <PaperProvider theme={theme}>
+      <NavigationContainer>
+        {/* set Home as the landing page */}
+        <Stack.Navigator initialRouteName="SightSea">
+          <Stack.Screen name="SightSea" component={HomeScreen} />
+          <Stack.Screen
+            name="Form"
+            component={SightForm}
+            options={{ headerLeft: null }}
+          />
+          <Stack.Screen
+            name="StaffLogin"
+            component={StaffLogin}
+            options={{ headerLeft: null }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </PaperProvider>
   );
 }

@@ -6,8 +6,13 @@ import {
   Button,
   StatusBar,
   TouchableOpacity,
+  ImageBackground,
 } from "react-native";
-import { NavigationContainer, useTheme } from "@react-navigation/native";
+import { NavigationContainer } from "@react-navigation/native";
+
+const image = {
+  uri: "https://i.ibb.co/Wc2RzBV/Swimming-with-a-Hawaiian-Sea-Turtle-6-1024x683.jpg",
+};
 
 const HomeScreen = ({ navigation }) => {
   const { colors } = useTheme();
@@ -15,7 +20,6 @@ const HomeScreen = ({ navigation }) => {
     container: {
       flex: 1,
       flexDirection: "column",
-      backgroundColor: colors.tan,
       alignItems: "center",
       //justifyContent: "center",
     },
@@ -27,7 +31,6 @@ const HomeScreen = ({ navigation }) => {
     },
     buttonText: {
       fontSize: 20,
-      color: "white",
     },
     buttonGroup: {
       position: "relative",
@@ -40,36 +43,43 @@ const HomeScreen = ({ navigation }) => {
       justifyContent: "center",
       width: "160%",
       height: 75,
+      backgroundColor: "#DDDDDD",
+      //backgroundColor: "lightblue",
       padding: "5%",
       borderWidth: 1,
       borderRadius: 50,
       borderColor: "rgba(0,0,0,0.2)",
-      marginTop: "10%",
-      backgroundColor: colors.deepblue,
+      marginTop: "5%",
+    },
+    image: {
+      flex: 1,
+      justifyContent: "center",
     },
   });
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.titleText}>Welcome to SightSea!</Text>
-      <View style={styles.buttonGroup}>
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={() => navigation.navigate("Form")}
-        >
-          <Text style={styles.buttonText}>Report an Animal Sighting</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navButton}>
-          <Text style={styles.buttonText}>Report a Distressed Animal</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={styles.navButton}
-          onPress={() => navigation.navigate("StaffLogin")}
-        >
-          <Text style={styles.buttonText}>Staff Portal</Text>
-        </TouchableOpacity>
+    <ImageBackground source={image} resizeMode="cover" style={styles.image}>
+      <View style={styles.container}>
+        <Text style={styles.titleText}>Welcome to SightSea!</Text>
+        <View style={styles.buttonGroup}>
+          <TouchableOpacity
+            style={styles.navButton}
+            onPress={() => navigation.navigate("Form")}
+          >
+            <Text style={styles.buttonText}>Report an Animal Sighting</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.navButton}>
+            <Text style={styles.buttonText}>Report a Distressed Animal</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.navButton}
+            onPress={() => navigation.navigate("StaffLogin")}
+          >
+            <Text style={styles.buttonText}>Staff Portal</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
+    </ImageBackground>
   );
 };
 
