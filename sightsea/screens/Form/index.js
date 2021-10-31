@@ -6,6 +6,7 @@ import {
   StatusBar,
   Platform,
   Dimensions,
+  Picker,
 } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import {
@@ -40,16 +41,17 @@ const styles = StyleSheet.create({
   },
 });
 const SightForm = () => {
-  const [Input, setInput] = React.useState("");
+  const [name, setName] = React.useState("");
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    window.alert(Input);
+    window.alert(name);
   };
 
   const [date, setDate] = React.useState(new Date());
   const [mode, setMode] = React.useState("date");
   const [show, setShow] = React.useState(false);
+  const [animalType, setAnimalType] = React.useState("turtle");
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -105,11 +107,19 @@ const SightForm = () => {
         </View>
         <TextInput
           style={styles.input}
-          onChangeText={setInput}
-          value={Input}
+          onChangeText={(itemValue, itemIndex) => setName(itemValue)}
+          value={name}
           mode="outlined"
           label="Enter First Name"
         />
+        <Picker
+          selectedValue={animalType}
+          onValueChange={(itemValue, itemIndex) => setAnimalType(itemValue)}
+        >
+          <Picker.Item label="Turtle" value="turtle" />
+          <Picker.Item label="Bird" value="bird" />
+          <Picker.Item label="Seal" value="seal" />
+        </Picker>
         <Button style={styles.btn} mode="contained" onPress={handleSubmit}>
           Submit
         </Button>
