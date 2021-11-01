@@ -7,7 +7,7 @@ import {
   TextInput,
   Button,
 } from "react-native";
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
 const styles = StyleSheet.create({
   container: {
@@ -17,43 +17,62 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   input: {
-    height: 40,
+    height: 50,
     margin: 12,
     borderWidth: 1,
+    width: "70%",
     borderRadius: 4,
     padding: 10,
     alignItems: "center",
     justifyContent: "center",
   },
+  errorText: {
+    color: "red",
+  }
 });
 
-const StaffLogin = () => {
-  const [Input, setInput] = React.useState("");
+const StaffLogin = ({ navigation }) => {
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [error, setError] = React.useState("");
 
   const auth = getAuth();
   const handleSubmit = (e) => {
     e.preventDefault();
-    const {email,password} = values;
-    console.log(Input);
-    signInWithEmailAndPassword(auth, email, password).catch(error =>
-      setErrorState(error.message));
+    setError("");
+    signInWithEmailAndPassword(auth, email, password)
+      .then((userCredential) => {
+        // Signed in
+
+        console.log("Logged in ");
+        const user = userCredential.user;
+        // TODO: navigate to admin page
+        // navigation.navigation("")
+      })
+      .catch((error) => {
+        setError(error.message);
+        console.log(error.message);
+      });
   };
 
   return (
     <View style={styles.container}>
-      <Text>Staff login:</Text>
+      <Text>Staff login</Text>
+      <Text
+        style={styles.errorText}
+      > {error && error}</Text>
       <TextInput
         style={styles.input}
-        onChangeText={setInput}
-        value={Input}
+        onChangeText={setEmail}
+        value={email}
         type="email"
         placeholder="Email"
       />
       <TextInput
         style={styles.input}
-        onChangeText={setInput}
-        value={Input}
-        type="password"
+        onChangeText={setPassword}
+        value={password}
+        secureTextEntry={true}
         placeholder="Password"
       />
       <Button title="Submit" onPress={handleSubmit}></Button>
