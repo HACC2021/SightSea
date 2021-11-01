@@ -6,9 +6,13 @@ import {
   StatusBar,
   Platform,
   Dimensions,
+  ScrollView,
 } from "react-native";
 import DropDown from "react-native-paper-dropdown";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import MapView, { Marker } from "react-native-maps";
+//import Marker from "react-native-maps";
+
 import {
   TextInput,
   Button,
@@ -41,31 +45,35 @@ const styles = StyleSheet.create({
     margin: 10,
     width: windowWidth * 0.5,
   },
+  map: {
+    width: windowWidth * 0.8,
+    height: windowHeight * 0.4,
+  },
 });
 const SightForm = () => {
-  const [name, setName] = React.useState("");
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    window.alert(name);
-  };
-
   const [date, setDate] = React.useState(new Date());
   const [mode, setMode] = React.useState("date");
   const [show, setShow] = React.useState(false);
   const [animalType, setAnimalType] = React.useState("turtle");
   const [showAnimalDropDown, setShowAnimalDropDown] = React.useState(false);
+  const [name, setName] = React.useState("");
+  const [phoneNum, setPhoneNum] = React.useState("");
+  const [validPhone, setValidPhone] = React.useState(false);
   const animalTypes = [
     { label: "Turtle", value: "turtle" },
     { label: "Bird", value: "bird" },
     { label: "Seal", value: "Seal" },
   ];
-  const [phoneNum, setPhoneNum] = React.useState("");
-  const [validPhone, setValidPhone] = React.useState(false);
+  const [mapRegion, setmapRegion] = React.useState({
+    latitude: 21.315603,
+    longitude: -157.858093,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  });
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
-    setShow(Platform.OS === "ios");
+    //setShow(Platform.OS === "ios");
     setDate(currentDate);
   };
 
@@ -80,6 +88,12 @@ const SightForm = () => {
 
   const showTimepicker = () => {
     showMode("time");
+  };
+
+  //window.alert(date.getHours() + ":" + date.getMinutes());
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    window.alert(name);
   };
 
   return (
@@ -116,8 +130,15 @@ const SightForm = () => {
             </View>
           </View>
         </View>
+        {/* <Marker coordinate={(37, -122)} /> */}
         <View>
-          <DropDown
+          <MapView style={styles.map} region={mapRegion}>
+            <Marker key={0} coordinate={mapRegion} title={"Marker"} />
+          </MapView>
+        </View>
+        <View>
+          {/* <DropDown
+            style={styles.input}
             label={"Animal Type"}
             mode={"outlined"}
             visible={showAnimalDropDown}
@@ -126,17 +147,20 @@ const SightForm = () => {
             value={animalType}
             setValue={setAnimalType}
             list={animalTypes}
-          />
+          /> */}
           <TextInput
             style={styles.input}
-            onChangeText={(itemValue, itemIndex) => setName(itemValue)}
+            onChangeText={setName}
             value={name}
             mode="outlined"
+            textContentType="name"
             label="Enter First Name"
           />
           <TextInput
             style={styles.input}
+            onChangeText={setPhoneNum}
             mode="outlined"
+            keyboardType="decimal-pad"
             label="Phone number"
           />
           <TextInput

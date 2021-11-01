@@ -7,27 +7,31 @@ import {
   StatusBar,
   TouchableOpacity,
   ImageBackground,
+  Dimensions,
 } from "react-native";
 import { NavigationContainer, useTheme } from "@react-navigation/native";
 
 const image = {
   uri: "https://i.ibb.co/Wc2RzBV/Swimming-with-a-Hawaiian-Sea-Turtle-6-1024x683.jpg",
 };
+//get window size of current device
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 
 const HomeScreen = ({ navigation }) => {
   const { colors } = useTheme();
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      flexDirection: "column",
+      // flexDirection: "column",
       alignItems: "center",
-      //justifyContent: "center",
+      justifyContent: "center",
     },
     titleText: {
       fontSize: 50,
       fontWeight: "bold",
       textAlign: "center",
-      paddingTop: "10%",
+      paddingTop: windowHeight * 0.1,
     },
     buttonText: {
       fontSize: 20,
@@ -36,20 +40,20 @@ const HomeScreen = ({ navigation }) => {
       position: "relative",
       flex: 1,
       alignItems: "center",
-      marginTop: "30%",
+      marginTop: windowHeight * 0.15,
     },
     navButton: {
       textAlign: "center",
       justifyContent: "center",
-      width: "160%",
+      width: windowHeight * 0.45,
       height: 75,
       backgroundColor: "#DDDDDD",
       //backgroundColor: "lightblue",
-      padding: "5%",
+      padding: windowWidth * 0.05,
       borderWidth: 1,
       borderRadius: 50,
       borderColor: "rgba(0,0,0,0.2)",
-      marginTop: "5%",
+      marginTop: windowWidth * 0.05,
     },
     image: {
       flex: 1,
