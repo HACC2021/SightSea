@@ -7,6 +7,7 @@ import {
   TextInput,
   Button,
 } from "react-native";
+import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
 
 const styles = StyleSheet.create({
   container: {
@@ -29,9 +30,13 @@ const styles = StyleSheet.create({
 const StaffLogin = () => {
   const [Input, setInput] = React.useState("");
 
+  const auth = getAuth();
   const handleSubmit = (e) => {
     e.preventDefault();
+    const {email,password} = values;
     console.log(Input);
+    signInWithEmailAndPassword(auth, email, password).catch(error =>
+      setErrorState(error.message));
   };
 
   return (
