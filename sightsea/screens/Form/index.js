@@ -8,9 +8,9 @@ import {
   Dimensions,
   ScrollView,
 } from "react-native";
-import DropDown from "react-native-paper-dropdown";
+//import DropDown from "react-native-paper-dropdown";
 import DateTimePicker from "@react-native-community/datetimepicker";
-import MapView, { Marker } from "react-native-maps";
+//import MapView, { Marker } from "react-native-maps";
 //import Marker from "react-native-maps";
 
 import {
@@ -21,6 +21,7 @@ import {
   Title,
   Paragraph,
   List,
+  Menu,
 } from "react-native-paper";
 import PhoneInput from "react-native-phone-input";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
@@ -55,7 +56,7 @@ const SightForm = () => {
   const [date, setDate] = React.useState(new Date());
   const [mode, setMode] = React.useState("date");
   const [show, setShow] = React.useState(false);
-  const [animalType, setAnimalType] = React.useState("turtle");
+  const [animalType, setAnimalType] = React.useState("Turtle");
   const [showAnimalDropDown, setShowAnimalDropDown] = React.useState(false);
   const [name, setName] = React.useState("");
   const [phoneNum, setPhoneNum] = React.useState("");
@@ -71,6 +72,14 @@ const SightForm = () => {
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
+
+  const handleAnimalDropdown = () => {
+    setShowAnimalDropDown(!showAnimalDropDown);
+  };
+  const handleDropdownPress = (value) => {
+    setAnimalType(value);
+    setShowAnimalDropDown(!showAnimalDropDown);
+  };
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -108,25 +117,6 @@ const SightForm = () => {
         {/*  datatimepicker must be wrapped in a view to work */}
         <View>
           <Title>Select Date and Time:</Title>
-          {Platform.OS === "android" && (
-            <View>
-              <Button onPress={showDatepicker}>Select Date</Button>
-
-              <Button onPress={showTimepicker}>Select Time</Button>
-
-              {show && (
-                // <DateTimePicker
-                //   testID="dateTimePicker"
-                //   value={date}
-                //   mode="date"
-                //   is24Hour={true}
-                //   display="calendar"
-                //   onChange={onChange}
-                // />
-                <DateTimePicker></DateTimePicker>
-              )}
-            </View>
-          )}
           <View style={{ flexDirection: "row" }}>
             <View style={{ flex: 0.5, flexDirection: "column" }}>
               <DateTimePicker
@@ -151,13 +141,16 @@ const SightForm = () => {
           </View>
         </View>
         {/* <Marker coordinate={(37, -122)} /> */}
+        {/*
         <View>
           <MapView style={styles.map} region={mapRegion}>
             <Marker key={0} coordinate={mapRegion} title={"Marker"} />
           </MapView>
         </View>
-        <View>
-          {/* <DropDown
+        */}
+
+        {/* <View>
+          <DropDown
             style={styles.input}
             label={"Animal Type"}
             mode={"outlined"}
@@ -167,7 +160,37 @@ const SightForm = () => {
             value={animalType}
             setValue={setAnimalType}
             list={animalTypes}
-          /> */}
+          />
+        </View> */}
+
+        <View>
+          <List.Section title="Animal Accordian">
+            <List.Accordion
+              title={animalType}
+              expanded={showAnimalDropDown}
+              onPress={handleAnimalDropdown}
+            >
+              <List.Item
+                title="Turtle"
+                onPress={() => {
+                  setAnimalType("Turtle");
+                }}
+              />
+              <List.Item
+                title="Seal"
+                onPress={() => {
+                  setAnimalType("Seal");
+                }}
+              />
+              <List.Item
+                title="Bird"
+                onPress={() => {
+                  setAnimalType("Bird");
+                  handleAnimalDropdown;
+                }}
+              />
+            </List.Accordion>
+          </List.Section>
           <TextInput
             style={styles.input}
             onChangeText={setName}
