@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: "red",
-  }
+  },
 });
 
 const StaffLogin = ({ navigation }) => {
@@ -58,9 +58,7 @@ const StaffLogin = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <Text>Staff login</Text>
-      <Text
-        style={styles.errorText}
-      > {error && error}</Text>
+      <Text style={styles.errorText}> {error && error}</Text>
       <TextInput
         style={styles.input}
         onChangeText={setEmail}

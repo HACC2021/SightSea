@@ -23,6 +23,7 @@ import {
   List,
 } from "react-native-paper";
 import PhoneInput from "react-native-phone-input";
+import RNDateTimePicker from "@react-native-community/datetimepicker";
 
 //get window size of current device
 const windowWidth = Dimensions.get("window").width;
@@ -73,7 +74,7 @@ const SightForm = () => {
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
-    //setShow(Platform.OS === "ios");
+    setShow(Platform.OS === "ios");
     setDate(currentDate);
   };
 
@@ -107,6 +108,25 @@ const SightForm = () => {
         {/*  datatimepicker must be wrapped in a view to work */}
         <View>
           <Title>Select Date and Time:</Title>
+          {Platform.OS === "android" && (
+            <View>
+              <Button onPress={showDatepicker}>Select Date</Button>
+
+              <Button onPress={showTimepicker}>Select Time</Button>
+
+              {show && (
+                // <DateTimePicker
+                //   testID="dateTimePicker"
+                //   value={date}
+                //   mode="date"
+                //   is24Hour={true}
+                //   display="calendar"
+                //   onChange={onChange}
+                // />
+                <DateTimePicker></DateTimePicker>
+              )}
+            </View>
+          )}
           <View style={{ flexDirection: "row" }}>
             <View style={{ flex: 0.5, flexDirection: "column" }}>
               <DateTimePicker
