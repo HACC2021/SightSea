@@ -6,10 +6,10 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SightForm from "./screens/Form";
 import HomeScreen from "./screens/Home";
 import StaffLogin from "./screens/StaffLogin";
+import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
 
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 // Your web app's Firebase configuration
@@ -21,23 +21,54 @@ const firebaseConfig = {
   storageBucket: "sightsea-57e15.appspot.com",
   messagingSenderId: "540196098412",
   appId: "1:540196098412:web:a53a48f2c8e7461ddf6349",
-  measurementId: "G-HPGWR7KS9T"
+  measurementId: "G-HPGWR7KS9T",
 };
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
 
 const Stack = createNativeStackNavigator();
 
+//apply global theme to paper elements
+const theme = {
+  ...DefaultTheme,
+  roundness: 6,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: "#5a8ee0",
+    accent: "#f1c40f",
+    skyblue: "#6DB9D5",
+    brightblue: "#2196f3",
+    deepblue: "#006994",
+    blue: "#5A88D4",
+    teal: "#008080",
+    lightblue: "rgb(97, 166, 200)",
+    tan: "#f9f4ef",
+    green: "rgb(75, 161, 117)",
+    lightgreen: "#96DA91",
+    seafoamgreen: "#93E9BE",
+    red: "#ff0000",
+  },
+};
+
 export default function App() {
   return (
-    <NavigationContainer>
-      {/* set Home as the landing page */}
-      <Stack.Navigator initialRouteName="Home">
-        <Stack.Screen name="Home" component={HomeScreen} />
-        <Stack.Screen name="Form" component={SightForm} options={{ headerLeft: null }}/>
-        <Stack.Screen name="StaffLogin" component={StaffLogin} options={{ headerLeft: null }}/>
-      </Stack.Navigator>
-    </NavigationContainer>
+    <PaperProvider theme={theme}>
+      <NavigationContainer>
+        {/* set Home as the landing page */}
+        <Stack.Navigator initialRouteName="SightSea">
+          <Stack.Screen name="SightSea" component={HomeScreen} />
+          <Stack.Screen
+            name="Form"
+            component={SightForm}
+            options={{ headerLeft: null }}
+          />
+          <Stack.Screen
+            name="StaffLogin"
+            component={StaffLogin}
+            options={{ headerLeft: null }}
+          />
+        </Stack.Navigator>
+      </NavigationContainer>
+    </PaperProvider>
   );
 }
