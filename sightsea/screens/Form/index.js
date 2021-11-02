@@ -76,7 +76,7 @@ const SightForm = () => {
   const handleAnimalDropdown = () => {
     setShowAnimalDropDown(!showAnimalDropDown);
   };
-  const handleDropdownPress = (value) => {
+  const dropdownItemClick = (value) => {
     setAnimalType(value);
     setShowAnimalDropDown(!showAnimalDropDown);
   };
@@ -172,21 +172,23 @@ const SightForm = () => {
             >
               <List.Item
                 title="Turtle"
-                onPress={() => {
+                onPress={function () {
                   setAnimalType("Turtle");
+                  handleAnimalDropdown();
                 }}
               />
               <List.Item
                 title="Seal"
-                onPress={() => {
+                onPress={function () {
                   setAnimalType("Seal");
+                  handleAnimalDropdown();
                 }}
               />
               <List.Item
                 title="Bird"
-                onPress={() => {
+                onPress={function () {
                   setAnimalType("Bird");
-                  handleAnimalDropdown;
+                  handleAnimalDropdown();
                 }}
               />
             </List.Accordion>
