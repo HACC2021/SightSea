@@ -11,7 +11,6 @@ import {
 } from "react-native";
 import { NavigationContainer, useTheme } from "@react-navigation/native";
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -55,7 +54,6 @@ const image = {
 //get window size of current device
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
-
 
 const HomeScreen = ({ navigation }) => {
   const { colors } = useTheme();
@@ -102,50 +100,28 @@ const HomeScreen = ({ navigation }) => {
 
   return (
 
-    <ImageBackground source={image} resizeMode="cover" style={styles.image}>
-
-      <View style={styles.container}>
-        <Text style={styles.titleText}>Welcome to SightSea!</Text>
-        <View style={styles.buttonGroup}>
-          <TouchableOpacity
-
-              style={styles.navButton}
-              onPress={() => navigation.navigate("Form")}
-          >
-            <Text style={styles.buttonText}>Report an Animal Sighting</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-              style={styles.navButton}
-          >
-            <Text style={styles.buttonText}>Report a Distressed Animal</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-              style={styles.navButton}
-              onPress={() => navigation.navigate("StaffPage")}
-          >
-            <Text style={styles.buttonText}>Staff Portal</Text>
-          </TouchableOpacity>
-
+      <ImageBackground source={image} resizeMode="cover" style={styles.image}>
+        <View style={styles.container}>
+          <Text style={styles.titleText}>Welcome to SightSea!</Text>
+          <View style={styles.buttonGroup}>
+            <TouchableOpacity
+                style={styles.navButton}
+                onPress={() => navigation.navigate("Form")}
+            >
+              <Text style={styles.buttonText}>Report an Animal Sighting</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.navButton}>
+              <Text style={styles.buttonText}>Report a Distressed Animal</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+                style={styles.navButton}
+                onPress={() => navigation.navigate("StaffLogin")}
+            >
+              <Text style={styles.buttonText}>Staff Portal</Text>
+            </TouchableOpacity>
+          </View>
         </View>
-      </View>
-
-            style={styles.navButton}
-            onPress={() => navigation.navigate("Form")}
-          >
-            <Text style={styles.buttonText}>Report an Animal Sighting</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navButton}>
-            <Text style={styles.buttonText}>Report a Distressed Animal</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.navButton}
-            onPress={() => navigation.navigate("StaffLogin")}
-          >
-            <Text style={styles.buttonText}>Staff Portal</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </ImageBackground>
+      </ImageBackground>
 
   );
 };
