@@ -11,6 +11,8 @@ import {
   Platform,
 } from "react-native";
 import { NavigationContainer, useTheme } from "@react-navigation/native";
+import { getDatabase, ref, onValue, set } from 'firebase/database';
+
 
 const styles = StyleSheet.create({
   container: {
@@ -122,6 +124,15 @@ const HomeScreen = ({ navigation }) => {
     },
   });
 
+async function addDoc() {
+  const db = getDatabase();
+  const reference = ref(db, 'test/' + 'testdoc');
+  await set(reference, {
+    field1: "hello2",
+  });
+  window.alert("clicked");
+}
+
   return (
 
       <ImageBackground source={image} resizeMode="cover" style={styles.image}>
@@ -135,7 +146,7 @@ const HomeScreen = ({ navigation }) => {
               <Text style={styles.buttonText}>Report an Animal Sighting</Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.navButton}>
-              <Text style={styles.buttonText}>Report a Distressed Animal</Text>
+              <Text style={styles.buttonText} onPress={addDoc}>Report a Distressed Animal</Text>
             </TouchableOpacity>
             <TouchableOpacity
                 style={styles.navButton}
