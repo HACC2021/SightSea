@@ -5,10 +5,9 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SightForm from "./screens/Form";
 import HomeScreen from "./screens/Home";
-
 import StaffPage from "./screens/Staff Page"
-
 import StaffLogin from "./screens/StaffLogin";
+
 import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
 
 // Import the functions you need from the SDKs you need
@@ -74,6 +73,11 @@ export default function App() {
             component={StaffLogin}
             options={{ headerLeft: null }}
           />
+          <Stack.Screen
+            name="StaffPage"
+            component={StaffPage}
+            options={{ headerLeft: null }}
+          />          
         </Stack.Navigator>
       </NavigationContainer>
     </PaperProvider>
