@@ -53,15 +53,23 @@ const styles = StyleSheet.create({
   },
 });
 const SightForm = () => {
+
   const [date, setDate] = React.useState(new Date());
+  const [time, setTime] = React.useState("");
   const [mode, setMode] = React.useState("date");
   const [showDate, setShowDate] = React.useState(false);
   const [showTime, setShowTime] = React.useState(false);
   const [animalType, setAnimalType] = React.useState("Turtle");
   const [showAnimalDropDown, setShowAnimalDropDown] = React.useState(false);
   const [name, setName] = React.useState("");
+  const [location, setLocation] = React.useState("");
+  const [present , setPresent] = React.useState("");
+  const [size, setSize] = React.useState("");
   const [phoneNum, setPhoneNum] = React.useState("");
   const [validPhone, setValidPhone] = React.useState(false);
+
+
+
   const [mapRegion, setmapRegion] = React.useState({
     latitude: 21.315603,
     longitude: -157.858093,
@@ -92,10 +100,69 @@ const SightForm = () => {
     showMode("time");
   };
 
+  //date format for form
+  const currentDate = () => {
+    var day = new Date().getDate();
+    //append 0 to front of single digit days
+    if (day.toString().length === 1 ){
+      day = 0 + "" + day
+    }
+    var month = new Date().getMonth() + 1;
+    var year = new Date().getFullYear();
+    var lasttwo = year.toString().slice(-2);
+
+    //MMDDYY as required
+    var datestring = month + "" + day + "" + lasttwo
+    return datestring;
+  }
+
+  const currentTime = () => {
+    var hour = new Date().getHours()
+    var minutes = new Date().getMinutes()
+
+    //HHMM in 24 time as required
+    var time = hour + "" + minutes
+    return time;
+  }
+
+  const phoneNumFormat = () => {
+    var first_three = phoneNum.toString().slice(0,3);
+    var middle_three = phoneNum.toString().slice(3, 6);
+    var last_four = phoneNum.toString().slice(-4);
+
+    var num = first_three + "-" + middle_three + "-" + last_four
+    return num;
+
+  }
   //window.alert(date.getHours() + ":" + date.getMinutes());
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    //For Seal input
+    var new_date = currentDate();
+    var new_time = currentTime();
+    var ticket = "XX" + "" + new_date + "" + new_time
+    const hotline = "";
+    const ticket_type = "I";
+    const observer =  name;
+    var observer_phone = phoneNumFormat();
+    const observer_type = "P";
+    var observer_intitials = name.slice(0,1) + observer_type;
+    const sector = "";
+    var location_data = location;
+    const location_notes = "";
+    const seal_present = present;
+    const seal_size = size;
+
+
+
+
+    window.alert(location_data);
     window.alert(name);
+
+    //Grab the current date and time
+
+
   };
 
   return (
@@ -171,6 +238,7 @@ const SightForm = () => {
                 />
               </List.Accordion>
             </List.Section>
+            {/* Using as the list of Seal questions */}
             <TextInput
               style={styles.input}
               onChangeText={setName}
@@ -186,13 +254,51 @@ const SightForm = () => {
               keyboardType="decimal-pad"
               label="Phone number"
             />
+
+
+            <TextInput
+                style={styles.input}
+                mode="outlined"
+                label="Where is the Animal Located?"
+                onChangeText={setLocation}
+            />
+
+            <TextInput
+                style={styles.input}
+                mode="outlined"
+                label="Is the animal still present?"
+                onChangeText={setPresent}
+            />
+            {/*Make a drop down with Pup, Weaner, Juvenile, subAudult, Adult, Uknown*/}
+            <TextInput
+                style={styles.input}
+                mode="outlined"
+                label="How big is the animal?"
+                onChangeText={setSize}
+            />
+
             <TextInput
               style={styles.input}
               mode="outlined"
               label="Is the animal on the beach or in the water?"
+              onChangeText={setSize}
             />
+
+            {/* Questions Below only show up if Not seal is selected via the drop down */}
             {animalType === "Seal" ? null : (
               <View>
+                <TextInput
+                    style={styles.input}
+                    mode="outlined"
+                    label="Where is the Animal Located?"
+                    onChangeText={setLocation}
+                />
+                <TextInput
+                    style={styles.input}
+                    mode="outlined"
+                    label="Is the animal still present?"
+                    onChangeText={setPresent}
+                />
                 <TextInput
                   style={styles.input}
                   mode="outlined"
