@@ -57,7 +57,6 @@ const StaffLogin = ({ navigation }) => {
 
         console.log("Logged in ");
         const user = userCredential.user;
-        // TODO: navigate to admin page
         navigation.navigate("StaffPage")
       })
       .catch((error) => {
