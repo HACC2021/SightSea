@@ -7,6 +7,7 @@ import SightForm from "./screens/Form";
 import HomeScreen from "./screens/Home";
 import StaffPage from "./screens/Staff Page";
 import StaffLogin from "./screens/StaffLogin";
+import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
 
 import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
 

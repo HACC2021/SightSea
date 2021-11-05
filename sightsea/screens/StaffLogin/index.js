@@ -57,7 +57,7 @@ const StaffLogin = ({ navigation }) => {
 
         console.log("Logged in ");
         const user = userCredential.user;
-        navigation.navigate("StaffPage")
+        navigation.navigate("StaffPage");
       })
       .catch((error) => {
         setError(error.message);

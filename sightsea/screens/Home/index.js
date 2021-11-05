@@ -8,7 +8,10 @@ import {
   TouchableOpacity,
   ImageBackground,
   Dimensions,
+<<<<<<< HEAD
   Platform,
+=======
+>>>>>>> 96bfd5a0db2918544e7f58fd1d9978b454e02e1b
 } from "react-native";
 import { NavigationContainer, useTheme } from "@react-navigation/native";
 
@@ -24,7 +27,7 @@ const styles = StyleSheet.create({
     fontSize: 50,
     fontWeight: "bold",
     textAlign: "center",
-    paddingTop: "10%"
+    paddingTop: "10%",
   },
   buttonText: {
     fontSize: 20,
@@ -33,7 +36,7 @@ const styles = StyleSheet.create({
     position: "relative",
     flex: 1,
     alignItems: "center",
-    marginTop: "30%"
+    marginTop: "30%",
   },
   navButton: {
     textAlign: "center",
@@ -44,7 +47,11 @@ const styles = StyleSheet.create({
     padding: "5%",
     borderWidth: 1,
     borderRadius: 50,
+<<<<<<< HEAD
     borderColor: 'rgba(0,0,0,0.2)',
+=======
+    borderColor: "rgba(0,0,0,0.2)",
+>>>>>>> 96bfd5a0db2918544e7f58fd1d9978b454e02e1b
     marginTop: "10%",
   },
 });

@@ -62,6 +62,11 @@ const SightForm = () => {
   const [name, setName] = React.useState("");
   const [phoneNum, setPhoneNum] = React.useState("");
   const [validPhone, setValidPhone] = React.useState(false);
+  const animalTypes = [
+    { label: "Turtle", value: "turtle" },
+    { label: "Bird", value: "bird" },
+    { label: "Seal", value: "Seal" },
+  ];
   const [mapRegion, setmapRegion] = React.useState({
     latitude: 21.315603,
     longitude: -157.858093,
