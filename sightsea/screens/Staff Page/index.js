@@ -268,7 +268,7 @@ const StaffPage = () => {
               zoom={mapRegion.zoom}
             >
               {/* markers on the map */}
-              {/* {markers.map((marker, index) => {
+              {markers.map((marker, index) => {
                 return (
                   <WebMarker
                     style={styles.marker}
@@ -278,8 +278,8 @@ const StaffPage = () => {
                     key={index}
                   />
                 );
-              })} */}
-              {<Markers />}
+              })}
+              {/* {<Markers />} */}
             </GoogleMapReact>
           ) : (
             <MapView style={styles.map} region={mapRegion}>
