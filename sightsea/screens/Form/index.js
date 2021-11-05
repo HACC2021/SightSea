@@ -23,7 +23,7 @@ import {
 } from "react-native-paper";
 import PhoneInput from "react-native-phone-input";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
-import { getFirestore, collection, addDoc } from "firebase/firestore";
+import { getDatabase, ref, onValue, set, child, get } from 'firebase/database';
 
 //import Marker from "react-native-maps";
 //import DropDown from "react-native-paper-dropdown";
@@ -66,13 +66,16 @@ const SightForm = () => {
   const [showAnimalDropDown, setShowAnimalDropDown] = React.useState(false);
   const [name, setName] = React.useState("");
 
+  const [docID, setDocID] = React.useState("");
   const [present, setPresent] = React.useState("");
 
   const [phoneNum, setPhoneNum] = React.useState("");
   const [validPhone, setValidPhone] = React.useState(false);
 
+  const [location, setLocation] = React.useState("");
+
   // In or out of water dropdown
-  const [location, setLocation] = React.useState("Water");
+  const [beachLocation, setBeachLocation] = React.useState("Water");
   const [showLocationDropDown, setLocationDropDown] = React.useState(false);
 
   //Size drop down
@@ -206,19 +209,81 @@ const SightForm = () => {
 
   };
 
-  async function inputTest ()  {
-    window.alert("inside funciton")
-    const db = getFirestore();
-    try {
-      const docRef = await addDoc(collection(db, "test"), {
-        test2: "this is a 2nd test"
+  //Generate a random Document ID for each document
+  const generateID = () => {
+    const tempID = Math.floor(Math.random() * 100000).toString();
+    //TODO need to poll the database to see if the random id exists before return
+
+    return tempID;
+  };
+
+  function addDoc() {
+
+    //filter to correct DB based on animal type
+    var animalDB = animalType;
+    //generate the random doc ID
+    var localdocID = generateID();
+
+    //submit via code below, may need to change via the type
+    const db = getDatabase();
+    var currentday = currentDate();
+    var currenttime = currentTime();
+    const observer_type = "P";
+    var intitials = name.slice(0, 1) + observer_type;
+
+    if(animalDB === "Seal"){
+      const reference = ref(db, `${animalDB}/` + `${localdocID}`);
+      set(reference, {
+        Date: currentday,
+        Time: currenttime,
+        Ticket_Number: "XX" + "" + currentday + "" + currenttime,
+        Hotline_Operator_Initials: "",
+        ticket_type: "I",
+        Observer: name,
+        Observer_Contact_Nubmer: phoneNumFormat(),
+        Observer_Type: "P",
+        Observer_Initials: intitials,
+        Sector: "",
+        Location: location,
+        Location_Notes: "",
+        Seal_Present: present,
+        Size: size,
+        Sex: sex,
+        Beach_Position: beachLocation,
+        How_Identified: "",
+        ID_temp: "",
+        Tag_Number: "",
+        Tag_Side: "",
+        Tag_Color: "",
+        ID_Perm: "",
+        Molt: "",
+        Additional_Notes_on_ID: "",
+        ID_Verified_By: "",
+        Seal_Logging: "",
+        Mom_and_Pup_Pair: "",
+        SRA_Set_Up: "",
+        SRA_Set_By: "",
+        Number_Volunteers_Engaged: 0,
+        Seal_Depart_Info_Avial: "",
+        Seal_Departed_Date: "",
+        Seal_Departed_Time: "",
+        Number_of_Calls_Received: 1,
+        Other_Notes: "",
+      }).then(() => {
+        window.alert("Report Submitted Successfully!");
+        //TODO back to main page
+      }).catch((error) => {
+        window.alert("Report Failed to submit.");
+        //TODO Stay on page and flag errors
       });
-      console.log("written: ", docRef.id);
-      window.alert("success")
-    } catch (e) {
-      console.error("Error adding document: ", e);
-      window.alert("There was an erro")
+    } else if (animalDB === "Turtle"){
+      
+
+    } else {
+      //bird
+
     }
+
   };
 
   return (
@@ -322,21 +387,21 @@ const SightForm = () => {
               {/*Values of 1 for land and 0 for water */}
               <List.Section title="Is the animal in the water or on land?">
                 <List.Accordion
-                    title={location}
+                    title={beachLocation}
                     expanded={showLocationDropDown}
                     onPress={closeLocationDropdown}
                 >
                   <List.Item
                       title="Water"
                       onPress={function () {
-                        setLocation("Water");
+                        setBeachLocation("Water");
                         closeLocationDropdown();
                       }}
                   />
                   <List.Item
                       title="Land"
                       onPress={function () {
-                        setLocation("Land");
+                        setBeachLocation("Land");
                         closeLocationDropdown();
                       }}
                   />
@@ -443,7 +508,6 @@ const SightForm = () => {
               </List.Section>
 
 
-
               {/* Questions Below only show up if Not seal is selected via the drop down */}
               {animalType === "Seal" ? null : (
                   <View>
@@ -482,7 +546,7 @@ const SightForm = () => {
                   </View>
               )}
             </View>
-            <Button style={styles.btn} mode="contained" onPress={handleSubmit}>
+            <Button style={styles.btn} mode="contained" onPress={() => addDoc()}>
               Submit
             </Button>
           </View>
