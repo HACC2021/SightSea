@@ -5,9 +5,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import SightForm from "./screens/Form";
 import HomeScreen from "./screens/Home";
-import StaffPage from "./screens/Staff Page"
+import StaffPage from "./screens/Staff Page";
 import StaffLogin from "./screens/StaffLogin";
-
 import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
 
 // Import the functions you need from the SDKs you need
@@ -28,6 +27,8 @@ const firebaseConfig = {
 };
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+
+//const googleAPIKey = "AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0";
 
 //const analytics = getAnalytics(app);
 
@@ -57,7 +58,6 @@ const theme = {
 
 export default function App() {
   return (
-
     <PaperProvider theme={theme}>
       <NavigationContainer>
         {/* set Home as the landing page */}
@@ -77,10 +77,9 @@ export default function App() {
             name="StaffPage"
             component={StaffPage}
             options={{ headerLeft: null }}
-          />          
+          />
         </Stack.Navigator>
       </NavigationContainer>
     </PaperProvider>
-
   );
 }
