@@ -7,6 +7,7 @@ import {
   Platform,
   Dimensions,
   ScrollView,
+  Image,
 } from "react-native";
 //import DropDown from "react-native-paper-dropdown";
 //import DateTimePicker from "@react-native-community/datetimepicker";
@@ -24,8 +25,7 @@ import {
   Menu,
 } from "react-native-paper";
 import PhoneInput from "react-native-phone-input";
-import RNDateTimePicker from "@react-native-community/datetimepicker";
-
+import GoogleMapReact from "google-map-react";
 //get window size of current device
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -49,14 +49,14 @@ const styles = StyleSheet.create({
   },
   map: {
     width: windowWidth * 0.8,
-    height: windowHeight * 0.4,
+    height: windowHeight * 0.5,
+  },
+  marker: {
+    width: 50,
+    height: 50,
   },
 });
 const SightForm = () => {
-  const [date, setDate] = React.useState(new Date());
-  const [mode, setMode] = React.useState("date");
-  const [showDate, setShowDate] = React.useState(false);
-  const [showTime, setShowTime] = React.useState(false);
   const [animalType, setAnimalType] = React.useState("Turtle");
   const [showAnimalDropDown, setShowAnimalDropDown] = React.useState(false);
   const [name, setName] = React.useState("");
@@ -68,34 +68,29 @@ const SightForm = () => {
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
+  const [markerRegion, setmarkerRegion] = React.useState({
+    lat: 21.315603,
+    lng: -157.858093,
+  });
+  var mapProps = {
+    center: {
+      lat: 21.315603,
+      lng: -157.858093,
+    },
+    zoom: 12,
+  };
+
+  const markerURL =
+    "http://icons.iconarchive.com/icons/paomedia/small-n-flat/256/map-marker-icon.png";
 
   const closeAnimalDropdown = () => {
     setShowAnimalDropDown(!showAnimalDropDown);
   };
 
-  const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
-    setShow(Platform.OS === "ios");
-    setDate(currentDate);
-  };
-
-  const showMode = (currentMode) => {
-    setShow(true);
-    setMode(currentMode);
-  };
-
-  const showDatepicker = () => {
-    showMode("date");
-  };
-
-  const showTimepicker = () => {
-    showMode("time");
-  };
-
   //window.alert(date.getHours() + ":" + date.getMinutes());
   const handleSubmit = (e) => {
     e.preventDefault();
-    window.alert(name);
+    window.alert("window submitted");
   };
 
   return (
@@ -107,38 +102,32 @@ const SightForm = () => {
             Fill out the form below to submit a sighting and our staffs will
             review the submitted form shortly.
           </Subheading>
-          {/* datatimepicker must be wrapped in a view to work
-          <View>
-            <Title>Select Date and Time:</Title>
-            <View style={{ flexDirection: "row" }}>
-              <View style={{ flex: 0.5, flexDirection: "column" }}>
-                <DateTimePicker
-                  testID="dateTimePicker"
-                  value={date}
-                  mode="date"
-                  is24Hour={true}
-                  display={showDate}
-                  onChange={onChange}
-                />
-              </View>
-              <View style={{ flex: 0.5, flexDirection: "column" }}>
-                <DateTimePicker
-                  testID="dateTimePicker"
-                  value={date}
-                  mode="time"
-                  is24Hour={true}
-                  display={showTime}
-                  onChange={onChange}
-                />
-              </View>
-           </View>
-           </View> */}
-          {/* <Marker coordinate={(37, -122)} /> */}
 
-          <View>
-            <MapView style={styles.map} region={mapRegion}>
-              <Marker key={0} coordinate={mapRegion} title={"Marker"} />
-            </MapView>
+          <View style={styles.map}>
+            {Platform.OS === "web" ? (
+              <GoogleMapReact
+                bootstrapURLKeys={
+                  {
+                    //google api key
+                    //key: "AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0",
+                  }
+                }
+                defaultCenter={mapProps.center}
+                zoom={mapProps.zoom}
+              >
+                {/* markers on the map */}
+                <Image
+                  style={styles.marker}
+                  source={markerURL}
+                  lat={markerRegion.lat}
+                  lng={markerRegion.lng}
+                />
+              </GoogleMapReact>
+            ) : (
+              <MapView style={styles.map} region={mapRegion}>
+                <Marker key={0} coordinate={mapRegion} title={"Marker"} />
+              </MapView>
+            )}
           </View>
 
           <View>
