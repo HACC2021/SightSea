@@ -15,9 +15,6 @@ import Component from "react";
 import Proptypes from "prop-types";
 import { DataTable, Checkbox, Modal, Portal } from "react-native-paper";
 
-import { getAuth, onAuthStateChanged } from 'firebase/auth';
-
-
 import GoogleMapReact from "google-map-react"
 import MapView, { Marker } from "react-native-maps"
 
@@ -98,18 +95,6 @@ const styles = StyleSheet.create({
 const StaffPage = ({navigation}) => {
   const [initializing, setInitializing] = useState(true);
   const [user, setUser] = useState();
-
-  const auth = getAuth();
-
-  // Listen for authentication state to change.
-  onAuthStateChanged(auth, (user) => {
-    if (user != null) {
-      console.log('We are authenticated now!');
-    }
-    else {
-      navigation.navigate("StaffLogin");
-    }
-  });
   
   //get window dimensions
   const windowWidth = Dimensions.get("window").width;
