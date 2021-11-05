@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -8,7 +8,7 @@ import {
   Button,
   Platform,
 } from "react-native";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, onAuthStateChanged,signInWithEmailAndPassword } from "firebase/auth";
 
 const styles = StyleSheet.create({
   container: {
@@ -43,11 +43,26 @@ const styles = StyleSheet.create({
 });
 
 const StaffLogin = ({ navigation }) => {
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [error, setError] = React.useState("");
-
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [user, setUser] = useState();
+  const [initializing, setInitializing] = useState(true);
+  
   const auth = getAuth();
+  // Listen for authentication state to change.
+  useEffect(() => {
+  onAuthStateChanged(auth, (user) => {
+    if (user != null) {
+      setUser(user);
+      console.log('We are authenticated now!');
+      navigation.navigate("StaffPage");
+    }
+    else {
+      setInitializing(false);
+    }
+  }); }, []);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setError("");
@@ -64,7 +79,8 @@ const StaffLogin = ({ navigation }) => {
         console.log(error.message);
       });
   };
-
+  
+  if (initializing) return null;
   return (
     <View style={styles.container}>
       <Text>Staff login</Text>
@@ -86,6 +102,9 @@ const StaffLogin = ({ navigation }) => {
       <Button title="Submit" onPress={handleSubmit}></Button>
     </View>
   );
+
 };
+
+
 
 export default StaffLogin;

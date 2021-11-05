@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   Text,
@@ -14,8 +14,11 @@ import {
 import Component from "react";
 import Proptypes from "prop-types";
 import { DataTable, Checkbox, Modal, Portal } from "react-native-paper";
-import MapView, { Marker } from "react-native-maps";
-import GoogleMapReact from "google-map-react";
+
+import GoogleMapReact from "google-map-react"
+import MapView, { Marker } from "react-native-maps"
+
+
 
 const styles = StyleSheet.create({
   container: {
@@ -89,7 +92,10 @@ const styles = StyleSheet.create({
 // are being displayed
 
 //protected route/login
-const StaffPage = () => {
+const StaffPage = ({navigation}) => {
+  const [initializing, setInitializing] = useState(true);
+  const [user, setUser] = useState();
+  
   //get window dimensions
   const windowWidth = Dimensions.get("window").width;
   const windowHeight = Dimensions.get("window").height;
