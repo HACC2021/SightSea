@@ -6,6 +6,7 @@ import {
   StatusBar,
   TextInput,
   Button,
+  Platform,
 } from "react-native";
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
@@ -20,11 +21,21 @@ const styles = StyleSheet.create({
     height: 50,
     margin: 12,
     borderWidth: 1,
-    width: "70%",
-    borderRadius: 4,
+    borderRadius: 6,
     padding: 10,
     alignItems: "center",
     justifyContent: "center",
+    ...Platform.select({
+      ios: {
+        width: "70%",
+      },
+      android: {
+        width: "70%",
+      },
+      default: {
+        width: "30%",
+      },
+    }),
   },
   errorText: {
     color: "red",
@@ -46,8 +57,7 @@ const StaffLogin = ({ navigation }) => {
 
         console.log("Logged in ");
         const user = userCredential.user;
-        // TODO: navigate to admin page
-        // navigation.navigation("")
+        navigation.navigate("StaffPage")
       })
       .catch((error) => {
         setError(error.message);
