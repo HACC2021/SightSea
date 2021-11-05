@@ -231,7 +231,7 @@ const SightForm = () => {
     const observer_type = "P";
     var intitials = name.slice(0, 1) + observer_type;
 
-    if(animalDB === "Seal"){
+    if (animalDB === "Seal") {
       const reference = ref(db, `${animalDB}/` + `${localdocID}`);
       set(reference, {
         Date: currentday,
@@ -276,13 +276,100 @@ const SightForm = () => {
         window.alert("Report Failed to submit.");
         //TODO Stay on page and flag errors
       });
-    } else if (animalDB === "Turtle"){
-      
+    } else
+      if (animalDB === "Turtle") {
+        const reference = ref(db, `${animalDB}/` + `${localdocID}`);
+        set(reference, {
+          Date: currentday,
+          Time: currenttime,
+          Ticket_Number: "XX" + "" + currentday + "" + currenttime,
+          Hotline_Operator_Initials: "",
+          ticket_type: "I",
+          Observer: name,
+          Observer_Contact_Nubmer: phoneNumFormat(),
+          Observer_Type: "P",
+          Observer_Initials: intitials,
+          Sector: "",
+          Location: location,
+          Location_Notes: "",
+          Seal_Present: present,
+          Size: size,
+          Sex: sex,
+          Beach_Position: beachLocation,
+          How_Identified: "",
+          ID_temp: "",
+          Tag_Number: "",
+          Tag_Side: "",
+          Tag_Color: "",
+          ID_Perm: "",
+          Molt: "",
+          Additional_Notes_on_ID: "",
+          ID_Verified_By: "",
+          Seal_Logging: "",
+          Mom_and_Pup_Pair: "",
+          SRA_Set_Up: "",
+          SRA_Set_By: "",
+          Number_Volunteers_Engaged: 0,
+          Seal_Depart_Info_Avial: "",
+          Seal_Departed_Date: "",
+          Seal_Departed_Time: "",
+          Number_of_Calls_Received: 1,
+          Other_Notes: "",
+        }).then(() => {
+          window.alert("Report Submitted Successfully!");
+          //TODO back to main page
+        }).catch((error) => {
+          window.alert("Report Failed to submit.");
+          //TODO Stay on page and flag errors
+        });
 
-    } else {
-      //bird
-
-    }
+      } else {
+        //bird
+        const reference = ref(db, `${animalDB}/` + `${localdocID}`);
+        set(reference, {
+          Date: currentday,
+          Time: currenttime,
+          Ticket_Number: "XX" + "" + currentday + "" + currenttime,
+          Hotline_Operator_Initials: "",
+          ticket_type: "I",
+          Observer: name,
+          Observer_Contact_Nubmer: phoneNumFormat(),
+          Observer_Type: "P",
+          Observer_Initials: intitials,
+          Sector: "",
+          Location: location,
+          Location_Notes: "",
+          Seal_Present: present,
+          Size: size,
+          Sex: sex,
+          Beach_Position: beachLocation,
+          How_Identified: "",
+          ID_temp: "",
+          Tag_Number: "",
+          Tag_Side: "",
+          Tag_Color: "",
+          ID_Perm: "",
+          Molt: "",
+          Additional_Notes_on_ID: "",
+          ID_Verified_By: "",
+          Seal_Logging: "",
+          Mom_and_Pup_Pair: "",
+          SRA_Set_Up: "",
+          SRA_Set_By: "",
+          Number_Volunteers_Engaged: 0,
+          Seal_Depart_Info_Avial: "",
+          Seal_Departed_Date: "",
+          Seal_Departed_Time: "",
+          Number_of_Calls_Received: 1,
+          Other_Notes: "",
+        }).then(() => {
+          window.alert("Report Submitted Successfully!");
+          //TODO back to main page
+        }).catch((error) => {
+          window.alert("Report Failed to submit.");
+          //TODO Stay on page and flag errors
+        });
+      }
 
   };
 
@@ -361,155 +448,159 @@ const SightForm = () => {
               </List.Section>
 
               {/* Using as the list of Seal questions */}
-              <TextInput
-                  style={styles.input}
-                  onChangeText={setName}
-                  value={name}
-                  mode="outlined"
-                  textContentType="name"
-                  label="Enter First Name"
-              />
-              <TextInput
-                  style={styles.input}
-                  onChangeText={setPhoneNum}
-                  mode="outlined"
-                  keyboardType="decimal-pad"
-                  label="Phone number"
-              />
 
-              <TextInput
-                  style={styles.input}
-                  mode="outlined"
-                  label="Where is the animal located?"
-                  onChangeText={setLocation}
-              />
+              {animalType === "Seal" ? (
+                  <View>
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={setName}
+                        value={name}
+                        mode="outlined"
+                        textContentType="name"
+                        label="Enter First Name"
+                    />
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={setPhoneNum}
+                        mode="outlined"
+                        keyboardType="decimal-pad"
+                        label="Phone number"
+                    />
 
-              {/*Values of 1 for land and 0 for water */}
-              <List.Section title="Is the animal in the water or on land?">
-                <List.Accordion
-                    title={beachLocation}
-                    expanded={showLocationDropDown}
-                    onPress={closeLocationDropdown}
-                >
-                  <List.Item
-                      title="Water"
-                      onPress={function () {
-                        setBeachLocation("Water");
-                        closeLocationDropdown();
-                      }}
-                  />
-                  <List.Item
-                      title="Land"
-                      onPress={function () {
-                        setBeachLocation("Land");
-                        closeLocationDropdown();
-                      }}
-                  />
-                </List.Accordion>
-              </List.Section>
+                    <TextInput
+                        style={styles.input}
+                        mode="outlined"
+                        label="Where is the animal located?"
+                        onChangeText={setLocation}
+                    />
 
-              <TextInput
-                  style={styles.input}
-                  mode="outlined"
-                  label="Is the animal still present?"
-                  onChangeText={setPresent}
-              />
-              {/*Make a drop down with Pup, Weaner, Juvenile, subAudult, Adult, Uknown*/}
-              <TextInput
-                  style={styles.input}
-                  mode="outlined"
-                  label="How big is the animal?"
-                  onChangeText={setSize}
-              />
+                    {/*Values of 1 for land and 0 for water */}
+                    <List.Section title="Is the animal in the water or on land?">
+                      <List.Accordion
+                          title={beachLocation}
+                          expanded={showLocationDropDown}
+                          onPress={closeLocationDropdown}
+                      >
+                        <List.Item
+                            title="Water"
+                            onPress={function () {
+                              setBeachLocation("Water");
+                              closeLocationDropdown();
+                            }}
+                        />
+                        <List.Item
+                            title="Land"
+                            onPress={function () {
+                              setBeachLocation("Land");
+                              closeLocationDropdown();
+                            }}
+                        />
+                      </List.Accordion>
+                    </List.Section>
 
-              {/*Make a drop down with Pup, Weaner, Juvenile, subAudult, Adult, Uknown*/}
-              <List.Section title="How big is the animal?">
-                <List.Accordion
-                    title={size}
-                    expanded={showSizeDropDown}
-                    onPress={closeSizeDropdown}
-                >
-                  <List.Item
-                      title="Pup"
-                      onPress={function () {
-                        setSize("Pup");
-                        closeSizeDropdown();
-                      }}
-                  />
-                  <List.Item
-                      title="Weaner"
-                      onPress={function () {
-                        setSize("Weaner");
-                        closeSizeDropdown();
-                      }}
-                  />
-                  <List.Item
-                      title="Juvenile"
-                      onPress={function () {
-                        setSize("Juvenile");
-                        closeSizeDropdown();
-                      }}
-                  />
-                  <List.Item
-                      title="Subadult"
-                      onPress={function () {
-                        setSize("Subadult");
-                        closeSizeDropdown();
-                      }}
-                  />
-                  <List.Item
-                      title="Adult"
-                      onPress={function () {
-                        setSize("Adult");
-                        closeSizeDropdown();
-                      }}
-                  />
-                  <List.Item
-                      title="Unknown"
-                      onPress={function () {
-                        setSize("Unknown");
-                        closeSizeDropdown();
-                      }}
-                  />
+                    <TextInput
+                        style={styles.input}
+                        mode="outlined"
+                        label="Is the animal still present?"
+                        onChangeText={setPresent}
+                    />
+                    {/*Make a drop down with Pup, Weaner, Juvenile, subAudult, Adult, Uknown*/}
+                    <TextInput
+                        style={styles.input}
+                        mode="outlined"
+                        label="How big is the animal?"
+                        onChangeText={setSize}
+                    />
 
-                </List.Accordion>
-              </List.Section>
+                    {/*Make a drop down with Pup, Weaner, Juvenile, subAudult, Adult, Uknown*/}
+                    <List.Section title="How big is the animal?">
+                      <List.Accordion
+                          title={size}
+                          expanded={showSizeDropDown}
+                          onPress={closeSizeDropdown}
+                      >
+                        <List.Item
+                            title="Pup"
+                            onPress={function () {
+                              setSize("Pup");
+                              closeSizeDropdown();
+                            }}
+                        />
+                        <List.Item
+                            title="Weaner"
+                            onPress={function () {
+                              setSize("Weaner");
+                              closeSizeDropdown();
+                            }}
+                        />
+                        <List.Item
+                            title="Juvenile"
+                            onPress={function () {
+                              setSize("Juvenile");
+                              closeSizeDropdown();
+                            }}
+                        />
+                        <List.Item
+                            title="Subadult"
+                            onPress={function () {
+                              setSize("Subadult");
+                              closeSizeDropdown();
+                            }}
+                        />
+                        <List.Item
+                            title="Adult"
+                            onPress={function () {
+                              setSize("Adult");
+                              closeSizeDropdown();
+                            }}
+                        />
+                        <List.Item
+                            title="Unknown"
+                            onPress={function () {
+                              setSize("Unknown");
+                              closeSizeDropdown();
+                            }}
+                        />
 
-
-              {/*Make a drop down with male,female or unknown*/}
-              <List.Section title="What is the sex of the Animal?">
-                <List.Accordion
-                    title={sex}
-                    expanded={showSexDropDown}
-                    onPress={closeSexDropdown}
-                >
-                  <List.Item
-                      title="Male"
-                      onPress={function () {
-                        setSex("Male");
-                        closeSexDropdown();
-                      }}
-                  />
-                  <List.Item
-                      title="Female"
-                      onPress={function () {
-                        setSex("Female");
-                        closeSexDropdown();
-                      }}
-                  />
-                  <List.Item
-                      title="Unknown"
-                      onPress={function () {
-                        setSex("Unknown");
-                        closeSexDropdown();
-                      }}
-                  />
-                </List.Accordion>
-              </List.Section>
+                      </List.Accordion>
+                    </List.Section>
 
 
-              {/* Questions Below only show up if Not seal is selected via the drop down */}
-              {animalType === "Seal" ? null : (
+                    {/*Make a drop down with male,female or unknown*/}
+                    <List.Section title="What is the sex of the Animal?">
+                      <List.Accordion
+                          title={sex}
+                          expanded={showSexDropDown}
+                          onPress={closeSexDropdown}
+                      >
+                        <List.Item
+                            title="Male"
+                            onPress={function () {
+                              setSex("Male");
+                              closeSexDropdown();
+                            }}
+                        />
+                        <List.Item
+                            title="Female"
+                            onPress={function () {
+                              setSex("Female");
+                              closeSexDropdown();
+                            }}
+                        />
+                        <List.Item
+                            title="Unknown"
+                            onPress={function () {
+                              setSex("Unknown");
+                              closeSexDropdown();
+                            }}
+                        />
+                      </List.Accordion>
+                    </List.Section>
+
+                  </View>
+
+              ) : (
+
                   <View>
                     <TextInput
                         style={styles.input}
@@ -543,8 +634,12 @@ const SightForm = () => {
                         mode="outlined"
                         label="About what size is the animal?"
                     />
+
+
                   </View>
+
               )}
+              
             </View>
             <Button style={styles.btn} mode="contained" onPress={() => addDoc()}>
               Submit
