@@ -9,11 +9,6 @@ import {
   ScrollView,
   Image,
 } from "react-native";
-//import DropDown from "react-native-paper-dropdown";
-//import DateTimePicker from "@react-native-community/datetimepicker";
-import MapView, { Marker } from "react-native-maps";
-//import Marker from "react-native-maps";
-
 import {
   TextInput,
   Button,
@@ -24,12 +19,12 @@ import {
   List,
   Menu,
 } from "react-native-paper";
-import PhoneInput from "react-native-phone-input";
+import MapView, { Marker } from "react-native-maps";
 import GoogleMapReact from "google-map-react";
+
 //get window size of current device
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -67,74 +62,25 @@ const SightForm = () => {
     { label: "Bird", value: "bird" },
     { label: "Seal", value: "Seal" },
   ];
-  const [mapRegion, setmapRegion] = React.useState({
-    latitude: 21.315603,
-    longitude: -157.858093,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-  });
-  const [markerRegion, setmarkerRegion] = React.useState({
-    lat: 21.315603,
-    lng: -157.858093,
-  });
-  var mapProps = {
-    center: {
-      lat: 21.315603,
-      lng: -157.858093,
-    },
-    zoom: 12,
-  };
-
-  const markerURL =
-    "http://icons.iconarchive.com/icons/paomedia/small-n-flat/256/map-marker-icon.png";
 
   const closeAnimalDropdown = () => {
     setShowAnimalDropDown(!showAnimalDropDown);
   };
 
-  //window.alert(date.getHours() + ":" + date.getMinutes());
   const handleSubmit = (e) => {
     e.preventDefault();
-    window.alert("window submitted");
+    window.alert("form submitted");
   };
 
   return (
-    <View style={styles.container}>
-      <ScrollView>
+    <ScrollView>
+      <View style={styles.container}>
         <View style={styles.form}>
           <Headline>Report a Sighting</Headline>
           <Subheading>
             Fill out the form below to submit a sighting and our staffs will
             review the submitted form shortly.
           </Subheading>
-
-          <View style={styles.map}>
-            {Platform.OS === "web" ? (
-              <GoogleMapReact
-                bootstrapURLKeys={
-                  {
-                    //google api key
-                    //key: "AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0",
-                  }
-                }
-                defaultCenter={mapProps.center}
-                zoom={mapProps.zoom}
-              >
-                {/* markers on the map */}
-                <Image
-                  style={styles.marker}
-                  source={markerURL}
-                  lat={markerRegion.lat}
-                  lng={markerRegion.lng}
-                />
-              </GoogleMapReact>
-            ) : (
-              <MapView style={styles.map} region={mapRegion}>
-                <Marker key={0} coordinate={mapRegion} title={"Marker"} />
-              </MapView>
-            )}
-          </View>
-
           <View>
             <List.Section title="Animal Type">
               <List.Accordion
@@ -214,8 +160,8 @@ const SightForm = () => {
             Submit
           </Button>
         </View>
-      </ScrollView>
-    </View>
+      </View>
+    </ScrollView>
   );
 };
 
