@@ -9,8 +9,6 @@ import StaffPage from "./screens/Staff Page";
 import StaffLogin from "./screens/StaffLogin";
 import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
 
-import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
-
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 //import { getAnalytics } from "firebase/analytics";
