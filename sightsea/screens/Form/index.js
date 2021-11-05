@@ -73,6 +73,7 @@ const SightForm = () => {
   const [validPhone, setValidPhone] = React.useState(false);
 
   const [location, setLocation] = React.useState("");
+  const [turtleSize, setTurtleSize] = React.useState("");
 
   // In or out of water dropdown
   const [beachLocation, setBeachLocation] = React.useState("Water");
@@ -85,6 +86,19 @@ const SightForm = () => {
   //Sex drop down
   const [sex, setSex] = React.useState("Unknown");
   const [showSexDropDown, setSexDropDown] = React.useState(false);
+
+  //Island Dropdown
+  const [island, setIsland] = React.useState("Oahu");
+  const [showIslandDropDown, setIslandDropDown] = React.useState(false);
+
+  //Type of Turtle Drop Down
+  const [turtle, setTurtle] = React.useState("Cm");
+  const [showTurtuleDropDown, setTurtleDropDown] = React.useState(false);
+
+  //Turtle Alive Drop Down
+  const [turtleStatus, setTurtleStatus] = React.useState("Alive");
+  const [showTurtleStatus, setTurtleStatusDropDown] = React.useState(false);
+
 
   const [mapRegion, setmapRegion] = React.useState({
     latitude: 21.315603,
@@ -108,6 +122,19 @@ const SightForm = () => {
   const closeSexDropdown = () => {
     setSexDropDown(!showSexDropDown);
   };
+
+  const closeIslandDropdown = () => {
+    setIslandDropDown(!showIslandDropDown);
+  };
+
+  const closeTurtleDropdown = () => {
+    setTurtleDropDown(!showTurtuleDropDown);
+  };
+
+  const closeTurtleStatusDropdown = () => {
+    setTurtleStatusDropDown(!showTurtleStatus);
+  };
+
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
@@ -278,41 +305,35 @@ const SightForm = () => {
       });
     } else
       if (animalDB === "Turtle") {
+
+        //Turtle Doc
+        const observer_type = "P";
+        var intitials = name.slice(0, 1) + observer_type;
+
         const reference = ref(db, `${animalDB}/` + `${localdocID}`);
         set(reference, {
           Date: currentday,
           Time: currenttime,
           Ticket_Number: "XX" + "" + currentday + "" + currenttime,
           Hotline_Operator_Initials: "",
-          ticket_type: "I",
+          ticket_type: "R",
           Observer: name,
-          Observer_Contact_Nubmer: phoneNumFormat(),
-          Observer_Type: "P",
+          Observer_Contact_Number: phoneNumFormat(),
           Observer_Initials: intitials,
+          Observer_Type: "P",
+          Island: island,
           Sector: "",
           Location: location,
           Location_Notes: "",
-          Seal_Present: present,
-          Size: size,
-          Sex: sex,
-          Beach_Position: beachLocation,
-          How_Identified: "",
-          ID_temp: "",
-          Tag_Number: "",
-          Tag_Side: "",
-          Tag_Color: "",
-          ID_Perm: "",
-          Molt: "",
-          Additional_Notes_on_ID: "",
-          ID_Verified_By: "",
-          Seal_Logging: "",
-          Mom_and_Pup_Pair: "",
-          SRA_Set_Up: "",
-          SRA_Set_By: "",
-          Number_Volunteers_Engaged: 0,
-          Seal_Depart_Info_Avial: "",
-          Seal_Departed_Date: "",
-          Seal_Departed_Time: "",
+          Type_of_Turtle: turtle,
+          Size: turtleSize,
+          Stauts: turtleStatus,
+          Primary_issue_or_cause_of_death: "",
+          Responder: "",
+          Time_Responder_left: "",
+          Responder_arrival_time: "",
+          Outreach_provided_by_operator: "",
+          FAST: "",
           Number_of_Calls_Received: 1,
           Other_Notes: "",
         }).then(() => {
@@ -324,7 +345,7 @@ const SightForm = () => {
         });
 
       } else {
-        //bird
+        //For Bird Docs
         const reference = ref(db, `${animalDB}/` + `${localdocID}`);
         set(reference, {
           Date: currentday,
@@ -602,44 +623,199 @@ const SightForm = () => {
               ) : (
 
                   <View>
+                    {/* Questions for turtles and Birds*/}
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={setName}
+                        value={name}
+                        mode="outlined"
+                        textContentType="name"
+                        label="Enter First Name"
+                    />
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={setPhoneNum}
+                        mode="outlined"
+                        keyboardType="decimal-pad"
+                        label="Phone number"
+                    />
+
+                    {/*Island Drop Down */}
+                    <List.Section title="Which Island are you Located on?">
+                      <List.Accordion
+                          title={island}
+                          expanded={showIslandDropDown}
+                          onPress={closeIslandDropdown}
+                      >
+                        <List.Item
+                            title="Oahu"
+                            onPress={function () {
+                              setIsland("Oahu");
+                              closeIslandDropdown();
+                            }}
+                        />
+                        <List.Item
+                            title="Maui"
+                            onPress={function () {
+                              setIsland("Maui");
+                              closeIslandDropdown();
+                            }}
+                        />
+                        <List.Item
+                            title="Hawaii"
+                            onPress={function () {
+                              setIsland("Hawaii");
+                              closeIslandDropdown();
+                            }}
+                        />
+                        <List.Item
+                            title="Kauai"
+                            onPress={function () {
+                              setIsland("Kauai");
+                              closeIslandDropdown();
+                            }}
+                        />
+                        <List.Item
+                            title="Molokai"
+                            onPress={function () {
+                              setIsland("Molokai");
+                              closeIslandDropdown();
+                            }}
+                        />
+                        <List.Item
+                            title="Uknown"
+                            onPress={function () {
+                              setIsland("Uknown");
+                              closeIslandDropdown();
+                            }}
+                        />
+
+
+                      </List.Accordion>
+                    </List.Section>
+
+
                     <TextInput
                         style={styles.input}
                         mode="outlined"
-                        label="Where is the Animal Located?"
+                        label="Where is the animal located?"
                         onChangeText={setLocation}
                     />
-                    <TextInput
-                        style={styles.input}
-                        mode="outlined"
-                        label="Is the animal still present?"
-                        onChangeText={setPresent}
-                    />
-                    <TextInput
-                        style={styles.input}
-                        mode="outlined"
-                        label="Describe any visible wounds (size/color)"
-                    />
-                    <TextInput
-                        style={styles.input}
-                        mode="outlined"
-                        label="Describe any previous wounds (ex. amputated flipper)"
-                    />
-                    <TextInput
-                        style={styles.input}
-                        mode="outlined"
-                        label="Describe the animal's behavior (ex. is it lethargic?)"
-                    />
-                    <TextInput
-                        style={styles.input}
-                        mode="outlined"
-                        label="About what size is the animal?"
-                    />
+
+
+                    {/*Turtle Specific Questions */}
+                    {animalType === "Turtle" ? (
+
+                        <View>
+                          {/*Type of Turtle Drop Down */}
+                          <List.Section title="What type of Turtle is it?">
+                            <List.Accordion
+                                title={turtle}
+                                expanded={showTurtuleDropDown}
+                                onPress={closeTurtleDropdown}
+                            >
+                              <List.Item
+                                  title="Cm"
+                                  onPress={function () {
+                                    setTurtle("Cm");
+                                    closeTurtleDropdown();
+                                  }}
+                              />
+                              <List.Item
+                                  title="Ei"
+                                  onPress={function () {
+                                    setTurtle("Ei");
+                                    closeTurtleDropdown();
+                                  }}
+                              />
+                              <List.Item
+                                  title="Unknown"
+                                  onPress={function () {
+                                    setTurtle("Unknown");
+                                    closeTurtleDropdown();
+                                  }}
+                              />
+                            </List.Accordion>
+                          </List.Section>
+
+                          <TextInput
+                              style={styles.input}
+                              mode="outlined"
+                              label="How big is the Turtle?"
+                              onChangeText={setTurtleSize}
+                          />
+
+                          {/* Alive or Dead Drop Down */}
+                          <List.Section title="Is the Turtle Alive?">
+                            <List.Accordion
+                                title={turtleStatus}
+                                expanded={showTurtleStatus}
+                                onPress={closeTurtleStatusDropdown}
+                            >
+                              <List.Item
+                                  title="Alive"
+                                  onPress={function () {
+                                    setTurtleStatus("Alive");
+                                    closeTurtleStatusDropdown();
+                                  }}
+                              />
+                              <List.Item
+                                  title="Deceased"
+                                  onPress={function () {
+                                    setTurtleStatus("Deceased");
+                                    closeTurtleStatusDropdown();
+                                  }}
+                              />
+                              <List.Item
+                                  title="Unknown"
+                                  onPress={function () {
+                                    setTurtleStatus("Unknown");
+                                    closeTurtleStatusDropdown();
+                                  }}
+                              />
+                            </List.Accordion>
+                          </List.Section>
+
+
+
+                        </View>
+
+                    ) : (
+
+                        <View>
+                          {/* Bird Specific Questions*/}
+
+                        </View>
+
+                    )}
+
+                    {/* Catch All For all three Types */}
+                    {/*<TextInput*/}
+                    {/*    style={styles.input}*/}
+                    {/*    mode="outlined"*/}
+                    {/*    label="Describe any visible wounds (size/color)"*/}
+                    {/*/>*/}
+                    {/*<TextInput*/}
+                    {/*    style={styles.input}*/}
+                    {/*    mode="outlined"*/}
+                    {/*    label="Describe any previous wounds (ex. amputated flipper)"*/}
+                    {/*/>*/}
+                    {/*<TextInput*/}
+                    {/*    style={styles.input}*/}
+                    {/*    mode="outlined"*/}
+                    {/*    label="Describe the animal's behavior (ex. is it lethargic?)"*/}
+                    {/*/>*/}
+                    {/*<TextInput*/}
+                    {/*    style={styles.input}*/}
+                    {/*    mode="outlined"*/}
+                    {/*    label="About what size is the animal?"*/}
+                    {/*/>*/}
 
 
                   </View>
 
               )}
-              
+
             </View>
             <Button style={styles.btn} mode="contained" onPress={() => addDoc()}>
               Submit
