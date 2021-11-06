@@ -62,22 +62,25 @@ const SightForm = () => {
   const [mode, setMode] = React.useState("date");
   const [showDate, setShowDate] = React.useState(false);
   const [showTime, setShowTime] = React.useState(false);
-  const [animalType, setAnimalType] = React.useState("Turtle");
-  const [showAnimalDropDown, setShowAnimalDropDown] = React.useState(false);
+
   const [name, setName] = React.useState("");
-
   const [docID, setDocID] = React.useState("");
-  const [present, setPresent] = React.useState("");
-
   const [phoneNum, setPhoneNum] = React.useState("");
   const [validPhone, setValidPhone] = React.useState(false);
-
   const [location, setLocation] = React.useState("");
   const [turtleSize, setTurtleSize] = React.useState("");
+
+  // Animal Type dropdown
+  const [animalType, setAnimalType] = React.useState("Turtle");
+  const [showAnimalDropDown, setShowAnimalDropDown] = React.useState(false);
 
   // In or out of water dropdown
   const [beachLocation, setBeachLocation] = React.useState("Water");
   const [showLocationDropDown, setLocationDropDown] = React.useState(false);
+
+  // Seal still present or not dropdown
+  const [present, setPresent] = React.useState("Yes");
+  const [showPresentDropDown, setPresentDropDown] = React.useState(false);
 
   //Size drop down
   const [size, setSize] = React.useState("Unknown");
@@ -98,7 +101,7 @@ const SightForm = () => {
   //Turtle Alive Drop Down
   const [turtleStatus, setTurtleStatus] = React.useState("Alive");
   const [showTurtleStatus, setTurtleStatusDropDown] = React.useState(false);
-  
+
   //Type of Bird Drop Down
   const [birdType, setBirdType] = React.useState("Albatross");
   const [showBirdType, setBirdTypeDropDown] = React.useState(false);
@@ -109,6 +112,10 @@ const SightForm = () => {
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
+
+  const closePresentDropdown = () => {
+    setPresentDropDown(!showPresentDropDown);
+  };
 
   const closeAnimalDropdown = () => {
     setShowAnimalDropDown(!showAnimalDropDown);
@@ -487,12 +494,12 @@ const SightForm = () => {
                     <TextInput
                         style={styles.input}
                         mode="outlined"
-                        label="Where is the animal located?"
+                        label="Where is the seal located?"
                         onChangeText={setLocation}
                     />
 
                     {/*Values of 1 for land and 0 for water */}
-                    <List.Section title="Is the animal in the water or on land?">
+                    <List.Section title="Is the seal in the water or on land?">
                       <List.Accordion
                           title={beachLocation}
                           expanded={showLocationDropDown}
@@ -515,17 +522,32 @@ const SightForm = () => {
                       </List.Accordion>
                     </List.Section>
 
-                    <TextInput
-                        style={styles.input}
-                        mode="outlined"
-                        label="Is the animal still present?"
-                        onChangeText={setPresent}
-                    />
-                    {/*Make a drop down with Pup, Weaner, Juvenile, subAudult, Adult, Uknown*/}
+                    {/* Drop down for if the seal is still present or not*/}
+                    <List.Section title="Is the Seal still present?">
+                      <List.Accordion
+                          title={present}
+                          expanded={showPresentDropDown}
+                          onPress={closePresentDropdown}
+                      >
+                        <List.Item
+                            title="Yes"
+                            onPress={function () {
+                              setPresent("Y");
+                              closePresentDropdown();
+                            }}
+                        />
+                        <List.Item
+                            title="No"
+                            onPress={function () {
+                              setPresent("N");
+                              closePresentDropdown();
+                            }}
+                        />
+                      </List.Accordion>
+                    </List.Section>
 
-
                     {/*Make a drop down with Pup, Weaner, Juvenile, subAudult, Adult, Uknown*/}
-                    <List.Section title="How big is the animal?">
+                    <List.Section title="How big is the Seal?">
                       <List.Accordion
                           title={size}
                           expanded={showSizeDropDown}
@@ -579,7 +601,7 @@ const SightForm = () => {
 
 
                     {/*Make a drop down with male,female or unknown*/}
-                    <List.Section title="What is the sex of the Animal?">
+                    <List.Section title="Is the Seal Male or Female?">
                       <List.Accordion
                           title={sex}
                           expanded={showSexDropDown}
@@ -694,7 +716,7 @@ const SightForm = () => {
                           <TextInput
                               style={styles.input}
                               mode="outlined"
-                              label="Where is the animal located?"
+                              label="Where is the Turtle located?"
                               onChangeText={setLocation}
                           />
 
@@ -766,8 +788,6 @@ const SightForm = () => {
                               />
                             </List.Accordion>
                           </List.Section>
-
-
 
                         </View>
 
