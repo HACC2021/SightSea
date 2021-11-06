@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -6,8 +6,9 @@ import {
   StatusBar,
   TextInput,
   Button,
+  Platform,
 } from "react-native";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { getAuth, onAuthStateChanged,signInWithEmailAndPassword } from "firebase/auth";
 
 const styles = StyleSheet.create({
   container: {
@@ -20,11 +21,21 @@ const styles = StyleSheet.create({
     height: 50,
     margin: 12,
     borderWidth: 1,
-    width: "70%",
-    borderRadius: 4,
+    borderRadius: 6,
     padding: 10,
     alignItems: "center",
     justifyContent: "center",
+    ...Platform.select({
+      ios: {
+        width: "70%",
+      },
+      android: {
+        width: "70%",
+      },
+      default: {
+        width: "30%",
+      },
+    }),
   },
   errorText: {
     color: "red",
@@ -32,11 +43,26 @@ const styles = StyleSheet.create({
 });
 
 const StaffLogin = ({ navigation }) => {
-  const [email, setEmail] = React.useState("");
-  const [password, setPassword] = React.useState("");
-  const [error, setError] = React.useState("");
-
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
+  const [user, setUser] = useState();
+  const [initializing, setInitializing] = useState(true);
+  
   const auth = getAuth();
+  // Listen for authentication state to change.
+  useEffect(() => {
+  onAuthStateChanged(auth, (user) => {
+    if (user != null) {
+      setUser(user);
+      console.log('We are authenticated now!');
+      navigation.navigate("StaffPage");
+    }
+    else {
+      setInitializing(false);
+    }
+  }); }, []);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     setError("");
@@ -46,15 +72,15 @@ const StaffLogin = ({ navigation }) => {
 
         console.log("Logged in ");
         const user = userCredential.user;
-        // TODO: navigate to admin page
-        // navigation.navigation("")
+        navigation.navigate("StaffPage");
       })
       .catch((error) => {
         setError(error.message);
         console.log(error.message);
       });
   };
-
+  
+  if (initializing) return null;
   return (
     <View style={styles.container}>
       <Text>Staff login</Text>
@@ -76,6 +102,9 @@ const StaffLogin = ({ navigation }) => {
       <Button title="Submit" onPress={handleSubmit}></Button>
     </View>
   );
+
 };
+
+
 
 export default StaffLogin;

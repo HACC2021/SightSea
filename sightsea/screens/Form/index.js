@@ -7,9 +7,8 @@ import {
   Platform,
   Dimensions,
   ScrollView,
+  Image,
 } from "react-native";
-
-import MapView, { Marker } from "react-native-maps";
 
 import {
   TextInput,
@@ -21,6 +20,7 @@ import {
   List,
   Menu,
 } from "react-native-paper";
+
 import PhoneInput from "react-native-phone-input";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import { getDatabase, ref, onValue, set, child, get } from 'firebase/database';
@@ -29,10 +29,13 @@ import { getDatabase, ref, onValue, set, child, get } from 'firebase/database';
 //import DropDown from "react-native-paper-dropdown";
 //import DateTimePicker from "@react-native-community/datetimepicker";
 
+import MapView, { Marker } from "react-native-maps";
+import GoogleMapReact from "google-map-react";
+
+
 //get window size of current device
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -52,7 +55,11 @@ const styles = StyleSheet.create({
   },
   map: {
     width: windowWidth * 0.8,
-    height: windowHeight * 0.4,
+    height: windowHeight * 0.5,
+  },
+  marker: {
+    width: 50,
+    height: 50,
   },
 });
 const SightForm = () => {
@@ -67,6 +74,7 @@ const SightForm = () => {
   const [docID, setDocID] = React.useState("");
   const [phoneNum, setPhoneNum] = React.useState("");
   const [validPhone, setValidPhone] = React.useState(false);
+
   const [location, setLocation] = React.useState("");
   const [turtleSize, setTurtleSize] = React.useState("");
 
@@ -112,6 +120,13 @@ const SightForm = () => {
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   });
+
+  const animalTypes = [
+    { label: "Turtle", value: "turtle" },
+    { label: "Bird", value: "bird" },
+    { label: "Seal", value: "Seal" },
+  ];
+
 
   const closePresentDropdown = () => {
     setPresentDropDown(!showPresentDropDown);

@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
     fontSize: 50,
     fontWeight: "bold",
     textAlign: "center",
-    paddingTop: "10%"
+    paddingTop: "10%",
   },
   buttonText: {
     fontSize: 20,
@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
     position: "relative",
     flex: 1,
     alignItems: "center",
-    marginTop: "30%"
+    marginTop: "30%",
   },
   navButton: {
     textAlign: "center",
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     padding: "5%",
     borderWidth: 1,
     borderRadius: 50,
-    borderColor: 'rgba(0,0,0,0.2)',
+    borderColor: "rgba(0,0,0,0.2)",
     marginTop: "10%",
   },
 });
@@ -102,7 +102,7 @@ const HomeScreen = ({ navigation }) => {
       borderWidth: 1,
       borderRadius: 50,
       borderColor: "rgba(0,0,0,0.2)",
-      
+
       ...Platform.select({
         ios: {
           padding: windowWidth * 0.05,
@@ -135,29 +135,29 @@ async function addDoc() {
 
   return (
 
-      <ImageBackground source={image} resizeMode="cover" style={styles.image}>
-        <View style={styles.container}>
-          <Text style={styles.titleText}>Welcome to SightSea!</Text>
-          <View style={styles.buttonGroup}>
-            <TouchableOpacity
-                style={styles.navButton}
-                onPress={() => navigation.navigate("Form")}
-            >
-              <Text style={styles.buttonText}>Report an Animal Sighting</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.navButton}>
-              <Text style={styles.buttonText} onPress={addDoc}>Report a Distressed Animal</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-                style={styles.navButton}
-                onPress={() => navigation.navigate("StaffLogin")}
-            >
-              <Text style={styles.buttonText}>Staff Portal</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </ImageBackground>
+    <ImageBackground source={image} resizeMode="cover" style={styles.image}>
+      <View style={styles.container}>
+        <Text style={styles.titleText}>Welcome to SightSea!</Text>
+        <View style={styles.buttonGroup}>
+          <TouchableOpacity
+            style={styles.navButton}
+            onPress={() => navigation.navigate("Form")}
+          >
+            <Text style={styles.buttonText}>Report an Animal Sighting</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.navButton}>
+            <Text style={styles.buttonText}>Report a Distressed Animal</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.navButton}
+            onPress={() => navigation.navigate("StaffLogin")}
+          >
+            <Text style={styles.buttonText}>Staff Portal</Text>
+          </TouchableOpacity>
 
+        </View>
+      </View>
+    </ImageBackground>
   );
 };
 
