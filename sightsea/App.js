@@ -10,7 +10,8 @@ import StaffLogin from "./screens/StaffLogin";
 import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
 
 // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
+import {initializeApp} from "firebase/app";
+import { getFirestore } from "firebase/firestore";
 //import { getAnalytics } from "firebase/analytics";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -19,14 +20,19 @@ import { initializeApp } from "firebase/app";
 const firebaseConfig = {
   apiKey: "AIzaSyBmMrLM-94w_FoUjeBJsNNzWDssfuGrfDQ",
   authDomain: "sightsea-57e15.firebaseapp.com",
+  databaseURL: "https://sightsea-57e15-default-rtdb.firebaseio.com",
   projectId: "sightsea-57e15",
   storageBucket: "sightsea-57e15.appspot.com",
   messagingSenderId: "540196098412",
   appId: "1:540196098412:web:a53a48f2c8e7461ddf6349",
-  measurementId: "G-HPGWR7KS9T",
+  measurementId: "G-HPGWR7KS9T"
 };
+
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
+initializeApp(firebaseConfig);
+
+
+
 
 //const googleAPIKey = "AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0";
 

@@ -11,6 +11,8 @@ import {
   Platform,
 } from "react-native";
 import { NavigationContainer, useTheme } from "@react-navigation/native";
+import { getDatabase, ref, onValue, set } from 'firebase/database';
+
 
 const styles = StyleSheet.create({
   container: {
@@ -122,7 +124,17 @@ const HomeScreen = ({ navigation }) => {
     },
   });
 
+async function addDoc() {
+  const db = getDatabase();
+  const reference = ref(db, 'test/' + 'testdoc');
+  await set(reference, {
+    field1: "hello2",
+  });
+  window.alert("clicked");
+}
+
   return (
+
     <ImageBackground source={image} resizeMode="cover" style={styles.image}>
       <View style={styles.container}>
         <Text style={styles.titleText}>Welcome to SightSea!</Text>
@@ -142,6 +154,7 @@ const HomeScreen = ({ navigation }) => {
           >
             <Text style={styles.buttonText}>Staff Portal</Text>
           </TouchableOpacity>
+
         </View>
       </View>
     </ImageBackground>
