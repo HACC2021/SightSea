@@ -10,6 +10,7 @@ import {
   Dimensions,
   Platform,
   ScrollView,
+  Box,
 } from "react-native";
 import Component from "react";
 import Proptypes from "prop-types";
@@ -78,6 +79,12 @@ const styles = StyleSheet.create({
     height: 100,
     backgroundColor: "white",
   },
+  Box: {
+    border: "1px solid",
+    width: 50,
+    height: 50,
+    backgroundColor: "white",
+  },
 });
 
 //searchable table of reports
@@ -96,6 +103,7 @@ const StaffPage = () => {
   const markerURL =
     "http://icons.iconarchive.com/icons/paomedia/small-n-flat/256/map-marker-icon.png";
   const [checked, setChecked] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
   //define map props
   const [mapRegion, setmapRegion] = React.useState({
     latitude: 21.315603,
@@ -120,28 +128,68 @@ const StaffPage = () => {
 
   const markers = [
     {
+      id: 1,
       lat: 21.315601,
       lng: -157.95813,
     },
     {
+      id: 3,
       lat: 21.315601,
       lng: -157.85813,
     },
   ];
 
+  const markerInfos = [
+    {
+      id: 1,
+      address: "test address 1",
+    },
+    {
+      id: 3,
+      address: "test address 2",
+    },
+  ];
+  var index = null;
+  var markerObj = null;
+  //var content = "";
   //marker image
-  const WebMarker = () => {
+  const WebMarker = (marker) => {
     function handleMarkerClick() {
-      window.alert("Clicked");
+      markerObj = marker.marker;
+      index = markers.indexOf(markerObj);
+      setOpen(true);
+      console.log(markerInfos[index].address);
     }
+
+    //display a list of info windows
+    //show a specific info windows INPUTS: (boolean open, number id)
+    //shows a info window after clicks on the marker
+    //clears the info window after clicking outside
 
     return (
       <div onClick={handleMarkerClick}>
-        {/* Render shipImage image */}
+        <WebInfoWindow />
         <img src={markerURL} alt="Logo" width={50} height={50} />
       </div>
     );
   };
+
+  const WebInfoWindow = () => {
+    return (
+      <div>
+        <View style={styles.Box}>
+          <Text> </Text>
+        </View>
+        ;
+      </div>
+    );
+  };
+
+  // {open && markerObj.id == markerInfos[index].id ? (
+  //   <View style={styles.Box}>
+  //     <Text> Box</Text>
+  //   </View>
+  // ) : null}
 
   //marker component
   const Markers = () => {
@@ -271,10 +319,9 @@ const StaffPage = () => {
               {markers.map((marker, index) => {
                 return (
                   <WebMarker
-                    style={styles.marker}
-                    source={markerURL}
                     lat={marker.lat}
                     lng={marker.lng}
+                    marker={marker}
                     key={index}
                   />
                 );
