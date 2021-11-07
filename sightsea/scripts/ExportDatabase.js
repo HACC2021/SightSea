@@ -186,7 +186,23 @@ const ExportDatabase = () => {
   //   });
 
   const json = testJson.Bird;
-  console.log(Object.keys(json)[0]);
+  const docArray = Object.entries(json);
+  console.log(docArray);
+  var fields = Object.keys(docArray[0][1]);
+  var replacer = function (key, value) {
+    return value === null ? "" : value;
+  };
+  console.log(fields);
+  var csv = docArray.map(function (row) {
+    return fields
+      .map(function (fieldName) {
+        return JSON.stringify(row[1][fieldName], replacer);
+      })
+      .join(",");
+  });
+  csv.unshift(fields.join(","));
+  csv = csv.join("\r\n");
+  console.log(csv);
 };
 
 export default ExportDatabase;
