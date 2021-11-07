@@ -208,7 +208,7 @@ const ExportDatabase = () => {
   //console.log(csv);
 
   async function saveImageMobile() {
-    const permission = await MediaLibrary.requestPermissionsAsync(true);
+    const permission = await MediaLibrary.requestPermissionsAsync();
     //window.alert(JSON.stringify(permission));
 
     if (permission.granted) {
@@ -226,9 +226,10 @@ const ExportDatabase = () => {
         await MediaLibrary.createAlbumAsync("Expo", asset)
           .then(() => {
             console.log("album created");
-            Alert.alert("file saved");
+            Alert.alert("file saved, please check your photo album");
           })
           .catch((error) => {
+            window.alert("unable to save photo");
             console.log("err", error);
           });
       } else {
@@ -254,12 +255,8 @@ const ExportDatabase = () => {
       const { status, canAskAgain } =
         await MediaLibrary.requestPermissionsAsync();
     }
-    // const fileUri = FileSystem.documentDirectory + "data.csv";
-    // await FileSystem.writeAsStringAsync(fileUri, csv, {
-    //   encoding: FileSystem.EncodingType.UTF8,
-    // });
-    // const asset = await MediaLibrary.createAssetAsync(fileUri);
-    // await MediaLibrary.createAlbumAsync("Download", asset, false);
+    //permission cases:
+    //https://ndpniraj.com/reading-audio-files-from-device-using-react-native-expo/
   }
 
   if (Platform.OS == "web") {
@@ -270,8 +267,12 @@ const ExportDatabase = () => {
     downloadLink.href = url;
     downloadLink.download = "data.csv";
     downloadLink.click();
-  } else {
+  } else if (Platform.OS === "android") {
     saveImageMobile();
+  } else {
+    window.alert(
+      "CSV file downloads are not supported on IOS.  Please download the CSV file on the desktop site"
+    );
   }
 };
 
