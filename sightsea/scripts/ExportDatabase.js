@@ -183,29 +183,46 @@ const ExportDatabase = () => {
   };
   var dataJson = {};
   const db = getDatabase();
-  //   const reference = ref(db, "/Bird");
-  //   onValue(reference, (snapshot) => {
-  //     console.log(snapshot.val());
-  //   });
+  const reference = ref(db, "/Bird");
+  var ready = 0;
+  var csv = "";
+  onValue(reference, (snapshot) => {
+    const json = snapshot.val();
+    const docArray = Object.entries(json);
+    console.log(docArray);
+    var fields = Object.keys(docArray[0][1]);
+    var replacer = function (key, value) {
+      return value === null ? "" : value;
+    };
+    console.log(fields);
+    csv = docArray.map(function (row) {
+      return fields
+        .map(function (fieldName) {
+          return JSON.stringify(row[1][fieldName], replacer);
+        })
+        .join(",");
+    });
+    csv.unshift(fields.join(","));
+    csv = csv.join("\r\n");
+    ready = 1;
+    console.log(csv);
 
-  const json = testJson.Bird;
-  const docArray = Object.entries(json);
-  //console.log(docArray);
-  var fields = Object.keys(docArray[0][1]);
-  var replacer = function (key, value) {
-    return value === null ? "" : value;
-  };
-  //console.log(fields);
-  var csv = docArray.map(function (row) {
-    return fields
-      .map(function (fieldName) {
-        return JSON.stringify(row[1][fieldName], replacer);
-      })
-      .join(",");
+    if (Platform.OS == "web") {
+      var blob = new Blob(["\ufeff", csv]);
+      var url = URL.createObjectURL(blob);
+      console.log(url.substring(5));
+      var downloadLink = document.createElement("a");
+      downloadLink.href = url;
+      downloadLink.download = "data.csv";
+      downloadLink.click();
+    } else if (Platform.OS === "android") {
+      saveImageMobile();
+    } else {
+      window.alert(
+        "CSV file downloads are not supported on IOS.  Please download the CSV file on the desktop site"
+      );
+    }
   });
-  csv.unshift(fields.join(","));
-  csv = csv.join("\r\n");
-  //console.log(csv);
 
   async function saveImageMobile() {
     const permission = await MediaLibrary.requestPermissionsAsync();
@@ -257,22 +274,6 @@ const ExportDatabase = () => {
     }
     //permission cases:
     //https://ndpniraj.com/reading-audio-files-from-device-using-react-native-expo/
-  }
-
-  if (Platform.OS == "web") {
-    var blob = new Blob(["\ufeff", csv]);
-    var url = URL.createObjectURL(blob);
-    console.log(url.substring(5));
-    var downloadLink = document.createElement("a");
-    downloadLink.href = url;
-    downloadLink.download = "data.csv";
-    downloadLink.click();
-  } else if (Platform.OS === "android") {
-    saveImageMobile();
-  } else {
-    window.alert(
-      "CSV file downloads are not supported on IOS.  Please download the CSV file on the desktop site"
-    );
   }
 };
 
