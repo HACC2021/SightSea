@@ -16,7 +16,7 @@ import Proptypes from "prop-types";
 import { DataTable, Checkbox, Modal, Portal } from "react-native-paper";
 import GoogleMapReact from "google-map-react";
 import MapView, { Marker } from "react-native-maps";
-import ExportDatabse from "../../scripts/ExportDatabase";
+import ExportDatabase from "../../scripts/ExportDatabase";
 
 const styles = StyleSheet.create({
   container: {
@@ -257,7 +257,7 @@ const StaffPage = ({ navigation }) => {
             </DataTable.Row>
           </DataTable>
         </View>
-        <Button title="Export Database" onClick={ExportDatabse} />
+        <Button title="Export Database" onPress={ExportDatabase} />
         {/* map */}
         <View style={styles.map}>
           {Platform.OS === "web" ? (
