@@ -1,5 +1,8 @@
 import React from "react";
+import { Alert, Platform } from "react-native";
 import { getDatabase, ref, onValue, once } from "firebase/database";
+import * as FileSystem from "expo-file-system";
+import * as MediaLibrary from "expo-media-library";
 
 const ExportDatabase = () => {
   const testJson = {
@@ -178,8 +181,8 @@ const ExportDatabase = () => {
       },
     },
   };
-  //   var dataJson = {};
-  //   const db = getDatabase();
+  var dataJson = {};
+  const db = getDatabase();
   //   const reference = ref(db, "/Bird");
   //   onValue(reference, (snapshot) => {
   //     console.log(snapshot.val());
@@ -187,12 +190,12 @@ const ExportDatabase = () => {
 
   const json = testJson.Bird;
   const docArray = Object.entries(json);
-  console.log(docArray);
+  //console.log(docArray);
   var fields = Object.keys(docArray[0][1]);
   var replacer = function (key, value) {
     return value === null ? "" : value;
   };
-  console.log(fields);
+  //console.log(fields);
   var csv = docArray.map(function (row) {
     return fields
       .map(function (fieldName) {
@@ -202,7 +205,74 @@ const ExportDatabase = () => {
   });
   csv.unshift(fields.join(","));
   csv = csv.join("\r\n");
-  console.log(csv);
+  //console.log(csv);
+
+  async function saveImageMobile() {
+    const permission = await MediaLibrary.requestPermissionsAsync(true);
+    //window.alert(JSON.stringify(permission));
+
+    if (permission.granted) {
+      //await MediaLibrary.createAlbumAsync("Download", asset, false);
+      const album = await MediaLibrary.getAlbumAsync("SightSea");
+      if (album === null) {
+        console.log("adding asset to new album");
+        const uri = FileSystem.documentDirectory + "data.csv";
+        const systemFile = await FileSystem.writeAsStringAsync(uri, csv, {
+          encoding: FileSystem.EncodingType.UTF8,
+        });
+        const asset = await MediaLibrary.createAssetAsync(uri);
+        console.log("asset:" + JSON.stringify(asset));
+        console.log("creating album");
+        await MediaLibrary.createAlbumAsync("Expo", asset)
+          .then(() => {
+            console.log("album created");
+            Alert.alert("file saved");
+          })
+          .catch((error) => {
+            console.log("err", error);
+          });
+      } else {
+        const uri = FileSystem.documentDirectory + "data.csv";
+        const systemFile = await FileSystem.writeAsStringAsync(uri, csv, {
+          encoding: FileSystem.EncodingType.UTF8,
+        });
+        const asset = await MediaLibrary.createAssetAsync(uri);
+        let added = await MediaLibrary.addAssetsToAlbumAsync(
+          asset,
+          album,
+          false
+        );
+        if (added === true) {
+          console.log("asset added to existing album");
+        } else {
+          console.log("error adding asset to existing album");
+        }
+      }
+    }
+
+    if (!permission.granted && permission.canAskAgain) {
+      const { status, canAskAgain } =
+        await MediaLibrary.requestPermissionsAsync();
+    }
+    // const fileUri = FileSystem.documentDirectory + "data.csv";
+    // await FileSystem.writeAsStringAsync(fileUri, csv, {
+    //   encoding: FileSystem.EncodingType.UTF8,
+    // });
+    // const asset = await MediaLibrary.createAssetAsync(fileUri);
+    // await MediaLibrary.createAlbumAsync("Download", asset, false);
+  }
+
+  if (Platform.OS == "web") {
+    var blob = new Blob(["\ufeff", csv]);
+    var url = URL.createObjectURL(blob);
+    console.log(url.substring(5));
+    var downloadLink = document.createElement("a");
+    downloadLink.href = url;
+    downloadLink.download = "data.csv";
+    downloadLink.click();
+  } else {
+    saveImageMobile();
+  }
 };
 
 export default ExportDatabase;
