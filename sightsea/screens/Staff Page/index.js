@@ -130,6 +130,10 @@ const StaffPage = ({ navigation }) => {
     setPageVerifiedTable(0);
   }, [itemsPerPage]);
 
+  // ##########adding Firebase query ##########
+// Firebase data query
+  // data = Firebase.database();
+// ####################
   //get window dimensions
   const windowWidth = Dimensions.get("window").width;
   const windowHeight = Dimensions.get("window").height;
@@ -240,7 +244,43 @@ const StaffPage = ({ navigation }) => {
               ) : null}
             </DataTable.Header>
             {/* Loop over new reports to make rows */}
-            <DataTable.Row>
+            
+{/* ###########USE when firebase is connected ####### */}
+
+              {/* {data.map((data) => {
+                return (
+                  <DataTable.Row key={data.id} onPress={() => navigation.navigate(data.id.toString())}>
+                  <DataTable.Cell style={styles.columns}>
+                <Checkbox
+                  status={checked ? "checked" : "unchecked"}
+                  onPress={() => {
+                    setChecked(!checked);
+                  }}
+                ></Checkbox>
+                  </DataTable.Cell>
+                  <DataTable.Cell numeric style={styles.row}>
+                {data.ticketNumber}
+              </DataTable.Cell>
+              <DataTable.Cell style={styles.row}>{data.ticketType}</DataTable.Cell>
+
+              {Platform.OS === "web" ? (
+                <>
+                  <DataTable.Cell numeric style={styles.row}>
+                  {data.date}
+                  </DataTable.Cell>
+                  <DataTable.Cell numeric style={styles.row}>
+                    {data.time}
+                  </DataTable.Cell>
+                  <DataTable.Cell style={styles.row}>{data.location}</DataTable.Cell>
+                </>
+              ) : null}
+                  </DataTable.Row>
+                  
+                )
+              })} */}
+
+{/* ###########USE when firebase is connected ####### */}
+              <DataTable.Row onPress={() => console.log("Clicked")}>
               <DataTable.Cell style={styles.columns}>
                 <Checkbox
                   status={checked ? "checked" : "unchecked"}
@@ -266,7 +306,7 @@ const StaffPage = ({ navigation }) => {
                 </>
               ) : null}
             </DataTable.Row>
-
+{/* ################## */}
             <DataTable.Pagination
               page={pageNewTable}
               numberOfPages={3}
