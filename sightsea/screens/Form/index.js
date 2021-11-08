@@ -312,6 +312,7 @@ const SightForm = () => {
         Seal_Departed_Time: "",
         Number_of_Calls_Received: 0,
         Other_Notes: "",
+        Verified: "",
       })
         .then(() => {
           window.alert("Report Submitted Successfully!");
@@ -352,6 +353,7 @@ const SightForm = () => {
         FAST: "",
         Number_of_Calls_Received: 0,
         Other_Notes: "",
+        Verified: "",
       })
         .then(() => {
           window.alert("Report Submitted Successfully!");
@@ -384,6 +386,7 @@ const SightForm = () => {
         Outreach_provided_by_operator: "",
         Number_of_Calls_Received: 0,
         Other_Notes: "",
+        Verified: "",
       })
         .then(() => {
           window.alert("Report Submitted Successfully!");
