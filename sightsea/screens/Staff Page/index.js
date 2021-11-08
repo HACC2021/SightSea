@@ -24,6 +24,9 @@ import GoogleMapReact from "google-map-react";
 import MapView, { Marker } from "react-native-maps";
 import ExportDatabase from "../../scripts/ExportDatabase";
 
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -111,6 +114,15 @@ const StaffPage = ({ navigation }) => {
   const [pageVerifiedTable, setPageVerifiedTable] = React.useState(0);
 
   React.useEffect(() => {
+    const auth = getAuth();
+    onAuthStateChanged(auth,(user) => {
+      if (!user)
+      {
+        navigation.navigate("SightSea");
+      }
+    })
+
+
     setPageNewTable(0);
     setPageVerifiedTable(0);
   }, [itemsPerPage]);
