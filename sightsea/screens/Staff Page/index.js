@@ -10,6 +10,8 @@ import {
   Dimensions,
   Platform,
   ScrollView,
+  Pressable,
+  TouchableOpacity,
 } from "react-native";
 import Component from "react";
 import Proptypes from "prop-types";
@@ -25,12 +27,13 @@ import MapView, { Marker } from "react-native-maps";
 import ExportDatabase from "../../scripts/ExportDatabase";
 
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-
+import { color } from "react-native-elements/dist/helpers";
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: "center",
+    textAlign: "center",
     justifyContent: "center",
   },
   // input: {
@@ -45,21 +48,15 @@ const styles = StyleSheet.create({
     fontSize: 30,
     marginTop: 10,
     fontWeight: "bold",
-    borderWidth: 3,
-    textAlign: "center",
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
+    textAlign: "left",
   },
   secondaryheader: {
     fontSize: 30,
     marginTop: 40,
     fontWeight: "bold",
-    borderWidth: 3,
-    textAlign: "center",
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
+    textAlign: "left",
   },
-  tableContainer: {},
+
   table: {
     marginTop: 10,
     marginBottom: 10,
@@ -75,7 +72,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   map: {
-    width: 800,
+    alignContent: "center",
+    width: "100%",
     height: 600,
   },
   marker: {
@@ -85,13 +83,20 @@ const styles = StyleSheet.create({
   containerStyle: {
     width: 100,
     height: 100,
-    backgroundColor: "white",
+    backgroundColor: "#fff",
   },
   surface: {
     alignItems: "center",
     justifyContent: "center",
     elevation: 4,
     paddingTop: 10,
+    width: "90%",
+  },
+  verifyButton: {    
+    borderRadius: 6,
+    // marginRight: 15,
+    padding: 4,
+    // padding: 7,
   },
 });
 
@@ -115,13 +120,11 @@ const StaffPage = ({ navigation }) => {
 
   React.useEffect(() => {
     const auth = getAuth();
-    onAuthStateChanged(auth,(user) => {
-      if (!user)
-      {
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
         navigation.navigate("SightSea");
       }
-    })
-
+    });
 
     setPageNewTable(0);
     setPageVerifiedTable(0);
@@ -205,16 +208,36 @@ const StaffPage = ({ navigation }) => {
           <Text style={styles.header}>New Reports</Text>
           <DataTable>
             <DataTable.Header>
-              <DataTable.Title>...</DataTable.Title>
+              {!checked ? (
+                <DataTable.Title></DataTable.Title>
+              ) : (
+                <DataTable.Title>
+                  <TouchableOpacity
+                  style={styles.verifyButton}
+                  onPress={Assign}
+                  >
+                    <Text style={{color: "#3478F6"}}>
+                    Verify
+                    </Text>
+                  </TouchableOpacity>
+                </DataTable.Title>
+              )}
               <DataTable.Title style={styles.columns}>
                 Ticket Number
               </DataTable.Title>
-              <DataTable.Title style={styles.columns}>Date</DataTable.Title>
-              <DataTable.Title style={styles.columns}>Time</DataTable.Title>
-              <DataTable.Title style={styles.columns}>Location</DataTable.Title>
               <DataTable.Title style={styles.columns}>
                 Ticket Type
               </DataTable.Title>
+
+              {Platform.OS === "web" ? (
+                <>
+                  <DataTable.Title style={styles.columns}>Date</DataTable.Title>
+                  <DataTable.Title style={styles.columns}>Time</DataTable.Title>
+                  <DataTable.Title style={styles.columns}>
+                    Location
+                  </DataTable.Title>
+                </>
+              ) : null}
             </DataTable.Header>
             {/* Loop over new reports to make rows */}
             <DataTable.Row>
@@ -229,14 +252,19 @@ const StaffPage = ({ navigation }) => {
               <DataTable.Cell numeric style={styles.row}>
                 123
               </DataTable.Cell>
-              <DataTable.Cell numeric style={styles.row}>
-                32132
-              </DataTable.Cell>
-              <DataTable.Cell numeric style={styles.row}>
-                0500
-              </DataTable.Cell>
-              <DataTable.Cell style={styles.row}>a beach</DataTable.Cell>
               <DataTable.Cell style={styles.row}>C</DataTable.Cell>
+
+              {Platform.OS === "web" ? (
+                <>
+                  <DataTable.Cell numeric style={styles.row}>
+                    32132
+                  </DataTable.Cell>
+                  <DataTable.Cell numeric style={styles.row}>
+                    0500
+                  </DataTable.Cell>
+                  <DataTable.Cell style={styles.row}>a beach</DataTable.Cell>
+                </>
+              ) : null}
             </DataTable.Row>
 
             <DataTable.Pagination
@@ -251,11 +279,6 @@ const StaffPage = ({ navigation }) => {
               optionsLabel={"Rows per page"}
             />
           </DataTable>
-          <Button
-            style={styles.button}
-            title="Verify"
-            onPress={Assign}
-          ></Button>
         </Surface>
         <View />
         <Surface style={styles.surface}>
@@ -267,34 +290,45 @@ const StaffPage = ({ navigation }) => {
               <DataTable.Title style={styles.columns}>
                 Ticket Number
               </DataTable.Title>
-              <DataTable.Title style={styles.columns}>Date</DataTable.Title>
-              <DataTable.Title style={styles.columns}>Time</DataTable.Title>
-              <DataTable.Title style={styles.columns}>Location</DataTable.Title>
               <DataTable.Title style={styles.columns}>
                 Ticket Type
               </DataTable.Title>
+
+              {Platform.OS === "web" ? (
+                <>
+                  <DataTable.Title style={styles.columns}>Date</DataTable.Title>
+                  <DataTable.Title style={styles.columns}>Time</DataTable.Title>
+                  <DataTable.Title style={styles.columns}>
+                    Location
+                  </DataTable.Title>
+                </>
+              ) : null}
             </DataTable.Header>
             {/* Loop over new reports to make rows */}
             <DataTable.Row>
               <DataTable.Cell style={styles.columns}>
-                <Checkbox
+                {/* <Checkbox
                   status={checked ? "checked" : "unchecked"}
                   onPress={() => {
                     setChecked(!checked);
                   }}
-                ></Checkbox>
+                ></Checkbox> */}
               </DataTable.Cell>
               <DataTable.Cell numeric style={styles.row}>
                 123
               </DataTable.Cell>
-              <DataTable.Cell numeric style={styles.row}>
-                32132
-              </DataTable.Cell>
-              <DataTable.Cell numeric style={styles.row}>
-                0500
-              </DataTable.Cell>
-              <DataTable.Cell style={styles.row}>a beach</DataTable.Cell>
               <DataTable.Cell style={styles.row}>C</DataTable.Cell>
+              {Platform.OS === "web" ? (
+                <>
+                  <DataTable.Cell numeric style={styles.row}>
+                    32132
+                  </DataTable.Cell>
+                  <DataTable.Cell numeric style={styles.row}>
+                    0500
+                  </DataTable.Cell>
+                  <DataTable.Cell style={styles.row}>a beach</DataTable.Cell>
+                </>
+              ) : null}
             </DataTable.Row>
 
             <DataTable.Pagination
