@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     width: "90%",
   },
-  verifyButton: {    
+  verifyButton: {
     borderRadius: 6,
     // marginRight: 15,
     padding: 4,
@@ -137,9 +137,9 @@ const StaffPage = ({ navigation }) => {
   }, [itemsPerPage]);
 
   // ##########adding Firebase query ##########
-// Firebase data query
+  // Firebase data query
   // data = Firebase.database();
-// ####################
+  // ####################
   //get window dimensions
   const windowWidth = Dimensions.get("window").width;
   const windowHeight = Dimensions.get("window").height;
@@ -264,12 +264,10 @@ const StaffPage = ({ navigation }) => {
               ) : (
                 <DataTable.Title>
                   <TouchableOpacity
-                  style={styles.verifyButton}
-                  onPress={Assign}
+                    style={styles.verifyButton}
+                    onPress={Assign}
                   >
-                    <Text style={{color: "#3478F6"}}>
-                    Verify
-                    </Text>
+                    <Text style={{ color: "#3478F6" }}>Verify</Text>
                   </TouchableOpacity>
                 </DataTable.Title>
               )}
@@ -291,10 +289,10 @@ const StaffPage = ({ navigation }) => {
               ) : null}
             </DataTable.Header>
             {/* Loop over new reports to make rows */}
-            
-{/* ###########USE when firebase is connected ####### */}
 
-              {/* {data.map((data) => {
+            {/* ###########USE when firebase is connected ####### */}
+
+            {/* {data.map((data) => {
                 return (
                   <DataTable.Row key={data.id} onPress={() => navigation.navigate(data.id.toString())}>
                   <DataTable.Cell style={styles.columns}>
@@ -326,8 +324,8 @@ const StaffPage = ({ navigation }) => {
                 )
               })} */}
 
-{/* ###########USE when firebase is connected ####### */}
-              <DataTable.Row onPress={() => console.log("Clicked")}>
+            {/* ###########USE when firebase is connected ####### */}
+            <DataTable.Row onPress={() => console.log("Clicked")}>
               <DataTable.Cell style={styles.columns}>
                 <Checkbox
                   status={checked ? "checked" : "unchecked"}
@@ -353,7 +351,7 @@ const StaffPage = ({ navigation }) => {
                 </>
               ) : null}
             </DataTable.Row>
-{/* ################## */}
+            {/* ################## */}
             <DataTable.Pagination
               page={pageNewTable}
               numberOfPages={3}
@@ -442,30 +440,6 @@ const StaffPage = ({ navigation }) => {
                 //google api key
                 //key: "AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0",
               }
-<<<<<<< HEAD
-              defaultCenter={mapRegion.center}
-              zoom={mapRegion.zoom}
-            >
-              {/* markers on the map */}
-              {markers.map((marker, index) => {
-                return (
-                  <WebMarker
-                    lat={marker.lat}
-                    lng={marker.lng}
-                    marker={marker}
-                    key={index}
-                  />
-                );
-              })}
-              {/* {<Markers />} */}
-            </GoogleMapReact>
-          ) : (
-            <MapView style={styles.map} region={mapRegion}>
-              <Marker key={0} coordinate={mapRegion} title={"Marker"} />
-            </MapView>
-          )}
-        </View>
-=======
             }
             defaultCenter={mapRegion.center}
             zoom={mapRegion.zoom}
@@ -489,7 +463,6 @@ const StaffPage = ({ navigation }) => {
             <Marker key={0} coordinate={mapRegion} title={"Marker"} />
           </MapView>
         )}
->>>>>>> main
       </View>
     </ScrollView>
   );
