@@ -21,9 +21,11 @@ import {
   Modal,
   Portal,
   Surface,
+  RadioButton,
 } from "react-native-paper";
 import GoogleMapReact from "google-map-react";
 import MapView, { Marker } from "react-native-maps";
+import { getDatabase, ref, onValue, once } from "firebase/database";
 import ExportDatabase from "../../scripts/ExportDatabase";
 
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -101,6 +103,7 @@ const styles = StyleSheet.create({
 });
 
 const optionsPerPage = [2, 3, 4];
+const animalTypes = ['Birds', 'Seals', 'Turtles'];
 
 //searchable table of reports
 //should default to display most recent 5 only then
@@ -117,6 +120,9 @@ const StaffPage = ({ navigation }) => {
   const [pageNewTable, setPageNewTable] = React.useState(0);
   const [itemsPerPage, setItemsPerPage] = React.useState(optionsPerPage[0]);
   const [pageVerifiedTable, setPageVerifiedTable] = React.useState(0);
+  const [tableData, setTableData] = React.useState({});
+  const [animalDisplayType, setAnimalDisplayType] = React.useState(animalTypes[0]);
+
 
   React.useEffect(() => {
     const auth = getAuth();
@@ -323,6 +329,11 @@ const StaffPage = ({ navigation }) => {
         <View />
         <Surface style={styles.surface}>
           <Text style={styles.secondaryheader}>Verified Reports</Text>
+          <RadioButton.Group onValueChange={value => setAnimalDisplayType(value)} value={animalDisplayType}>
+            {animalTypes.map((x) => (
+              <RadioButton.Item label={x} value={x}/>
+            ))}
+          </RadioButton.Group>
           {/* Display map with pins for ALL new reports */}
           <DataTable>
             <DataTable.Header>
