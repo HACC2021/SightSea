@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Component } from "react";
 import {
   StyleSheet,
   Text,
@@ -13,7 +13,6 @@ import {
   Pressable,
   TouchableOpacity,
 } from "react-native";
-import Component from "react";
 import Proptypes from "prop-types";
 import {
   DataTable,
@@ -23,6 +22,9 @@ import {
   Surface,
   RadioButton,
   Title,
+  Card,
+  Paragraph,
+  Subheading,
 } from "react-native-paper";
 import GoogleMapReact from "google-map-react";
 import MapView, { Marker } from "react-native-maps";
@@ -44,6 +46,8 @@ import ExportDatabase from "../../scripts/ExportDatabase";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import * as Location from "expo-location";
 
+const windowWidth = Dimensions.get("window").width;
+const windowHeight = Dimensions.get("window").height;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -113,12 +117,22 @@ const styles = StyleSheet.create({
     padding: 4,
     // padding: 7,
   },
-  // Box: {
-  //   border: "1px solid",
-  //   width: 50,
-  //   height: 50,
-  //   backgroundColor: "white",
-  // },
+  Box: {
+    width: windowWidth * 0.15,
+    height: 90,
+    marginLeft: -windowWidth * 0.15 * 0.4,
+    alignItems: "center",
+    justifyContent: "center",
+    elevation: 4,
+    paddingTop: 3,
+  },
+  img: {
+    width: 40,
+    height: 40,
+  },
+  cancel: {
+    textAlign: "right",
+  },
 });
 
 const optionsPerPage = [2, 3, 4];
@@ -160,90 +174,100 @@ const StaffPage = ({ navigation }) => {
   // Firebase data query
   // data = Firebase.database();
   // ####################
-  //get window dimensions
-  const windowWidth = Dimensions.get("window").width;
-  const windowHeight = Dimensions.get("window").height;
-  const markerURL =
-    "http://icons.iconarchive.com/icons/paomedia/small-n-flat/256/map-marker-icon.png";
-  const [checked, setChecked] = React.useState(false);
-  const [open, setOpen] = React.useState(false);
-  //define map props
-  const [mapRegion, setmapRegion] = React.useState({
-    latitude: 21.315603,
-    longitude: -157.858093,
-    latitudeDelta: 0.0922,
-    longitudeDelta: 0.0421,
-    center: {
-      lat: 21.315601,
-      lng: -157.85809,
-    },
-    zoom: 12,
-  });
-  const [markerRegion, setmarkerRegion] = React.useState({
-    lat: 21.315603,
-    lng: -157.858093,
-  });
+
   //console.log("Checked :", checked)
   const Assign = (e) => {
     e.preventDefault();
     console.log("Assign to volunteer");
   };
 
-  const markers = [
+  const markerURL =
+    "http://icons.iconarchive.com/icons/paomedia/small-n-flat/256/map-marker-icon.png";
+  const [checked, setChecked] = React.useState(false);
+
+  const mapProps = {
+    center: {
+      lat: 21.315601,
+      lng: -157.85809,
+    },
+    zoom: 12,
+  };
+
+  var markers = [
     {
-      id: 3,
       lat: 21.315601,
       lng: -157.85813,
       info: "test address 2",
     },
     {
-      id: 1,
       lat: 21.315601,
       lng: -157.95813,
       info: "test address 1",
     },
   ];
 
-  // const markerInfos = [
-  //   {
-  //     id: 1,
-  //     address: "test address 1",
-  //   },
-  //   {
-  //     id: 3,
-  //     address: "test address 2",
-  //   },
-  // ];
-  var activeIndex = null; //index of active marker
-  var activeMarker = null;
-  //marker image
-  const WebMarker = (marker) => {
-    function handleMarkerClick() {
-      //get index of active marker
-      activeMarker = marker;
-      activeIndex = marker["$dimensionKey"];
-      // console.log(markers[activeIndex].info);
-      // console.log(activeMarker);
+  //define marker info
+  const InfoWindow = ({ marker, index, show }) => {
+    //close window when X is clicked
+    function setShow(show) {
+      show = false;
     }
-
-    //display a list of info windows
-    //show a specific info windows INPUTS: (boolean open, number id)
-    //shows a info window after clicks on the marker
-    //clears the info window after clicking outside
-
     return (
-      <div onClick={handleMarkerClick}>
-        <WebInfoWindow marker={marker} />
-        <img src={markerURL} alt="Logo" width={50} height={50} />
+      <div>
+        {show && (
+          <Card style={styles.Box}>
+            <Paragraph onPress={setShow(show)} style={styles.cancel}>
+              X
+            </Paragraph>
+            <Card.Content>
+              <Text>Name of Location</Text>
+              <Paragraph>{marker["info"]}</Paragraph>
+            </Card.Content>
+          </Card>
+        )}
       </div>
     );
   };
 
-  const WebInfoWindow = (marker) => {
-    console.log(marker.marker);
-    return <div>HI</div>;
-  };
+  //define marker
+  function CustomMarker({ lat, lng, onMarkerClick, marker, index }) {
+    //allow user to open/close info window by clicking the info window
+    const [show, setShow] = React.useState(false);
+    function onMarkerClick() {
+      console.log(marker["info"]);
+      setShow(!show);
+    }
 
+    return (
+      <div onClick={onMarkerClick} lat={lat} lng={lng}>
+        {show && <InfoWindow marker={marker} index={index} show={show} />}
+        <Image source={markerURL} style={styles.img} />
+      </div>
+    );
+  }
+
+  //initialize map
+  function GoogleMap({ center, zoom, data }) {
+    return (
+      <GoogleMapReact
+        style={{ height: "100vh", width: "100%" }}
+        defaultZoom={zoom}
+        defaultCenter={center}
+      >
+        {data.map((item, index) => {
+          return (
+            <CustomMarker
+              key={index}
+              lat={item.lat}
+              lng={item.lng}
+              marker={item}
+              index={index}
+            />
+          );
+        })}
+      </GoogleMapReact>
+    );
+  }
   //query database for certain animal
   const getDocs = (animal, direction) => {
     console.log(backAnchorKey);
@@ -271,10 +295,13 @@ const StaffPage = ({ navigation }) => {
     onChildAdded(reference, (snapshot) => {
       setBackAnchorKey(snapshot.key);
       docCounter++;
-      if (docCounter === 1 && (direction === "forward" || direction === "switch")) {
+      if (
+        docCounter === 1 &&
+        (direction === "forward" || direction === "switch")
+      ) {
         frontAnchorKeys.push(snapshot.key);
         console.log(frontAnchorKeys);
-      } else if (docCounter === 1 && direction === "back"){
+      } else if (docCounter === 1 && direction === "back") {
         frontAnchorKeys.pop();
       }
     });
@@ -297,28 +324,6 @@ const StaffPage = ({ navigation }) => {
     frontAnchorKeys = [];
     getDocs(animal, "switch");
   };
-  // {open && markerObj.id == markerInfos[index].id ? (
-  //   <View style={styles.Box}>
-  //     <Text> Box</Text>
-  //   </View>
-  // ) : null}
-
-  //marker component
-  // const Markers = () => {
-  //   return (
-  //     <View>
-  //       {markers.map((marker, index) => {
-  //         <WebMarker
-  //           style={styles.marker}
-  //           source={markerURL}
-  //           lat={marker.lat}
-  //           lng={marker.lng}
-  //           key={index}
-  //         />;
-  //       })}
-  //     </View>
-  //   );
-  // };
 
   //convert location coordinate to address
   function convertToAddress(coordinateObj) {
@@ -538,33 +543,17 @@ const StaffPage = ({ navigation }) => {
             />
           </DataTable>
         </Surface>
-        <Button title="Export Database" onPress={ExportDatabase} />
+        <View>
+          <Button title="Export Database" onPress={ExportDatabase} />
+        </View>
         {/* map */}
         <View style={styles.map}>
           {Platform.OS === "web" ? (
-            <GoogleMapReact
-              bootstrapURLKeys={
-                {
-                  /*************************Enable api key before deployment ************************/
-                  //key: "AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0",
-                }
-              }
-              defaultCenter={mapRegion.center}
-              zoom={mapRegion.zoom}
-            >
-              {/* markers on the map */}
-              {markers.map((marker, index) => {
-                return (
-                  <WebMarker
-                    lat={marker.lat}
-                    lng={marker.lng}
-                    key={index}
-                    marker={marker}
-                  />
-                );
-              })}
-              {/* {<Markers />} */}
-            </GoogleMapReact>
+            <GoogleMap
+              center={mapProps.center}
+              zoom={mapProps.zoom}
+              data={markers}
+            />
           ) : (
             <MapView style={styles.map} region={mapRegion}>
               <Marker key={0} coordinate={mapRegion} title={"Marker"} />
