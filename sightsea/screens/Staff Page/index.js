@@ -32,6 +32,7 @@ import {
   once,
   orderByKey,
   startAt,
+  startAfter,
   endAt,
   query,
   limitToFirst,
@@ -115,6 +116,7 @@ const styles = StyleSheet.create({
 
 const optionsPerPage = [2, 3, 4];
 const animalTypes = ["Bird", "Seal", "Turtle"];
+var frontAnchorKeys = [];
 
 //searchable table of reports
 //should default to display most recent 5 only then
@@ -132,11 +134,8 @@ const StaffPage = ({ navigation }) => {
   const [itemsPerPage, setItemsPerPage] = React.useState(optionsPerPage[0]);
   const [pageVerifiedTable, setPageVerifiedTable] = React.useState(0);
   const [tableData, setTableData] = React.useState([]);
-  const [animalDisplayType, setAnimalDisplayType] = React.useState(
-    animalTypes[0]
-  );
+  const [animalDisplayType, setAnimalDisplayType] = React.useState(null);
   const [backAnchorKey, setBackAnchorKey] = React.useState(null);
-  const [frontAnchorKey, setFrontAnchorKey] = React.useState(null);
 
   React.useEffect(() => {
     const auth = getAuth();
@@ -225,38 +224,56 @@ const StaffPage = ({ navigation }) => {
   };
 
   //query database for certain animal
-  const getDocs = (animal) => {
-    setAnimalDisplayType(animal);
+  const getDocs = (animal, direction) => {
     const db = getDatabase();
     var docCounter = 0;
+    console.log(pageVerifiedTable);
+    console.log(direction);
+    console.log("front keys: " + frontAnchorKeys);
     const reference =
       backAnchorKey === null
-        ? query(ref(db, `/${animalDisplayType}`), orderByKey(), limitToFirst(1))
-        : query(
-            ref(db, `/${animalDisplayType}`),
+        ? query(ref(db, `/${animal}`), orderByKey(), limitToFirst(1))
+        : direction === "forward"
+        ? query(
+            ref(db, `/${animal}`),
             orderByKey(),
-            startAt(backAnchorKey),
+            startAfter(backAnchorKey),
+            limitToFirst(1)
+          )
+        : query(
+            ref(db, `/${animal}`),
+            orderByKey(),
+            startAt(frontAnchorKeys[pageVerifiedTable - 1]),
             limitToFirst(1)
           );
     onChildAdded(reference, (snapshot) => {
-      //console.log(snapshot.key);
       setBackAnchorKey(snapshot.key);
       docCounter++;
-      if (docCounter === 1) {
-        setFrontAnchorKey(snapshot.key);
-        //console.log("front anchor: " + snapshot.key)
+      if (docCounter === 1 && direction === "forward") {
+        frontAnchorKeys.push(snapshot.key);
+        console.log(frontAnchorKeys);
+      } else if (docCounter === 1 && direction === "back"){
+        frontAnchorKeys.pop();
       }
     });
     onValue(reference, (snapshot) => {
       setTableData(Object.entries(snapshot.val()));
     });
-    console.log(tableData);
   };
 
   const handlePageChange = (page) => {
+    page > pageVerifiedTable
+      ? getDocs(animalDisplayType, "forward")
+      : getDocs(animalDisplayType, "back");
     setPageVerifiedTable(page);
-    getDocs(animalDisplayType);
-  }
+  };
+
+  const handleRadioChange = (animal) => {
+    setAnimalDisplayType(animal);
+    setPageVerifiedTable(0);
+    setBackAnchorKey(null);
+    getDocs(animal, "forward");
+  };
 
   return (
     //Can only return 1 view object for Andriod
@@ -376,7 +393,7 @@ const StaffPage = ({ navigation }) => {
         <Surface style={styles.surface}>
           <Text style={styles.secondaryheader}>Verified Reports</Text>
           <RadioButton.Group
-            onValueChange={(value) => getDocs(value)}
+            onValueChange={(value) => handleRadioChange(value)}
             value={animalDisplayType}
           >
             {animalTypes.map((x, index) => (
@@ -419,7 +436,9 @@ const StaffPage = ({ navigation }) => {
                 <DataTable.Cell numeric style={styles.row}>
                   {element[0]}
                 </DataTable.Cell>
-                <DataTable.Cell style={styles.row}>{element[1].ticket_type}</DataTable.Cell>
+                <DataTable.Cell style={styles.row}>
+                  {element[1].ticket_type}
+                </DataTable.Cell>
                 {Platform.OS === "web" ? (
                   <>
                     <DataTable.Cell numeric style={styles.row}>
@@ -428,7 +447,9 @@ const StaffPage = ({ navigation }) => {
                     <DataTable.Cell numeric style={styles.row}>
                       {element[1].Time}
                     </DataTable.Cell>
-                    <DataTable.Cell style={styles.row}>{element[1].Location}</DataTable.Cell>
+                    <DataTable.Cell style={styles.row}>
+                      {element[1].Location}
+                    </DataTable.Cell>
                   </>
                 ) : null}
               </DataTable.Row>
