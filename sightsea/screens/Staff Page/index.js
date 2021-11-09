@@ -172,37 +172,39 @@ const StaffPage = ({ navigation }) => {
 
   const markers = [
     {
-      id: 1,
-      lat: 21.315601,
-      lng: -157.95813,
-    },
-    {
       id: 3,
       lat: 21.315601,
       lng: -157.85813,
+      info: "test address 2",
+    },
+    {
+      id: 1,
+      lat: 21.315601,
+      lng: -157.95813,
+      info: "test address 1",
     },
   ];
 
-  const markerInfos = [
-    {
-      id: 1,
-      address: "test address 1",
-    },
-    {
-      id: 3,
-      address: "test address 2",
-    },
-  ];
-  var index = null;
-  var markerObj = null;
-  //var content = "";
+  // const markerInfos = [
+  //   {
+  //     id: 1,
+  //     address: "test address 1",
+  //   },
+  //   {
+  //     id: 3,
+  //     address: "test address 2",
+  //   },
+  // ];
+  var activeIndex = null; //index of active marker
+  var activeMarker = null;
   //marker image
   const WebMarker = (marker) => {
     function handleMarkerClick() {
-      markerObj = marker.marker;
-      index = markers.indexOf(markerObj);
-      setOpen(true);
-      console.log(markerInfos[index].address);
+      //get index of active marker
+      activeMarker = marker;
+      activeIndex = marker["$dimensionKey"];
+      // console.log(markers[activeIndex].info);
+      // console.log(activeMarker);
     }
 
     //display a list of info windows
@@ -212,18 +214,15 @@ const StaffPage = ({ navigation }) => {
 
     return (
       <div onClick={handleMarkerClick}>
-        {/* <WebInfoWindow /> */}
+        <WebInfoWindow marker={marker} />
         <img src={markerURL} alt="Logo" width={50} height={50} />
       </div>
     );
   };
 
-  const WebInfoWindow = () => {
-    return (
-      <div>
-        <p>Hi</p>;
-      </div>
-    );
+  const WebInfoWindow = (marker) => {
+    console.log(marker.marker);
+    return <div>HI</div>;
   };
 
   // {open && markerObj.id == markerInfos[index].id ? (
@@ -470,11 +469,10 @@ const StaffPage = ({ navigation }) => {
               {markers.map((marker, index) => {
                 return (
                   <WebMarker
-                    style={styles.marker}
-                    source={markerURL}
                     lat={marker.lat}
                     lng={marker.lng}
                     key={index}
+                    marker={marker}
                   />
                 );
               })}

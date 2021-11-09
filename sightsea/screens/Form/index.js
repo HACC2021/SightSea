@@ -209,11 +209,6 @@ const SightForm = () => {
 
     return locationCoordinate;
   }
-
-  //get location coordinate
-  const coordinate = getUserLocation();
-  console.log(coordinate);
-
   //format number form input
   const phoneNumFormat = () => {
     var first_three = phoneNum.toString().slice(0, 3);
@@ -280,6 +275,11 @@ const SightForm = () => {
   };
 
   function addDoc() {
+    //get location coordinate
+    var coordinate = getUserLocation();
+    coordinate = JSON.stringify(coordinate);
+    console.log(coordinate);
+
     //filter to correct DB based on animal type
     var animalDB = animalType;
     //generate the random doc ID
@@ -299,6 +299,7 @@ const SightForm = () => {
       //Seal Doc
       const reference = ref(db, `${animalDB}/` + `${localdocID}`);
       set(reference, {
+        GPS_Coordinate: coordinate,
         Date: currentday,
         Time: currenttime,
         Ticket_Number: "XX" + "" + currentday + "" + currenttime,
