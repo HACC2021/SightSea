@@ -20,6 +20,7 @@ import {
   Modal,
   Portal,
   Surface,
+  RadioButton,
   Title,
   Card,
   Paragraph,
@@ -27,6 +28,19 @@ import {
 } from "react-native-paper";
 import GoogleMapReact from "google-map-react";
 import MapView, { Marker } from "react-native-maps";
+import {
+  getDatabase,
+  ref,
+  onValue,
+  once,
+  orderByKey,
+  startAt,
+  startAfter,
+  endAt,
+  query,
+  limitToFirst,
+  onChildAdded,
+} from "firebase/database";
 import ExportDatabase from "../../scripts/ExportDatabase";
 
 import { getAuth, onAuthStateChanged } from "firebase/auth";
@@ -122,6 +136,8 @@ const styles = StyleSheet.create({
 });
 
 const optionsPerPage = [2, 3, 4];
+const animalTypes = ["Bird", "Seal", "Turtle"];
+var frontAnchorKeys = [];
 
 //searchable table of reports
 //should default to display most recent 5 only then
@@ -138,6 +154,9 @@ const StaffPage = ({ navigation }) => {
   const [pageNewTable, setPageNewTable] = React.useState(0);
   const [itemsPerPage, setItemsPerPage] = React.useState(optionsPerPage[0]);
   const [pageVerifiedTable, setPageVerifiedTable] = React.useState(0);
+  const [tableData, setTableData] = React.useState([]);
+  const [animalDisplayType, setAnimalDisplayType] = React.useState(null);
+  const [backAnchorKey, setBackAnchorKey] = React.useState(null);
 
   React.useEffect(() => {
     const auth = getAuth();
@@ -147,8 +166,8 @@ const StaffPage = ({ navigation }) => {
       }
     });
 
-    setPageNewTable(0);
-    setPageVerifiedTable(0);
+    //setPageNewTable(0);
+    //setPageVerifiedTable(0);
   }, [itemsPerPage]);
 
   // ##########adding Firebase query ##########
@@ -249,6 +268,62 @@ const StaffPage = ({ navigation }) => {
       </GoogleMapReact>
     );
   }
+  //query database for certain animal
+  const getDocs = (animal, direction) => {
+    console.log(backAnchorKey);
+    const db = getDatabase();
+    var docCounter = 0;
+    //console.log(pageVerifiedTable);
+    //console.log(direction);
+    //console.log("front keys: " + frontAnchorKeys);
+    const reference =
+      direction === "switch"
+        ? query(ref(db, `/${animal}`), orderByKey(), limitToFirst(itemsPerPage))
+        : direction === "forward"
+        ? query(
+            ref(db, `/${animal}`),
+            orderByKey(),
+            startAfter(backAnchorKey),
+            limitToFirst(itemsPerPage)
+          )
+        : query(
+            ref(db, `/${animal}`),
+            orderByKey(),
+            startAt(frontAnchorKeys[pageVerifiedTable - 1]),
+            limitToFirst(itemsPerPage)
+          );
+    onChildAdded(reference, (snapshot) => {
+      setBackAnchorKey(snapshot.key);
+      docCounter++;
+      if (
+        docCounter === 1 &&
+        (direction === "forward" || direction === "switch")
+      ) {
+        frontAnchorKeys.push(snapshot.key);
+        console.log(frontAnchorKeys);
+      } else if (docCounter === 1 && direction === "back") {
+        frontAnchorKeys.pop();
+      }
+    });
+    onValue(reference, (snapshot) => {
+      setTableData(Object.entries(snapshot.val()));
+    });
+  };
+
+  const handlePageChange = (page) => {
+    page > pageVerifiedTable
+      ? getDocs(animalDisplayType, "forward")
+      : getDocs(animalDisplayType, "back");
+    setPageVerifiedTable(page);
+  };
+
+  const handleRadioChange = (animal) => {
+    setAnimalDisplayType(animal);
+    setPageVerifiedTable(0);
+    setBackAnchorKey(null);
+    frontAnchorKeys = [];
+    getDocs(animal, "switch");
+  };
 
   //convert location coordinate to address
   function convertToAddress(coordinateObj) {
@@ -392,6 +467,14 @@ const StaffPage = ({ navigation }) => {
         <View />
         <Surface style={styles.surface}>
           <Text style={styles.secondaryheader}>Verified Reports</Text>
+          <RadioButton.Group
+            onValueChange={(value) => handleRadioChange(value)}
+            value={animalDisplayType}
+          >
+            {animalTypes.map((x, index) => (
+              <RadioButton.Item key={index} label={x} value={x} />
+            ))}
+          </RadioButton.Group>
           {/* Display map with pins for ALL new reports */}
           <DataTable>
             <DataTable.Header>
@@ -414,40 +497,47 @@ const StaffPage = ({ navigation }) => {
               ) : null}
             </DataTable.Header>
             {/* Loop over new reports to make rows */}
-            <DataTable.Row>
-              <DataTable.Cell style={styles.columns}>
-                {/* <Checkbox
+
+            {tableData.map((element, index) => (
+              <DataTable.Row key={index}>
+                <DataTable.Cell style={styles.columns}>
+                  {/* <Checkbox
                   status={checked ? "checked" : "unchecked"}
                   onPress={() => {
                     setChecked(!checked);
                   }}
                 ></Checkbox> */}
-              </DataTable.Cell>
-              <DataTable.Cell numeric style={styles.row}>
-                123
-              </DataTable.Cell>
-              <DataTable.Cell style={styles.row}>C</DataTable.Cell>
-              {Platform.OS === "web" ? (
-                <>
-                  <DataTable.Cell numeric style={styles.row}>
-                    32132
-                  </DataTable.Cell>
-                  <DataTable.Cell numeric style={styles.row}>
-                    0500
-                  </DataTable.Cell>
-                  <DataTable.Cell style={styles.row}>a beach</DataTable.Cell>
-                </>
-              ) : null}
-            </DataTable.Row>
+                </DataTable.Cell>
+                <DataTable.Cell numeric style={styles.row}>
+                  {element[0]}
+                </DataTable.Cell>
+                <DataTable.Cell style={styles.row}>
+                  {element[1].ticket_type}
+                </DataTable.Cell>
+                {Platform.OS === "web" ? (
+                  <>
+                    <DataTable.Cell numeric style={styles.row}>
+                      {element[1].Date}
+                    </DataTable.Cell>
+                    <DataTable.Cell numeric style={styles.row}>
+                      {element[1].Time}
+                    </DataTable.Cell>
+                    <DataTable.Cell style={styles.row}>
+                      {element[1].Location}
+                    </DataTable.Cell>
+                  </>
+                ) : null}
+              </DataTable.Row>
+            ))}
 
             <DataTable.Pagination
               page={pageVerifiedTable}
               numberOfPages={3}
-              onPageChange={(page) => setPageVerifiedTable(page)}
-              label="1-2 of 6"
-              optionsPerPage={optionsPerPage}
-              itemsPerPage={itemsPerPage}
-              setItemsPerPage={setItemsPerPage}
+              onPageChange={(page) => handlePageChange(page)}
+              label={pageVerifiedTable + 1 + "of 3"}
+              // optionsPerPage={optionsPerPage}
+              // itemsPerPage={itemsPerPage}
+              // setItemsPerPage={setItemsPerPage}
               showFastPagination
               optionsLabel={"Rows per page"}
             />
