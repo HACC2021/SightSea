@@ -30,7 +30,8 @@
     "react-native-phone-input": "^1.2.1",
     "react-native-safe-area-context": "3.3.2",
     "react-native-screens": "~3.8.0",
-    "react-native-units": "^1.0.0"
+    "react-native-units": "^1.0.0",
+    "expo-location": "~13.0.4"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"
