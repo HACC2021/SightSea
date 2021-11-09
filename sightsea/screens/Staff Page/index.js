@@ -225,31 +225,32 @@ const StaffPage = ({ navigation }) => {
 
   //query database for certain animal
   const getDocs = (animal, direction) => {
+    console.log(backAnchorKey);
     const db = getDatabase();
     var docCounter = 0;
-    console.log(pageVerifiedTable);
-    console.log(direction);
-    console.log("front keys: " + frontAnchorKeys);
+    //console.log(pageVerifiedTable);
+    //console.log(direction);
+    //console.log("front keys: " + frontAnchorKeys);
     const reference =
-      backAnchorKey === null
-        ? query(ref(db, `/${animal}`), orderByKey(), limitToFirst(1))
+      direction === "switch"
+        ? query(ref(db, `/${animal}`), orderByKey(), limitToFirst(itemsPerPage))
         : direction === "forward"
         ? query(
             ref(db, `/${animal}`),
             orderByKey(),
             startAfter(backAnchorKey),
-            limitToFirst(1)
+            limitToFirst(itemsPerPage)
           )
         : query(
             ref(db, `/${animal}`),
             orderByKey(),
             startAt(frontAnchorKeys[pageVerifiedTable - 1]),
-            limitToFirst(1)
+            limitToFirst(itemsPerPage)
           );
     onChildAdded(reference, (snapshot) => {
       setBackAnchorKey(snapshot.key);
       docCounter++;
-      if (docCounter === 1 && direction === "forward") {
+      if (docCounter === 1 && (direction === "forward" || direction === "switch")) {
         frontAnchorKeys.push(snapshot.key);
         console.log(frontAnchorKeys);
       } else if (docCounter === 1 && direction === "back"){
@@ -272,7 +273,8 @@ const StaffPage = ({ navigation }) => {
     setAnimalDisplayType(animal);
     setPageVerifiedTable(0);
     setBackAnchorKey(null);
-    getDocs(animal, "forward");
+    frontAnchorKeys = [];
+    getDocs(animal, "switch");
   };
 
   return (
@@ -460,9 +462,9 @@ const StaffPage = ({ navigation }) => {
               numberOfPages={3}
               onPageChange={(page) => handlePageChange(page)}
               label={pageVerifiedTable + 1 + "of 3"}
-              optionsPerPage={optionsPerPage}
-              itemsPerPage={itemsPerPage}
-              setItemsPerPage={setItemsPerPage}
+              // optionsPerPage={optionsPerPage}
+              // itemsPerPage={itemsPerPage}
+              // setItemsPerPage={setItemsPerPage}
               showFastPagination
               optionsLabel={"Rows per page"}
             />
