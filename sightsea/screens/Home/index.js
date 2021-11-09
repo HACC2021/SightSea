@@ -154,7 +154,12 @@ async function addDoc() {
           >
             <Text style={styles.buttonText}>Staff Portal</Text>
           </TouchableOpacity>
-
+          <TouchableOpacity
+              style={styles.navButton}
+              onPress={() => navigation.navigate("ViewReport")}
+          >
+            <Text style={styles.buttonText}>View Report Test</Text>
+          </TouchableOpacity>
         </View>
       </View>
     </ImageBackground>
