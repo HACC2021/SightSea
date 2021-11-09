@@ -21,13 +21,13 @@ import {
   Modal,
   Portal,
   Surface,
+  Title,
 } from "react-native-paper";
 import GoogleMapReact from "google-map-react";
 import MapView, { Marker } from "react-native-maps";
 import ExportDatabase from "../../scripts/ExportDatabase";
 
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { color } from "react-native-elements/dist/helpers";
 
 const styles = StyleSheet.create({
   container: {
@@ -98,12 +98,12 @@ const styles = StyleSheet.create({
     padding: 4,
     // padding: 7,
   },
-  Box: {
-    border: "1px solid",
-    width: 50,
-    height: 50,
-    backgroundColor: "white",
-  },
+  // Box: {
+  //   border: "1px solid",
+  //   width: 50,
+  //   height: 50,
+  //   backgroundColor: "white",
+  // },
 });
 
 const optionsPerPage = [2, 3, 4];
@@ -211,7 +211,7 @@ const StaffPage = ({ navigation }) => {
 
     return (
       <div onClick={handleMarkerClick}>
-        <WebInfoWindow />
+        {/* <WebInfoWindow /> */}
         <img src={markerURL} alt="Logo" width={50} height={50} />
       </div>
     );
@@ -220,10 +220,7 @@ const StaffPage = ({ navigation }) => {
   const WebInfoWindow = () => {
     return (
       <div>
-        <View style={styles.Box}>
-          <Text> </Text>
-        </View>
-        ;
+        <p>Hi</p>;
       </div>
     );
   };
@@ -235,21 +232,21 @@ const StaffPage = ({ navigation }) => {
   // ) : null}
 
   //marker component
-  const Markers = () => {
-    return (
-      <View>
-        {markers.map((marker, index) => {
-          <WebMarker
-            style={styles.marker}
-            source={markerURL}
-            lat={marker.lat}
-            lng={marker.lng}
-            key={index}
-          />;
-        })}
-      </View>
-    );
-  };
+  // const Markers = () => {
+  //   return (
+  //     <View>
+  //       {markers.map((marker, index) => {
+  //         <WebMarker
+  //           style={styles.marker}
+  //           source={markerURL}
+  //           lat={marker.lat}
+  //           lng={marker.lng}
+  //           key={index}
+  //         />;
+  //       })}
+  //     </View>
+  //   );
+  // };
 
   return (
     //Can only return 1 view object for Andriod
@@ -429,40 +426,40 @@ const StaffPage = ({ navigation }) => {
             />
           </DataTable>
         </Surface>
-      </View>
-      <Button title="Export Database" onPress={ExportDatabase} />
-      {/* map */}
-      <View style={styles.map}>
-        {Platform.OS === "web" ? (
-          <GoogleMapReact
-            bootstrapURLKeys={
-              {
-                //google api key
-                //key: "AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0",
+        <Button title="Export Database" onPress={ExportDatabase} />
+        {/* map */}
+        <View style={styles.map}>
+          {Platform.OS === "web" ? (
+            <GoogleMapReact
+              bootstrapURLKeys={
+                {
+                  /*************************Enable api key before deployment ************************/
+                  //key: "AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0",
+                }
               }
-            }
-            defaultCenter={mapRegion.center}
-            zoom={mapRegion.zoom}
-          >
-            {/* markers on the map */}
-            {markers.map((marker, index) => {
-              return (
-                <WebMarker
-                  style={styles.marker}
-                  source={markerURL}
-                  lat={marker.lat}
-                  lng={marker.lng}
-                  key={index}
-                />
-              );
-            })}
-            {/* {<Markers />} */}
-          </GoogleMapReact>
-        ) : (
-          <MapView style={styles.map} region={mapRegion}>
-            <Marker key={0} coordinate={mapRegion} title={"Marker"} />
-          </MapView>
-        )}
+              defaultCenter={mapRegion.center}
+              zoom={mapRegion.zoom}
+            >
+              {/* markers on the map */}
+              {markers.map((marker, index) => {
+                return (
+                  <WebMarker
+                    style={styles.marker}
+                    source={markerURL}
+                    lat={marker.lat}
+                    lng={marker.lng}
+                    key={index}
+                  />
+                );
+              })}
+              {/* {<Markers />} */}
+            </GoogleMapReact>
+          ) : (
+            <MapView style={styles.map} region={mapRegion}>
+              <Marker key={0} coordinate={mapRegion} title={"Marker"} />
+            </MapView>
+          )}
+        </View>
       </View>
     </ScrollView>
   );

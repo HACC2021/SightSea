@@ -24,7 +24,7 @@ import {
 import PhoneInput from "react-native-phone-input";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import { getDatabase, ref, onValue, set, child, get } from "firebase/database";
-
+import * as Location from "expo-location";
 //import Marker from "react-native-maps";
 //import DropDown from "react-native-paper-dropdown";
 //import DateTimePicker from "@react-native-community/datetimepicker";
@@ -60,11 +60,8 @@ const styles = StyleSheet.create({
 });
 const SightForm = () => {
   const [date, setDate] = React.useState(new Date());
-  const [time, setTime] = React.useState("");
-  const [mode, setMode] = React.useState("date");
-  const [showDate, setShowDate] = React.useState(false);
-  const [showTime, setShowTime] = React.useState(false);
-
+  const [currentLocation, setCurrentLocation] = React.useState(null);
+  const [errorMsg, setErrorMsg] = React.useState(null);
   const [name, setName] = React.useState("");
   const [docID, setDocID] = React.useState("");
   const [phoneNum, setPhoneNum] = React.useState("");
@@ -151,25 +148,6 @@ const SightForm = () => {
     setBirdTypeDropDown(!showBirdType);
   };
 
-  const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
-    setShow(Platform.OS === "ios");
-    setDate(currentDate);
-  };
-
-  const showMode = (currentMode) => {
-    setShow(true);
-    setMode(currentMode);
-  };
-
-  const showDatepicker = () => {
-    showMode("date");
-  };
-
-  const showTimepicker = () => {
-    showMode("time");
-  };
-
   //format the date for the form
   const currentDate = () => {
     var day = new Date().getDate();
@@ -196,6 +174,70 @@ const SightForm = () => {
     return time;
   };
 
+  //get current user location
+  React.useEffect(() => {
+    (async () => {
+      //check if location is enabled by user
+      let { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== "granted") {
+        setErrorMsg("Permission to access location was denied");
+        return;
+      }
+      //get user current location
+      let currentLocation = await Location.getCurrentPositionAsync({});
+      setCurrentLocation(currentLocation);
+    })();
+  }, []);
+
+  //get location coordinate from currentLocation (location object)
+  //return object: latitude, longitude, postal address
+  function getUserLocation() {
+    let locationCoordinate = {};
+    let errorText = "Waiting..";
+    if (errorMsg) {
+      //console.log(errorText);
+      window.alert(errorText);
+    }
+    //convert to postal address if no errors are found
+    else if (currentLocation) {
+      //convert to array of values
+      const locationArray = Object.values(currentLocation);
+      //store location coordinate in a object
+      locationCoordinate["latitude"] = locationArray[0].latitude;
+      locationCoordinate["longitude"] = locationArray[0].longitude;
+    }
+
+    return locationCoordinate;
+  }
+
+  function convertToAddress(coordinateObj) {
+    let locationString = "";
+    //convert coordinate to postal address
+    //@param object: {latitude: xxx, longitude:xxx}
+    //@param array: address
+
+    /*************************Enable api key when using reverseGeocodeAsync function ************************/
+    Location.setGoogleApiKey("AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0");
+    Location.reverseGeocodeAsync(coordinateObj).then((address) => {
+      //console.log(address[0]);
+
+      locationString =
+        address[0]["name"] +
+        ". " +
+        address[0]["city"] +
+        ", " +
+        address[0]["region"] +
+        " " +
+        address[0]["postalCode"];
+    });
+
+    return locationString;
+  }
+
+  // window.alert(
+  //   locationCoordinate.latitude + ", " + locationCoordinate.longitude
+  // );
+
   //format number form input
   const phoneNumFormat = () => {
     var first_three = phoneNum.toString().slice(0, 3);
@@ -208,6 +250,10 @@ const SightForm = () => {
   //window.alert(date.getHours() + ":" + date.getMinutes());
   const handleSubmit = (e) => {
     e.preventDefault();
+
+    //get location coordinate
+    const coordinate = getUserLocation();
+    console.log(coordinate);
 
     //All Required info for seal input
     var new_date = currentDate();
@@ -408,34 +454,6 @@ const SightForm = () => {
             Fill out the form below to submit a sighting and our staffs will
             review the submitted form shortly.
           </Subheading>
-          {/* datatimepicker must be wrapped in a view to work
-          <View>
-            <Title>Select Date and Time:</Title>
-            <View style={{ flexDirection: "row" }}>
-              <View style={{ flex: 0.5, flexDirection: "column" }}>
-                <DateTimePicker
-                  testID="dateTimePicker"
-                  value={date}
-                  mode="date"
-                  is24Hour={true}
-                  display={showDate}
-                  onChange={onChange}
-                />
-              </View>
-              <View style={{ flex: 0.5, flexDirection: "column" }}>
-                <DateTimePicker
-                  testID="dateTimePicker"
-                  value={date}
-                  mode="time"
-                  is24Hour={true}
-                  display={showTime}
-                  onChange={onChange}
-                />
-              </View>
-           </View>
-           </View> */}
-          {/* <Marker coordinate={(37, -122)} /> */}
-
           <View>
             <List.Section title="Animal Type">
               <List.Accordion
