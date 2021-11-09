@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
   Text,
@@ -10,19 +10,30 @@ import {
   Dimensions,
   Platform,
   ScrollView,
-  Box,
+  Pressable,
+  TouchableOpacity,
 } from "react-native";
 import Component from "react";
 import Proptypes from "prop-types";
-import { DataTable, Checkbox, Modal, Portal } from "react-native-paper";
-import MapView, { Marker } from "react-native-maps";
+import {
+  DataTable,
+  Checkbox,
+  Modal,
+  Portal,
+  Surface,
+} from "react-native-paper";
 import GoogleMapReact from "google-map-react";
+import MapView, { Marker } from "react-native-maps";
+import ExportDatabase from "../../scripts/ExportDatabase";
+
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { color } from "react-native-elements/dist/helpers";
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "skyblue",
     alignItems: "center",
+    textAlign: "center",
     justifyContent: "center",
   },
   // input: {
@@ -37,21 +48,15 @@ const styles = StyleSheet.create({
     fontSize: 30,
     marginTop: 10,
     fontWeight: "bold",
-    borderWidth: 3,
-    textAlign: "center",
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
+    textAlign: "left",
   },
   secondaryheader: {
     fontSize: 30,
     marginTop: 40,
     fontWeight: "bold",
-    borderWidth: 3,
-    textAlign: "center",
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
+    textAlign: "left",
   },
-  tableContainer: {},
+
   table: {
     marginTop: 10,
     marginBottom: 10,
@@ -67,7 +72,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   map: {
-    width: 800,
+    alignContent: "center",
+    width: "100%",
     height: 600,
   },
   marker: {
@@ -77,7 +83,20 @@ const styles = StyleSheet.create({
   containerStyle: {
     width: 100,
     height: 100,
-    backgroundColor: "white",
+    backgroundColor: "#fff",
+  },
+  surface: {
+    alignItems: "center",
+    justifyContent: "center",
+    elevation: 4,
+    paddingTop: 10,
+    width: "90%",
+  },
+  verifyButton: {    
+    borderRadius: 6,
+    // marginRight: 15,
+    padding: 4,
+    // padding: 7,
   },
   Box: {
     border: "1px solid",
@@ -86,6 +105,8 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
   },
 });
+
+const optionsPerPage = [2, 3, 4];
 
 //searchable table of reports
 //should default to display most recent 5 only then
@@ -96,7 +117,29 @@ const styles = StyleSheet.create({
 // are being displayed
 
 //protected route/login
-const StaffPage = () => {
+const StaffPage = ({ navigation }) => {
+  const [initializing, setInitializing] = useState(true);
+  const [user, setUser] = useState();
+  const [pageNewTable, setPageNewTable] = React.useState(0);
+  const [itemsPerPage, setItemsPerPage] = React.useState(optionsPerPage[0]);
+  const [pageVerifiedTable, setPageVerifiedTable] = React.useState(0);
+
+  React.useEffect(() => {
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        navigation.navigate("SightSea");
+      }
+    });
+
+    setPageNewTable(0);
+    setPageVerifiedTable(0);
+  }, [itemsPerPage]);
+
+  // ##########adding Firebase query ##########
+// Firebase data query
+  // data = Firebase.database();
+// ####################
   //get window dimensions
   const windowWidth = Dimensions.get("window").width;
   const windowHeight = Dimensions.get("window").height;
@@ -212,40 +255,80 @@ const StaffPage = () => {
     //Can only return 1 view object for Andriod
     <ScrollView>
       <View style={styles.container}>
-        <View style={styles.tableContainer}>
-          <Text style={styles.header}>Approve Reports</Text>
-
-          <DataTable style={styles.table}>
+        <Surface style={styles.surface}>
+          <Text style={styles.header}>New Reports</Text>
+          <DataTable>
             <DataTable.Header>
+              {!checked ? (
+                <DataTable.Title></DataTable.Title>
+              ) : (
+                <DataTable.Title>
+                  <TouchableOpacity
+                  style={styles.verifyButton}
+                  onPress={Assign}
+                  >
+                    <Text style={{color: "#3478F6"}}>
+                    Verify
+                    </Text>
+                  </TouchableOpacity>
+                </DataTable.Title>
+              )}
               <DataTable.Title style={styles.columns}>
-                Date & Time
+                Ticket Number
               </DataTable.Title>
-              <DataTable.Title style={styles.columns}>Location</DataTable.Title>
               <DataTable.Title style={styles.columns}>
-                Identifying Markings
+                Ticket Type
               </DataTable.Title>
-              <DataTable.Title style={styles.columns}>Behavior</DataTable.Title>
-              <DataTable.Title style={styles.columns}>
-                Crowd Size
-              </DataTable.Title>
-              <DataTable.Title style={styles.columns}>Name</DataTable.Title>
-              <DataTable.Title style={styles.columns}> Phone #</DataTable.Title>
-              <DataTable.Title style={styles.columns}>Images</DataTable.Title>
-              <DataTable.Title style={styles.columns}>
-                Assigned?{" "}
-              </DataTable.Title>
+
+              {Platform.OS === "web" ? (
+                <>
+                  <DataTable.Title style={styles.columns}>Date</DataTable.Title>
+                  <DataTable.Title style={styles.columns}>Time</DataTable.Title>
+                  <DataTable.Title style={styles.columns}>
+                    Location
+                  </DataTable.Title>
+                </>
+              ) : null}
             </DataTable.Header>
-            {/* Loop over new reports and display them here */}
-            <DataTable.Row>
-              <DataTable.Cell style={styles.row}>Today 1:00 PM</DataTable.Cell>
-              <DataTable.Cell style={styles.row}>Sandys</DataTable.Cell>
-              <DataTable.Cell style={styles.row}>Spot on Head</DataTable.Cell>
-              <DataTable.Cell style={styles.row}>Erratic</DataTable.Cell>
-              <DataTable.Cell style={styles.row}>40 People</DataTable.Cell>
-              <DataTable.Cell style={styles.row}>Patrick</DataTable.Cell>
-              <DataTable.Cell style={styles.row}>123-4567</DataTable.Cell>
-              <DataTable.Cell style={styles.row}>None.</DataTable.Cell>
-              <DataTable.Cell style={styles.row}>
+            {/* Loop over new reports to make rows */}
+            
+{/* ###########USE when firebase is connected ####### */}
+
+              {/* {data.map((data) => {
+                return (
+                  <DataTable.Row key={data.id} onPress={() => navigation.navigate(data.id.toString())}>
+                  <DataTable.Cell style={styles.columns}>
+                <Checkbox
+                  status={checked ? "checked" : "unchecked"}
+                  onPress={() => {
+                    setChecked(!checked);
+                  }}
+                ></Checkbox>
+                  </DataTable.Cell>
+                  <DataTable.Cell numeric style={styles.row}>
+                {data.ticketNumber}
+              </DataTable.Cell>
+              <DataTable.Cell style={styles.row}>{data.ticketType}</DataTable.Cell>
+
+              {Platform.OS === "web" ? (
+                <>
+                  <DataTable.Cell numeric style={styles.row}>
+                  {data.date}
+                  </DataTable.Cell>
+                  <DataTable.Cell numeric style={styles.row}>
+                    {data.time}
+                  </DataTable.Cell>
+                  <DataTable.Cell style={styles.row}>{data.location}</DataTable.Cell>
+                </>
+              ) : null}
+                  </DataTable.Row>
+                  
+                )
+              })} */}
+
+{/* ###########USE when firebase is connected ####### */}
+              <DataTable.Row onPress={() => console.log("Clicked")}>
+              <DataTable.Cell style={styles.columns}>
                 <Checkbox
                   status={checked ? "checked" : "unchecked"}
                   onPress={() => {
@@ -253,65 +336,113 @@ const StaffPage = () => {
                   }}
                 ></Checkbox>
               </DataTable.Cell>
+              <DataTable.Cell numeric style={styles.row}>
+                123
+              </DataTable.Cell>
+              <DataTable.Cell style={styles.row}>C</DataTable.Cell>
+
+              {Platform.OS === "web" ? (
+                <>
+                  <DataTable.Cell numeric style={styles.row}>
+                    32132
+                  </DataTable.Cell>
+                  <DataTable.Cell numeric style={styles.row}>
+                    0500
+                  </DataTable.Cell>
+                  <DataTable.Cell style={styles.row}>a beach</DataTable.Cell>
+                </>
+              ) : null}
             </DataTable.Row>
+{/* ################## */}
+            <DataTable.Pagination
+              page={pageNewTable}
+              numberOfPages={3}
+              onPageChange={(page) => setPageNewTable(page)}
+              label="1-2 of 6"
+              optionsPerPage={optionsPerPage}
+              itemsPerPage={itemsPerPage}
+              setItemsPerPage={setItemsPerPage}
+              showFastPagination
+              optionsLabel={"Rows per page"}
+            />
           </DataTable>
-
-          {/*Assign to volunteer page */}
-
-          <Button
-            style={styles.button}
-            title="Assign"
-            onPress={Assign}
-          ></Button>
-          <Text style={styles.secondaryheader}>Reports</Text>
-
+        </Surface>
+        <View />
+        <Surface style={styles.surface}>
+          <Text style={styles.secondaryheader}>Verified Reports</Text>
           {/* Display map with pins for ALL new reports */}
-
-          <DataTable style={styles.table}>
+          <DataTable>
             <DataTable.Header>
+              <DataTable.Title></DataTable.Title>
               <DataTable.Title style={styles.columns}>
-                Date & Time
+                Ticket Number
               </DataTable.Title>
-              <DataTable.Title style={styles.columns}>Location</DataTable.Title>
               <DataTable.Title style={styles.columns}>
-                Identifying Markings
+                Ticket Type
               </DataTable.Title>
-              <DataTable.Title style={styles.columns}>Behavior</DataTable.Title>
-              <DataTable.Title style={styles.columns}>
-                Crowd Size
-              </DataTable.Title>
-              <DataTable.Title style={styles.columns}>Name</DataTable.Title>
-              <DataTable.Title style={styles.columns}> Phone #</DataTable.Title>
-              <DataTable.Title style={styles.columns}>Images</DataTable.Title>
-              <DataTable.Title style={styles.columns}>
-                Volunteer
-              </DataTable.Title>
-            </DataTable.Header>
-            {/* Loop over all reports and display them here */}
-            <DataTable.Row>
-              <DataTable.Cell>Today 1:00 PM</DataTable.Cell>
-              <DataTable.Cell>Sandys</DataTable.Cell>
-              <DataTable.Cell>Spot on Head</DataTable.Cell>
-              <DataTable.Cell>Erratic</DataTable.Cell>
-              <DataTable.Cell>40 People</DataTable.Cell>
-              <DataTable.Cell>Patrick</DataTable.Cell>
-              <DataTable.Cell>123-4567</DataTable.Cell>
-              <DataTable.Cell>None.</DataTable.Cell>
-              <DataTable.Cell>Jeffery</DataTable.Cell>
-            </DataTable.Row>
-          </DataTable>
-        </View>
 
-        {/* map */}
-        <View style={styles.map}>
-          {Platform.OS === "web" ? (
-            <GoogleMapReact
-              bootstrapURLKeys={
-                {
-                  //google api key
-                  //key: "AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0",
-                }
+              {Platform.OS === "web" ? (
+                <>
+                  <DataTable.Title style={styles.columns}>Date</DataTable.Title>
+                  <DataTable.Title style={styles.columns}>Time</DataTable.Title>
+                  <DataTable.Title style={styles.columns}>
+                    Location
+                  </DataTable.Title>
+                </>
+              ) : null}
+            </DataTable.Header>
+            {/* Loop over new reports to make rows */}
+            <DataTable.Row>
+              <DataTable.Cell style={styles.columns}>
+                {/* <Checkbox
+                  status={checked ? "checked" : "unchecked"}
+                  onPress={() => {
+                    setChecked(!checked);
+                  }}
+                ></Checkbox> */}
+              </DataTable.Cell>
+              <DataTable.Cell numeric style={styles.row}>
+                123
+              </DataTable.Cell>
+              <DataTable.Cell style={styles.row}>C</DataTable.Cell>
+              {Platform.OS === "web" ? (
+                <>
+                  <DataTable.Cell numeric style={styles.row}>
+                    32132
+                  </DataTable.Cell>
+                  <DataTable.Cell numeric style={styles.row}>
+                    0500
+                  </DataTable.Cell>
+                  <DataTable.Cell style={styles.row}>a beach</DataTable.Cell>
+                </>
+              ) : null}
+            </DataTable.Row>
+
+            <DataTable.Pagination
+              page={pageVerifiedTable}
+              numberOfPages={3}
+              onPageChange={(page) => setPageVerifiedTable(page)}
+              label="1-2 of 6"
+              optionsPerPage={optionsPerPage}
+              itemsPerPage={itemsPerPage}
+              setItemsPerPage={setItemsPerPage}
+              showFastPagination
+              optionsLabel={"Rows per page"}
+            />
+          </DataTable>
+        </Surface>
+      </View>
+      <Button title="Export Database" onPress={ExportDatabase} />
+      {/* map */}
+      <View style={styles.map}>
+        {Platform.OS === "web" ? (
+          <GoogleMapReact
+            bootstrapURLKeys={
+              {
+                //google api key
+                //key: "AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0",
               }
+<<<<<<< HEAD
               defaultCenter={mapRegion.center}
               zoom={mapRegion.zoom}
             >
@@ -334,6 +465,31 @@ const StaffPage = () => {
             </MapView>
           )}
         </View>
+=======
+            }
+            defaultCenter={mapRegion.center}
+            zoom={mapRegion.zoom}
+          >
+            {/* markers on the map */}
+            {markers.map((marker, index) => {
+              return (
+                <WebMarker
+                  style={styles.marker}
+                  source={markerURL}
+                  lat={marker.lat}
+                  lng={marker.lng}
+                  key={index}
+                />
+              );
+            })}
+            {/* {<Markers />} */}
+          </GoogleMapReact>
+        ) : (
+          <MapView style={styles.map} region={mapRegion}>
+            <Marker key={0} coordinate={mapRegion} title={"Marker"} />
+          </MapView>
+        )}
+>>>>>>> main
       </View>
     </ScrollView>
   );
