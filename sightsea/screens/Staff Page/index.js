@@ -21,13 +21,14 @@ import {
   Modal,
   Portal,
   Surface,
+  Title,
 } from "react-native-paper";
 import GoogleMapReact from "google-map-react";
 import MapView, { Marker } from "react-native-maps";
 import ExportDatabase from "../../scripts/ExportDatabase";
 
 import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { color } from "react-native-elements/dist/helpers";
+import * as Location from "expo-location";
 
 const styles = StyleSheet.create({
   container: {
@@ -92,12 +93,18 @@ const styles = StyleSheet.create({
     paddingTop: 10,
     width: "90%",
   },
-  verifyButton: {    
+  verifyButton: {
     borderRadius: 6,
     // marginRight: 15,
     padding: 4,
     // padding: 7,
   },
+  // Box: {
+  //   border: "1px solid",
+  //   width: 50,
+  //   height: 50,
+  //   backgroundColor: "white",
+  // },
 });
 
 const optionsPerPage = [2, 3, 4];
@@ -131,15 +138,16 @@ const StaffPage = ({ navigation }) => {
   }, [itemsPerPage]);
 
   // ##########adding Firebase query ##########
-// Firebase data query
+  // Firebase data query
   // data = Firebase.database();
-// ####################
+  // ####################
   //get window dimensions
   const windowWidth = Dimensions.get("window").width;
   const windowHeight = Dimensions.get("window").height;
   const markerURL =
     "http://icons.iconarchive.com/icons/paomedia/small-n-flat/256/map-marker-icon.png";
   const [checked, setChecked] = React.useState(false);
+  const [open, setOpen] = React.useState(false);
   //define map props
   const [mapRegion, setmapRegion] = React.useState({
     latitude: 21.315603,
@@ -164,45 +172,107 @@ const StaffPage = ({ navigation }) => {
 
   const markers = [
     {
+      id: 1,
       lat: 21.315601,
       lng: -157.95813,
     },
     {
+      id: 3,
       lat: 21.315601,
       lng: -157.85813,
     },
   ];
 
+  const markerInfos = [
+    {
+      id: 1,
+      address: "test address 1",
+    },
+    {
+      id: 3,
+      address: "test address 2",
+    },
+  ];
+  var index = null;
+  var markerObj = null;
+  //var content = "";
   //marker image
-  const WebMarker = () => {
+  const WebMarker = (marker) => {
     function handleMarkerClick() {
-      window.alert("Clicked");
+      markerObj = marker.marker;
+      index = markers.indexOf(markerObj);
+      setOpen(true);
+      console.log(markerInfos[index].address);
     }
+
+    //display a list of info windows
+    //show a specific info windows INPUTS: (boolean open, number id)
+    //shows a info window after clicks on the marker
+    //clears the info window after clicking outside
 
     return (
       <div onClick={handleMarkerClick}>
-        {/* Render shipImage image */}
+        {/* <WebInfoWindow /> */}
         <img src={markerURL} alt="Logo" width={50} height={50} />
       </div>
     );
   };
 
-  //marker component
-  const Markers = () => {
+  const WebInfoWindow = () => {
     return (
-      <View>
-        {markers.map((marker, index) => {
-          <WebMarker
-            style={styles.marker}
-            source={markerURL}
-            lat={marker.lat}
-            lng={marker.lng}
-            key={index}
-          />;
-        })}
-      </View>
+      <div>
+        <p>Hi</p>;
+      </div>
     );
   };
+
+  // {open && markerObj.id == markerInfos[index].id ? (
+  //   <View style={styles.Box}>
+  //     <Text> Box</Text>
+  //   </View>
+  // ) : null}
+
+  //marker component
+  // const Markers = () => {
+  //   return (
+  //     <View>
+  //       {markers.map((marker, index) => {
+  //         <WebMarker
+  //           style={styles.marker}
+  //           source={markerURL}
+  //           lat={marker.lat}
+  //           lng={marker.lng}
+  //           key={index}
+  //         />;
+  //       })}
+  //     </View>
+  //   );
+  // };
+
+  //convert location coordinate to address
+  function convertToAddress(coordinateObj) {
+    let locationString = "";
+    //convert coordinate to postal address
+    //@param object: {latitude: xxx, longitude:xxx}
+    //@param array: address
+
+    /*************************Enable api key when using reverseGeocodeAsync function ************************/
+    Location.setGoogleApiKey("AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0");
+    Location.reverseGeocodeAsync(coordinateObj).then((address) => {
+      //console.log(address[0]);
+
+      locationString =
+        address[0]["name"] +
+        ". " +
+        address[0]["city"] +
+        ", " +
+        address[0]["region"] +
+        " " +
+        address[0]["postalCode"];
+    });
+
+    return locationString;
+  }
 
   return (
     //Can only return 1 view object for Andriod
@@ -217,12 +287,10 @@ const StaffPage = ({ navigation }) => {
               ) : (
                 <DataTable.Title>
                   <TouchableOpacity
-                  style={styles.verifyButton}
-                  onPress={Assign}
+                    style={styles.verifyButton}
+                    onPress={Assign}
                   >
-                    <Text style={{color: "#3478F6"}}>
-                    Verify
-                    </Text>
+                    <Text style={{ color: "#3478F6" }}>Verify</Text>
                   </TouchableOpacity>
                 </DataTable.Title>
               )}
@@ -244,10 +312,10 @@ const StaffPage = ({ navigation }) => {
               ) : null}
             </DataTable.Header>
             {/* Loop over new reports to make rows */}
-            
-{/* ###########USE when firebase is connected ####### */}
 
-              {/* {data.map((data) => {
+            {/* ###########USE when firebase is connected ####### */}
+
+            {/* {data.map((data) => {
                 return (
                   <DataTable.Row key={data.id} onPress={() => navigation.navigate(data.id.toString())}>
                   <DataTable.Cell style={styles.columns}>
@@ -279,8 +347,8 @@ const StaffPage = ({ navigation }) => {
                 )
               })} */}
 
-{/* ###########USE when firebase is connected ####### */}
-              <DataTable.Row onPress={() => console.log("Clicked")}>
+            {/* ###########USE when firebase is connected ####### */}
+            <DataTable.Row onPress={() => console.log("Clicked")}>
               <DataTable.Cell style={styles.columns}>
                 <Checkbox
                   status={checked ? "checked" : "unchecked"}
@@ -306,7 +374,7 @@ const StaffPage = ({ navigation }) => {
                 </>
               ) : null}
             </DataTable.Row>
-{/* ################## */}
+            {/* ################## */}
             <DataTable.Pagination
               page={pageNewTable}
               numberOfPages={3}
@@ -384,40 +452,40 @@ const StaffPage = ({ navigation }) => {
             />
           </DataTable>
         </Surface>
-      </View>
-      <Button title="Export Database" onPress={ExportDatabase} />
-      {/* map */}
-      <View style={styles.map}>
-        {Platform.OS === "web" ? (
-          <GoogleMapReact
-            bootstrapURLKeys={
-              {
-                //google api key
-                //key: "AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0",
+        <Button title="Export Database" onPress={ExportDatabase} />
+        {/* map */}
+        <View style={styles.map}>
+          {Platform.OS === "web" ? (
+            <GoogleMapReact
+              bootstrapURLKeys={
+                {
+                  /*************************Enable api key before deployment ************************/
+                  //key: "AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0",
+                }
               }
-            }
-            defaultCenter={mapRegion.center}
-            zoom={mapRegion.zoom}
-          >
-            {/* markers on the map */}
-            {markers.map((marker, index) => {
-              return (
-                <WebMarker
-                  style={styles.marker}
-                  source={markerURL}
-                  lat={marker.lat}
-                  lng={marker.lng}
-                  key={index}
-                />
-              );
-            })}
-            {/* {<Markers />} */}
-          </GoogleMapReact>
-        ) : (
-          <MapView style={styles.map} region={mapRegion}>
-            <Marker key={0} coordinate={mapRegion} title={"Marker"} />
-          </MapView>
-        )}
+              defaultCenter={mapRegion.center}
+              zoom={mapRegion.zoom}
+            >
+              {/* markers on the map */}
+              {markers.map((marker, index) => {
+                return (
+                  <WebMarker
+                    style={styles.marker}
+                    source={markerURL}
+                    lat={marker.lat}
+                    lng={marker.lng}
+                    key={index}
+                  />
+                );
+              })}
+              {/* {<Markers />} */}
+            </GoogleMapReact>
+          ) : (
+            <MapView style={styles.map} region={mapRegion}>
+              <Marker key={0} coordinate={mapRegion} title={"Marker"} />
+            </MapView>
+          )}
+        </View>
       </View>
     </ScrollView>
   );
