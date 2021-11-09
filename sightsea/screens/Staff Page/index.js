@@ -28,6 +28,7 @@ import MapView, { Marker } from "react-native-maps";
 import ExportDatabase from "../../scripts/ExportDatabase";
 
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+import * as Location from "expo-location";
 
 const styles = StyleSheet.create({
   container: {
@@ -247,6 +248,31 @@ const StaffPage = ({ navigation }) => {
   //     </View>
   //   );
   // };
+
+  //convert location coordinate to address
+  function convertToAddress(coordinateObj) {
+    let locationString = "";
+    //convert coordinate to postal address
+    //@param object: {latitude: xxx, longitude:xxx}
+    //@param array: address
+
+    /*************************Enable api key when using reverseGeocodeAsync function ************************/
+    Location.setGoogleApiKey("AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0");
+    Location.reverseGeocodeAsync(coordinateObj).then((address) => {
+      //console.log(address[0]);
+
+      locationString =
+        address[0]["name"] +
+        ". " +
+        address[0]["city"] +
+        ", " +
+        address[0]["region"] +
+        " " +
+        address[0]["postalCode"];
+    });
+
+    return locationString;
+  }
 
   return (
     //Can only return 1 view object for Andriod

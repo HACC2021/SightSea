@@ -210,33 +210,9 @@ const SightForm = () => {
     return locationCoordinate;
   }
 
-  function convertToAddress(coordinateObj) {
-    let locationString = "";
-    //convert coordinate to postal address
-    //@param object: {latitude: xxx, longitude:xxx}
-    //@param array: address
-
-    /*************************Enable api key when using reverseGeocodeAsync function ************************/
-    Location.setGoogleApiKey("AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0");
-    Location.reverseGeocodeAsync(coordinateObj).then((address) => {
-      //console.log(address[0]);
-
-      locationString =
-        address[0]["name"] +
-        ". " +
-        address[0]["city"] +
-        ", " +
-        address[0]["region"] +
-        " " +
-        address[0]["postalCode"];
-    });
-
-    return locationString;
-  }
-
-  // window.alert(
-  //   locationCoordinate.latitude + ", " + locationCoordinate.longitude
-  // );
+  //get location coordinate
+  const coordinate = getUserLocation();
+  console.log(coordinate);
 
   //format number form input
   const phoneNumFormat = () => {
