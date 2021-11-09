@@ -471,20 +471,26 @@ const StaffPage = ({ navigation }) => {
             onValueChange={(value) => handleRadioChange(value)}
             value={animalDisplayType}
           >
-            {animalTypes.map((x, index) => (
-              <RadioButton.Item key={index} label={x} value={x} />
-            ))}
+            {Platform.OS === "web" ? (
+              <View style={{ flexDirection: "row" }}>
+                {animalTypes.map((x, index) => (
+                  <View style={{ flexDirection: "column" }}>
+                    <RadioButton.Item key={index} label={x} value={x} />
+                  </View>
+                ))}
+              </View>
+            ) : (
+              animalTypes.map((x, index) => (
+                <RadioButton.Item key={index} label={x} value={x} />
+              ))
+            )}
           </RadioButton.Group>
           {/* Display map with pins for ALL new reports */}
           <DataTable>
             <DataTable.Header>
               <DataTable.Title></DataTable.Title>
-              <DataTable.Title style={styles.columns}>
-                Ticket Number
-              </DataTable.Title>
-              <DataTable.Title style={styles.columns}>
-                Ticket Type
-              </DataTable.Title>
+              <DataTable.Title>Ticket Number</DataTable.Title>
+              <DataTable.Title>Ticket Type</DataTable.Title>
 
               {Platform.OS === "web" ? (
                 <>
@@ -555,8 +561,8 @@ const StaffPage = ({ navigation }) => {
               data={markers}
             />
           ) : (
-            <MapView style={styles.map} region={mapRegion}>
-              <Marker key={0} coordinate={mapRegion} title={"Marker"} />
+            <MapView style={styles.map} region={mapProps.center}>
+              <Marker key={0} coordinate={mapProps.center} title={"Marker"} />
             </MapView>
           )}
         </View>
