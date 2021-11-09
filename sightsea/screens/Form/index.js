@@ -112,6 +112,8 @@ const SightForm = () => {
     { label: "Seal", value: "Seal" },
   ];
 
+  var coordinate = {};
+
   const closePresentDropdown = () => {
     setPresentDropDown(!showPresentDropDown);
   };
@@ -218,13 +220,10 @@ const SightForm = () => {
     var num = first_three + "-" + middle_three + "-" + last_four;
     return num;
   };
+
   //window.alert(date.getHours() + ":" + date.getMinutes());
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    //get location coordinate
-    const coordinate = getUserLocation();
-    console.log(coordinate);
 
     //All Required info for seal input
     var new_date = currentDate();
@@ -274,12 +273,10 @@ const SightForm = () => {
     return tempID;
   };
 
-  function addDoc() {
-    //get location coordinate
-    var coordinate = getUserLocation();
-    coordinate = JSON.stringify(coordinate);
-    console.log(coordinate);
+  //get location coordinate
+  coordinate = getUserLocation();
 
+  function addDoc() {
     //filter to correct DB based on animal type
     var animalDB = animalType;
     //generate the random doc ID
@@ -295,11 +292,15 @@ const SightForm = () => {
     const observer_type = "P";
     var intitials = name.slice(0, 1) + observer_type;
 
-    if (animalDB === "Seal") {
+    //check if the gps coordinate object is empty
+    if (animalDB === "Seal" && Object.keys(coordinate).length > 0) {
       //Seal Doc
       const reference = ref(db, `${animalDB}/` + `${localdocID}`);
       set(reference, {
-        GPS_Coordinate: coordinate,
+        GPS_Coordinate: {
+          latitude: coordinate["latitude"],
+          longitude: coordinate["longitude"],
+        },
         Date: currentday,
         Time: currenttime,
         Ticket_Number: "XX" + "" + currentday + "" + currenttime,
@@ -345,13 +346,17 @@ const SightForm = () => {
           window.alert("Report Failed to submit.");
           //TODO Stay on page and flag errors
         });
-    } else if (animalDB === "Turtle") {
+    } else if (animalDB === "Turtle" && Object.keys(coordinate).length > 0) {
       //Turtle Doc
       const observer_type = "P";
       var intitials = name.slice(0, 1) + observer_type;
 
       const reference = ref(db, `${animalDB}/` + `${localdocID}`);
       set(reference, {
+        GPS_Coordinate: {
+          latitude: coordinate["latitude"],
+          longitude: coordinate["longitude"],
+        },
         Date: currentday,
         Time: currenttime,
         Ticket_Number: "XX" + "" + currentday + "" + currenttime,
@@ -386,10 +391,14 @@ const SightForm = () => {
           window.alert("Report Failed to submit.");
           //TODO Stay on page and flag errors
         });
-    } else {
+    } else if (animalDB === "Bird" && Object.keys(coordinate).length > 0) {
       //For Bird Docs
       const reference = ref(db, `${animalDB}/` + `${localdocID}`);
       set(reference, {
+        GPS_Coordinate: {
+          latitude: coordinate["latitude"],
+          longitude: coordinate["longitude"],
+        },
         Date: currentday,
         Time: currenttime,
         Ticket_Number: "XX" + "" + currentday + "" + currenttime,
