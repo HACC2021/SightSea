@@ -363,7 +363,7 @@ const StaffPage = ({ navigation }) => {
   //convert location coordinate to address
   function convertToAddress(arrayOfMarker) {
     /*************************Enable api key when using reverseGeocodeAsync function ************************/
-    Location.setGoogleApiKey("AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0");
+    // Location.setGoogleApiKey("AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0");
     //loop through each marker object and convert them to postal address
     var string = "";
     arrayOfMarker.map((obj, index) => {
@@ -547,7 +547,7 @@ const StaffPage = ({ navigation }) => {
             {/* Loop over new reports to make rows */}
 
             {tableData.map((element, index) => (
-              <DataTable.Row key={index} onPress={navigation.navigate('ViewReport', {docId: element[0]})}>
+                <DataTable.Row key={index} onPress={ () => navigation.navigate('ViewReport', {table: element[1]})}>
                 <DataTable.Cell style={styles.columns} key={index}>
                   {/* <Checkbox
                   status={checked ? "checked" : "unchecked"}

@@ -1,5 +1,5 @@
 import React from "react";
-import { getDatabase, ref, onValue, once } from "firebase/database";
+import { getDatabase, ref, onValue, once, set } from "firebase/database";
 import {
   StyleSheet,
   Text,
@@ -62,7 +62,9 @@ const styles = StyleSheet.create({
     height: 50,
   },
 });
-const ViewReport = ({navigation}) => {
+const ViewReport = ({route, navigation}) => {
+  const { table }  = route.params;
+  console.log(table);
   const [animalType, setAnimalType] = React.useState("Turtle");
   const [showAnimalDropDown, setShowAnimalDropDown] = React.useState(false);
   const [name, setName] = React.useState("");
@@ -84,69 +86,41 @@ const ViewReport = ({navigation}) => {
     window.alert("form submitted");
   };
 
-  const getDocs = (animal, direction) => {
-    const db = getDatabase();
-    const turtleReference = ref(db, "/Turtle/documents");
-    onValue(turtleReference, (snapshot) => {
-      var data = snapshot.val();
-      for (let i in data) {
-        var d = data[i].Date;
-      }
-    });
-    onValue(reference, (snapshot) => {
-      setTableData(Object.entries(snapshot.val()));
-    });
+  function writeData() {
+
   }
+
   return (
       <ScrollView>
         <View style={styles.container}>
           <View style={styles.form}>
             <Headline>Report a Sighting</Headline>
-            <View>
-              <List.Section title="Animal Type">
-                <List.Accordion
-                    title={animalType}
-                    expanded={showAnimalDropDown}
-                    onPress={closeAnimalDropdown}
-                >
-                  <List.Item
-                      title="Turtle"
-                      onPress={function () {
-                        setAnimalType("Turtle");
-                        closeAnimalDropdown();
-                      }}
-                  />
-                  <List.Item
-                      title="Seal"
-                      onPress={function () {
-                        setAnimalType("Seal");
-                        closeAnimalDropdown();
-                      }}
-                  />
-                  <List.Item
-                      title="Bird"
-                      onPress={function () {
-                        setAnimalType("Bird");
-                        closeAnimalDropdown();
-                      }}
-                  />
-                </List.Accordion>
-              </List.Section>
-
-              {tableData.map((element, index) => (
                   <View>
                     <Surface>
-                      <Text style={styles.input}>Name:</Text>
-                      <Text style={styles.input}>Date:</Text>
-                      <Text style={styles.input}>Phone Number:</Text>
-                      <Text style={styles.input}>Location:</Text>
+                      { === "Seal" ? null : (
+                          <Text style={styles.input}>Date: {table.Date}</Text>
+                          <Text style={styles.input}>Delivered: {table.Delivered}</Text>
+                          <Text style={styles.input}>Hotline Operator Initals: {table.Hotline_Operator_Initals}</Text>
+                          <Text style={styles.input}>Location: {table.Location}</Text>
+                          <Text style={styles.input}>Location Notes: {table.Location_Notes}</Text>
+                          <Text style={styles.input}>Number of Calls Received: {table.Number_of_Calls_Received}</Text>
+                          <Text style={styles.input}>Observer: {table.Observer}</Text>
+                          <Text style={styles.input}>Observer Number: {table.Observer_Number}</Text>
+                          <Text style={styles.input}>Observer Initials: {table.Observer_Initials}</Text>
+                          <Text style={styles.input}>Observer Type: {table.Observer_Type}</Text>
+                          <Text style={styles.input}>Observer Notes: {table.Observer_Notes}</Text>
+                          <Text style={styles.input}>Outreach Provided By Operator: {table.Outreach_Provided_By_Operator}</Text>
+                          <Text style={styles.input}>Sector: {table.Sector}</Text>
+                          <Text style={styles.input}>Ticket Number: {table.Ticket_Number}</Text>
+                          <Text style={styles.input}>Time: {table.Time}</Text>
+                          <Text style={styles.input}>Type of Bird: {table.Type_of_Bird}</Text>
+                          <Text style={styles.input}>Verified: {table.Verified}</Text>
+                          <Text style={styles.input}>Where To: {table.Where_To}</Text>
+                          <Text style={styles.input}>Ticket Type: {table.Ticket_Type}</Text>
                     </Surface>
                   </View>
-              ))}
 
-
-              {/*{animalType === "Seal" ? null : (*/}
-              {/*    <View>*/}
+             {/*    <View>*/}
               {/*      <Surface>*/}
               {/*        <Text style={styles.input}>Name:</Text>*/}
               {/*        <Text style={styles.input}>Date:</Text>*/}
@@ -156,10 +130,9 @@ const ViewReport = ({navigation}) => {
               {/*    </View>*/}
               {/*)}*/}
             </View>
-            {/*<Button style={styles.btn} mode="contained" onPress={handleSubmit}>*/}
-            {/*  Submit*/}
-            {/*</Button>*/}
-          </View>
+            <Button style={styles.btn} mode="contained" onPress={handleSubmit}>
+              Submit
+            </Button>
         </View>
       </ScrollView>
   );
