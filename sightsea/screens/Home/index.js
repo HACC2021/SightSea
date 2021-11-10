@@ -155,7 +155,7 @@ const HomeScreen = ({ navigation }) => {
             <Dialog.Title> Animal in Distress</Dialog.Title>
             <Dialog.Content>
             <Paragraph>
-              Please press call the hotline
+              Please press call the hotline at 808-256-9840
             </Paragraph>
             </Dialog.Content>
             <Dialog.Actions>
