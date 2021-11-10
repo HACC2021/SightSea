@@ -141,19 +141,22 @@ const HomeScreen = ({ navigation }) => {
           >
             Report an Animal Sighting
           </Button>
+
           <Button style={styles.navButton}>Report a Distressed Animal</Button>
+
           <Button
             style={styles.navButton}
             onPress={() => navigation.navigate("StaffLogin")}
           >
-            <Text style={styles.buttonText}>Staff Portal</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
+            Staff Portal
+          </Button>
+
+          <Button
               style={styles.navButton}
               onPress={() => navigation.navigate("ViewReport")}
           >
-            <Text style={styles.buttonText}>View Report Test</Text>
-          </TouchableOpacity>
+            View Report
+          </Button>
         </View>
       </View>
     </ImageBackground>

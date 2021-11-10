@@ -1,4 +1,5 @@
 import React from "react";
+import { getDatabase, ref, onValue, once } from "firebase/database";
 import {
   StyleSheet,
   Text,
@@ -18,6 +19,7 @@ import {
   Paragraph,
   List,
   Menu,
+  Surface,
 } from "react-native-paper";
 import MapView, { Marker } from "react-native-maps";
 import GoogleMapReact from "google-map-react";
@@ -41,6 +43,15 @@ const styles = StyleSheet.create({
   btn: {
     margin: 10,
     width: windowWidth * 0.5,
+  },
+  surface: {
+    alignItems: "center",
+    justifyContent: "center",
+    elevation: 4,
+    paddingTop: 20,
+    paddingRight: 20,
+    paddingBottom: 20,
+    paddingLeft: 20,
   },
   map: {
     width: windowWidth * 0.8,
@@ -72,15 +83,20 @@ const ViewReport = () => {
     window.alert("form submitted");
   };
 
+  const db = getDatabase();
+  const birdReference = ref(db, "/Bird/documents");
+  onValue(birdReference, (snapshot) => {
+    var data = snapshot.val();
+    for(let i in data) {
+      console.log(data[i]);
+    }
+  })
+
   return (
       <ScrollView>
         <View style={styles.container}>
           <View style={styles.form}>
             <Headline>Report a Sighting</Headline>
-            <Subheading>
-              Fill out the form below to submit a sighting and our staffs will
-              review the submitted form shortly.
-            </Subheading>
             <View>
               <List.Section title="Animal Type">
                 <List.Accordion
@@ -111,54 +127,20 @@ const ViewReport = () => {
                   />
                 </List.Accordion>
               </List.Section>
-              <TextInput
-                  style={styles.input}
-                  onChangeText={setName}
-                  value={name}
-                  mode="outlined"
-                  textContentType="name"
-                  label="Enter First Name"
-              />
-              <TextInput
-                  style={styles.input}
-                  onChangeText={setPhoneNum}
-                  mode="outlined"
-                  keyboardType="decimal-pad"
-                  label="Phone number"
-              />
-              <TextInput
-                  style={styles.input}
-                  mode="outlined"
-                  label="Is the animal on the beach or in the water?"
-              />
               {animalType === "Seal" ? null : (
                   <View>
-                    <TextInput
-                        style={styles.input}
-                        mode="outlined"
-                        label="Describe any visible wounds (size/color)"
-                    />
-                    <TextInput
-                        style={styles.input}
-                        mode="outlined"
-                        label="Describe any previous wounds (ex. amputated flipper)"
-                    />
-                    <TextInput
-                        style={styles.input}
-                        mode="outlined"
-                        label="Describe the animal's behavior (ex. is it lethargic?)"
-                    />
-                    <TextInput
-                        style={styles.input}
-                        mode="outlined"
-                        label="About what size is the animal?"
-                    />
+                    <Surface>
+                      <Text style={styles.input}>Name:</Text>
+                      <Text style={styles.input}>Date:</Text>
+                      <Text style={styles.input}>Phone Number:</Text>
+                      <Text style={styles.input}>Location:</Text>
+                    </Surface>
                   </View>
               )}
             </View>
-            <Button style={styles.btn} mode="contained" onPress={handleSubmit}>
-              Submit
-            </Button>
+            {/*<Button style={styles.btn} mode="contained" onPress={handleSubmit}>*/}
+            {/*  Submit*/}
+            {/*</Button>*/}
           </View>
         </View>
       </ScrollView>
