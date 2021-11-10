@@ -183,7 +183,7 @@ const ExportDatabase = () => {
   };
   var dataJson = {};
   const db = getDatabase();
-  const reference = ref(db, "/Bird");
+  const reference = ref(db, "/Bird/documents");
   var ready = 0;
   var csv = "";
   onValue(reference, (snapshot) => {
