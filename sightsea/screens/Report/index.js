@@ -62,12 +62,13 @@ const styles = StyleSheet.create({
     height: 50,
   },
 });
-const ViewReport = () => {
+const ViewReport = ({navigation}) => {
   const [animalType, setAnimalType] = React.useState("Turtle");
   const [showAnimalDropDown, setShowAnimalDropDown] = React.useState(false);
   const [name, setName] = React.useState("");
   const [phoneNum, setPhoneNum] = React.useState("");
   const [validPhone, setValidPhone] = React.useState(false);
+  const [tableData, setTableData] = React.useState([]);
   const animalTypes = [
     { label: "Turtle", value: "turtle" },
     { label: "Bird", value: "bird" },
@@ -83,17 +84,19 @@ const ViewReport = () => {
     window.alert("form submitted");
   };
 
-  const db = getDatabase();
-  const turtleReference = ref(db, "/Turtle/documents");
-  onValue(turtleReference, (snapshot) => {
-    var data = snapshot.val();
-    console.log(data);
-    for(let i in data) {
-      var d = data[i].Date;
-      console.log(d);
-    }
-  })
-
+  const getDocs = (animal, direction) => {
+    const db = getDatabase();
+    const turtleReference = ref(db, "/Turtle/documents");
+    onValue(turtleReference, (snapshot) => {
+      var data = snapshot.val();
+      for (let i in data) {
+        var d = data[i].Date;
+      }
+    });
+    onValue(reference, (snapshot) => {
+      setTableData(Object.entries(snapshot.val()));
+    });
+  }
   return (
       <ScrollView>
         <View style={styles.container}>
@@ -129,7 +132,8 @@ const ViewReport = () => {
                   />
                 </List.Accordion>
               </List.Section>
-              {animalType === "Seal" ? null : (
+
+              {tableData.map((element, index) => (
                   <View>
                     <Surface>
                       <Text style={styles.input}>Name:</Text>
@@ -138,7 +142,19 @@ const ViewReport = () => {
                       <Text style={styles.input}>Location:</Text>
                     </Surface>
                   </View>
-              )}
+              ))}
+
+
+              {/*{animalType === "Seal" ? null : (*/}
+              {/*    <View>*/}
+              {/*      <Surface>*/}
+              {/*        <Text style={styles.input}>Name:</Text>*/}
+              {/*        <Text style={styles.input}>Date:</Text>*/}
+              {/*        <Text style={styles.input}>Phone Number:</Text>*/}
+              {/*        <Text style={styles.input}>Location:</Text>*/}
+              {/*      </Surface>*/}
+              {/*    </View>*/}
+              {/*)}*/}
             </View>
             {/*<Button style={styles.btn} mode="contained" onPress={handleSubmit}>*/}
             {/*  Submit*/}

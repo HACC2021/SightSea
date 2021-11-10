@@ -42,7 +42,6 @@ import {
   onChildAdded,
 } from "firebase/database";
 import ExportDatabase from "../../scripts/ExportDatabase";
-
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import * as Location from "expo-location";
 
@@ -347,7 +346,7 @@ const StaffPage = ({ navigation }) => {
     getDocs(animalDisplayType, "switch");
     tableData.map((element) => {
       markers.push({
-        ticketNum: element[1].GPS_Coordinate.Ticket_Number,
+        ticketNum: element[1].Ticket_Number,
         latitude: element[1].GPS_Coordinate.latitude,
         longitude: element[1].GPS_Coordinate.longitude,
       });
@@ -548,7 +547,7 @@ const StaffPage = ({ navigation }) => {
             {/* Loop over new reports to make rows */}
 
             {tableData.map((element, index) => (
-              <DataTable.Row key={index}>
+              <DataTable.Row key={index} onPress={navigation.navigate('ViewReport', {docId: element[0]})}>
                 <DataTable.Cell style={styles.columns} key={index}>
                   {/* <Checkbox
                   status={checked ? "checked" : "unchecked"}
