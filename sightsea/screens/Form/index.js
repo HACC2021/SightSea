@@ -24,7 +24,7 @@ import {
 import PhoneInput from "react-native-phone-input";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
 import { getDatabase, ref, onValue, set, child, get, runTransaction } from "firebase/database";
-import * as Location from "expo-location";
+//import * as Location from "expo-location";
 //import Marker from "react-native-maps";
 //import DropDown from "react-native-paper-dropdown";
 //import DateTimePicker from "@react-native-community/datetimepicker";
@@ -274,7 +274,7 @@ const SightForm = () => {
   };
 
   //get location coordinate
-  coordinate = getUserLocation();
+  //coordinate = getUserLocation();
 
   function addDoc() {
     //filter to correct DB based on animal type
@@ -293,14 +293,14 @@ const SightForm = () => {
     var intitials = name.slice(0, 1) + observer_type;
 
     //check if the gps coordinate object is empty
-    if (animalDB === "Seal" && Object.keys(coordinate).length > 0) {
+    if (animalDB === "Seal") {
       //Seal Doc
       const reference = ref(db, `${animalDB}/documents/` + `${localdocID}`);
       set(reference, {
-        GPS_Coordinate: {
-          latitude: coordinate["latitude"],
-          longitude: coordinate["longitude"],
-        },
+        // GPS_Coordinate: {
+        //   latitude: coordinate["latitude"],
+        //   longitude: coordinate["longitude"],
+        // },
         Date: currentday,
         Time: currenttime,
         Ticket_Number: "XX" + "" + currentday + "" + currenttime,
@@ -346,17 +346,17 @@ const SightForm = () => {
           window.alert("Report Failed to submit.");
           //TODO Stay on page and flag errors
         });
-    } else if (animalDB === "Turtle" && Object.keys(coordinate).length > 0) {
+    } else if (animalDB === "Turtle") {
       //Turtle Doc
       const observer_type = "P";
       var intitials = name.slice(0, 1) + observer_type;
 
       const reference = ref(db, `${animalDB}/documents/` + `${localdocID}`);
       set(reference, {
-        GPS_Coordinate: {
-          latitude: coordinate["latitude"],
-          longitude: coordinate["longitude"],
-        },
+        // GPS_Coordinate: {
+        //   latitude: coordinate["latitude"],
+        //   longitude: coordinate["longitude"],
+        // },
         Date: currentday,
         Time: currenttime,
         Ticket_Number: "XX" + "" + currentday + "" + currenttime,
@@ -391,14 +391,14 @@ const SightForm = () => {
           window.alert("Report Failed to submit.");
           //TODO Stay on page and flag errors
         });
-    } else if (animalDB === "Bird" && Object.keys(coordinate).length > 0) {
+    } else if (animalDB === "Bird") {
       //For Bird Docs
       const reference = ref(db, `${animalDB}/documents/` + `${localdocID}`);
       set(reference, {
-        GPS_Coordinate: {
-          latitude: coordinate["latitude"],
-          longitude: coordinate["longitude"],
-        },
+        // GPS_Coordinate: {
+        //   latitude: coordinate["latitude"],
+        //   longitude: coordinate["longitude"],
+        // },
         Date: currentday,
         Time: currenttime,
         Ticket_Number: "XX" + "" + currentday + "" + currenttime,
