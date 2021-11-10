@@ -23,7 +23,15 @@ import {
 
 import PhoneInput from "react-native-phone-input";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
-import { getDatabase, ref, onValue, set, child, get, runTransaction } from "firebase/database";
+import {
+  getDatabase,
+  ref,
+  onValue,
+  set,
+  child,
+  get,
+  runTransaction,
+} from "firebase/database";
 import * as Location from "expo-location";
 //import Marker from "react-native-maps";
 //import DropDown from "react-native-paper-dropdown";
@@ -46,7 +54,7 @@ const styles = StyleSheet.create({
     width: windowWidth * 0.8,
   },
   btn: {
-    margin: 10,
+    margin: 20,
     width: windowWidth * 0.5,
   },
   map: {
@@ -431,13 +439,13 @@ const SightForm = () => {
     }
     const countref = ref(db, `${animalDB}/`);
     runTransaction(countref, (post) => {
-      if(post) {
-        if(post.count) {
+      if (post) {
+        if (post.count) {
           post.count++;
         }
       }
       return post;
-    })
+    });
   }
 
   return (
