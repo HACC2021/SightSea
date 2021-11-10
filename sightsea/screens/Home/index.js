@@ -3,13 +3,14 @@ import {
   StyleSheet,
   Text,
   View,
-  Button,
   StatusBar,
   TouchableOpacity,
   ImageBackground,
   Dimensions,
   Platform,
+  Linking
 } from "react-native";
+import { Button, Dialog, Portal, Paragraph } from "react-native-paper";
 import { NavigationContainer, useTheme } from "@react-navigation/native";
 import { getDatabase, ref, onValue, set } from 'firebase/database';
 
@@ -60,6 +61,9 @@ const windowHeight = Dimensions.get("window").height;
 
 const HomeScreen = ({ navigation }) => {
   const { colors } = useTheme();
+    const [visible, setVisible] = React.useState(false);
+  const showDialog = () => setVisible(true);
+  const hideDialog = () => setVisible(false);  
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -145,9 +149,27 @@ async function addDoc() {
           >
             <Text style={styles.buttonText}>Report an Animal Sighting</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.navButton}>
-            <Text style={styles.buttonText}>Report a Distressed Animal</Text>
-          </TouchableOpacity>
+          <TouchableOpacity 
+          style={styles.navButton}
+          onPress={showDialog}
+          ><Text style={styles.buttonText}>Report a Distressed Animal</Text></TouchableOpacity>
+          <Portal>
+            <Dialog visible={visible} onDismiss={hideDialog}>
+            <Dialog.Title> Animal in Distress</Dialog.Title>
+            <Dialog.Content>
+            <Paragraph>
+              Please press call the hotline at 808-256-9840
+            </Paragraph>
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button onPress={hideDialog}>Cancel</Button>
+              <Button onPress={()=>Linking.openURL('tel:808-256-9840')}>Call</Button>
+            </Dialog.Actions>
+            </Dialog>
+          </Portal>
+
+
+
           <TouchableOpacity
             style={styles.navButton}
             onPress={() => navigation.navigate("StaffLogin")}
