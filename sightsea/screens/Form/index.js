@@ -177,19 +177,19 @@ const SightForm = () => {
   };
 
   //get current user location
-  React.useEffect(() => {
-    (async () => {
-      //check if location is enabled by user
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-        return;
-      }
-      //get user current location
-      let currentLocation = await Location.getCurrentPositionAsync({});
-      setCurrentLocation(currentLocation);
-    })();
-  }, []);
+  // React.useEffect(() => {
+  //   (async () => {
+  //     //check if location is enabled by user
+  //     // let { status } = await Location.requestForegroundPermissionsAsync();
+  //     // if (status !== "granted") {
+  //     //   setErrorMsg("Permission to access location was denied");
+  //     //   return;
+  //     // }
+  //     //get user current location
+  //     // let currentLocation = await Location.getCurrentPositionAsync({});
+  //     // setCurrentLocation(currentLocation);
+  //   })();
+  // }, []);
 
   //get location coordinate from currentLocation (location object)
   //return object: latitude, longitude, postal address
