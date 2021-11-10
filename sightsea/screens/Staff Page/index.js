@@ -339,7 +339,7 @@ const StaffPage = ({ navigation }) => {
 
   const handleRadioChange = () => {
     var markers = [];
-    //setAnimalDisplayType(animal);
+    setAnimalDisplayType(animal);
     setPageVerifiedTable(0);
     setBackAnchorKey(null);
     frontAnchorKeys = [];
@@ -503,7 +503,7 @@ const StaffPage = ({ navigation }) => {
         <Surface style={styles.surface}>
           <Text style={styles.secondaryheader}>Verified Reports</Text>
           <RadioButton.Group
-            onValueChange={(value) => setAnimalDisplayType(value)}
+            onValueChange={(value) => handleRadioChange(value)}
             value={animalDisplayType}
           >
             {Platform.OS === "web" ? (
@@ -520,13 +520,13 @@ const StaffPage = ({ navigation }) => {
               ))
             )}
           </RadioButton.Group>
-          <Button
+          {/* <Button
             mode="contained"
             style={styles.btn}
             onPress={handleRadioChange}
           >
             Search
-          </Button>
+          </Button> */}
           {/* Display map with pins for ALL new reports */}
           <DataTable>
             <DataTable.Header>
