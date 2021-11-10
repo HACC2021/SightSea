@@ -198,12 +198,12 @@ const StaffPage = ({ navigation }) => {
     {
       lat: 21.315601,
       lng: -157.85813,
-      info: "test address 2",
+      info: "828R+6P Joint Base Pearl Harbor-Hickam. Joint Base Pearl Harbor-Hickam, Hawaii undefined",
     },
     {
       lat: 21.315601,
       lng: -157.95813,
-      info: "test address 1",
+      info: "828R+6P Joint Base Pearl Harbor-Hickam. Joint Base Pearl Harbor-Hickam, Hawaii undefined",
     },
   ];
 
