@@ -11,6 +11,7 @@ import {
   ScrollView,
   Pressable,
   TouchableOpacity,
+  Button,
 } from "react-native";
 import Proptypes from "prop-types";
 import {
@@ -24,7 +25,7 @@ import {
   Card,
   Paragraph,
   Subheading,
-  Button,
+  //Button,
 } from "react-native-paper";
 import GoogleMapReact from "google-map-react";
 // import MapView, { Marker } from "react-native-maps";
@@ -285,7 +286,7 @@ const StaffPage = ({ navigation }) => {
     onValue(pageref, (snapshot) => {
       console.log(snapshot.val());
       console.log(itemsPerPage);
-      console.log((Number(snapshot.val()) / itemsPerPage))
+      console.log(Number(snapshot.val()) / itemsPerPage);
       setTotalPages(Math.ceil(Number(snapshot.val()) / itemsPerPage));
     });
     var docCounter = 0;
@@ -357,7 +358,7 @@ const StaffPage = ({ navigation }) => {
     // convertToAddress(markers);
     // //pass the GPS coordinate object to the MarkerData array
     // setMarkerData(markers);
-   };
+  };
 
   // console.log(markerData);
   //convert location coordinate to address
@@ -547,9 +548,16 @@ const StaffPage = ({ navigation }) => {
             {/* Loop over new reports to make rows */}
 
             {tableData.map((element, index) => (
-                <DataTable.Row key={index} onPress={ () => navigation.navigate(
-                    'ViewReport', {table: element[1], animal: animalDisplayType, documentID: element[0], }
-                )}>
+              <DataTable.Row
+                key={index}
+                onPress={() =>
+                  navigation.navigate("ViewReport", {
+                    table: element[1],
+                    animal: animalDisplayType,
+                    documentID: element[0],
+                  })
+                }
+              >
                 <DataTable.Cell style={styles.columns} key={index}>
                   {/* <Checkbox
                   status={checked ? "checked" : "unchecked"}
@@ -579,7 +587,7 @@ const StaffPage = ({ navigation }) => {
                 ) : null}
               </DataTable.Row>
             ))}
-
+            {animalDisplayType !== null ?
             <DataTable.Pagination
               page={pageVerifiedTable}
               numberOfPages={totalPages}
@@ -590,14 +598,19 @@ const StaffPage = ({ navigation }) => {
               // setItemsPerPage={setItemsPerPage}
               showFastPagination
               optionsLabel={"Rows per page"}
-            />
+            /> : null}
           </DataTable>
         </Surface>
         <View>
-          <Button title={`Export ${animalDisplayType} Database`} onPress={() => ExportDatabase(animalDisplayType)} />
+          {animalDisplayType !== null ? (
+            <Button
+              title={`Export ${animalDisplayType} Database`}
+              onPress={() => ExportDatabase(animalDisplayType)}
+            />
+          ) : null}
         </View>
         {/* map */}
-         <View style={styles.map}>
+        <View style={styles.map}>
           {Platform.OS === "web" ? (
             <GoogleMap
               center={mapProps.center}
@@ -605,13 +618,13 @@ const StaffPage = ({ navigation }) => {
               // data={markerData}
             />
           ) : null}
-          
-           {/* (
+
+          {/* (
              <MapView style={styles.map} region={mapProps.center}>
                <Marker key={0} coordinate={mapProps.center} title={"Marker"} />
              </MapView>
            ) */}
-        </View> 
+        </View>
       </View>
     </ScrollView>
   );
