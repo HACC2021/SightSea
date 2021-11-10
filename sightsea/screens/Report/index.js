@@ -84,11 +84,13 @@ const ViewReport = () => {
   };
 
   const db = getDatabase();
-  const birdReference = ref(db, "/Bird/documents");
-  onValue(birdReference, (snapshot) => {
+  const turtleReference = ref(db, "/Turtle/documents");
+  onValue(turtleReference, (snapshot) => {
     var data = snapshot.val();
+    console.log(data);
     for(let i in data) {
-      console.log(data[i]);
+      var d = data[i].Date;
+      console.log(d);
     }
   })
 
