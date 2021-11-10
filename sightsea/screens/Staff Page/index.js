@@ -121,6 +121,7 @@ const styles = StyleSheet.create({
     width: windowWidth * 0.15,
     height: 90,
     marginLeft: -windowWidth * 0.15 * 0.4,
+    marginTop: -windowWidth * 0.15 * 0.45,
     alignItems: "center",
     justifyContent: "center",
     elevation: 4,
@@ -239,9 +240,9 @@ const StaffPage = ({ navigation }) => {
     }
 
     return (
-      <div onClick={onMarkerClick} lat={lat} lng={lng}>
+      <div onClick={onMarkerClick}>
         {show && <InfoWindow marker={marker} index={index} show={show} />}
-        <Image source={markerURL} style={styles.img} />
+        <Image source={markerURL} style={styles.img} lat={lat} lng={lng} />
       </div>
     );
   }
@@ -326,29 +327,36 @@ const StaffPage = ({ navigation }) => {
   };
 
   //convert location coordinate to address
-  function convertToAddress(coordinateObj) {
-    let locationString = "";
+  function convertToAddress(markers) {
     //convert coordinate to postal address
     //@param object: {latitude: xxx, longitude:xxx}
     //@param array: address
 
     /*************************Enable api key when using reverseGeocodeAsync function ************************/
     Location.setGoogleApiKey("AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0");
-    Location.reverseGeocodeAsync(coordinateObj).then((address) => {
-      //console.log(address[0]);
+    //loop through each marker object and convert them to postal address
+    markers.map((marker, index) => {
+      Location.reverseGeocodeAsync({
+        latitude: marker.lat,
+        longitude: marker.lng,
+      }).then((address) => {
+        const addressString =
+          address[0]["name"] +
+          ". " +
+          address[0]["city"] +
+          ", " +
+          address[0]["region"] +
+          " " +
+          address[0]["postalCode"];
 
-      locationString =
-        address[0]["name"] +
-        ". " +
-        address[0]["city"] +
-        ", " +
-        address[0]["region"] +
-        " " +
-        address[0]["postalCode"];
+        //add the postal address to the info field to markers array
+        markers[index]["info"] = addressString;
+      });
     });
-
-    return locationString;
   }
+
+  //convertToAddress(markers);
+  console.log(markers);
 
   return (
     //Can only return 1 view object for Andriod
@@ -474,7 +482,7 @@ const StaffPage = ({ navigation }) => {
             {Platform.OS === "web" ? (
               <View style={{ flexDirection: "row" }}>
                 {animalTypes.map((x, index) => (
-                  <View style={{ flexDirection: "column" }}>
+                  <View style={{ flexDirection: "column" }} key={index}>
                     <RadioButton.Item key={index} label={x} value={x} />
                   </View>
                 ))}
@@ -506,7 +514,7 @@ const StaffPage = ({ navigation }) => {
 
             {tableData.map((element, index) => (
               <DataTable.Row key={index}>
-                <DataTable.Cell style={styles.columns}>
+                <DataTable.Cell style={styles.columns} key={index}>
                   {/* <Checkbox
                   status={checked ? "checked" : "unchecked"}
                   onPress={() => {
