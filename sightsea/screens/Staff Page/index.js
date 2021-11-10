@@ -574,7 +574,7 @@ const StaffPage = ({ navigation }) => {
           </DataTable>
         </Surface>
         <View>
-          <Button title="Export Database" onPress={ExportDatabase} />
+          <Button title={`Export ${animalDisplayType} Database`} onPress={() => ExportDatabase(animalDisplayType)} />
         </View>
         {/* map */}
          <View style={styles.map}>
