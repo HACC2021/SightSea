@@ -55,14 +55,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     justifyContent: "center",
   },
-  // input: {
-  //   height: 40,
-  //   margin: 12,
-  //   borderWidth: 1,
-  //   padding: 10,
-  //   alignItems: "center",
-  //   justifyContent: "center",
-  // },
   header: {
     fontSize: 30,
     marginTop: 10,
@@ -118,14 +110,15 @@ const styles = StyleSheet.create({
     // padding: 7,
   },
   Box: {
-    width: windowWidth * 0.15,
-    height: 90,
-    marginLeft: -windowWidth * 0.15 * 0.4,
-    marginTop: -windowWidth * 0.15 * 0.45,
+    width: windowWidth * 0.18,
+    height: 100,
+    marginLeft: -windowWidth * 0.18 * 0.4,
+    marginTop: -windowWidth * 0.18 * 0.45,
     alignItems: "center",
     justifyContent: "center",
     elevation: 4,
-    paddingTop: 3,
+    paddingBottom: 5,
+    paddingRight: 1,
   },
   img: {
     width: 40,
@@ -184,6 +177,21 @@ const StaffPage = ({ navigation }) => {
     console.log("Assign to volunteer");
   };
 
+  var markers = [
+    {
+      ticketNum: 12345,
+      latitude: 21.315601,
+      longitude: -157.85813,
+      info: "56 N Vineyard Blvd. Honolulu, Hawaii 96817",
+    },
+    {
+      ticketNum: 12345,
+      latitude: 21.315601,
+      longitude: -157.95813,
+      info: "828R+6P Joint Base Pearl Harbor-Hickam. Joint Base Pearl Harbor-Hickam, Hawaii undefined",
+    },
+  ];
+
   const markerURL =
     "http://icons.iconarchive.com/icons/paomedia/small-n-flat/256/map-marker-icon.png";
   const [checked, setChecked] = React.useState(false);
@@ -195,19 +203,6 @@ const StaffPage = ({ navigation }) => {
     },
     zoom: 12,
   };
-
-  // var markers = [
-  //   {
-  //     latitude: 21.315601,
-  //     longitude: -157.85813,
-  //     info: "828R+6P Joint Base Pearl Harbor-Hickam. Joint Base Pearl Harbor-Hickam, Hawaii undefined",
-  //   },
-  //   {
-  //     latitude: 21.315601,
-  //     longitude: -157.95813,
-  //     info: "828R+6P Joint Base Pearl Harbor-Hickam. Joint Base Pearl Harbor-Hickam, Hawaii undefined",
-  //   },
-  // ];
 
   //define marker info
   const InfoWindow = ({ marker, index, show }) => {
@@ -223,7 +218,7 @@ const StaffPage = ({ navigation }) => {
               X
             </Paragraph>
             <Card.Content>
-              <Text>Name of Location</Text>
+              <Paragraph> Ticket Number: {marker["ticketNum"]}</Paragraph>
               <Paragraph>{marker["info"]}</Paragraph>
             </Card.Content>
           </Card>
@@ -338,15 +333,16 @@ const StaffPage = ({ navigation }) => {
     setBackAnchorKey(null);
     frontAnchorKeys = [];
     getDocs(animal, "switch");
-    tableData.map((element, index) => {
+    tableData.map((element) => {
       markers.push({
+        ticketNum: element[1].GPS_Coordinate.Ticket_Number,
         latitude: element[1].GPS_Coordinate.latitude,
         longitude: element[1].GPS_Coordinate.longitude,
       });
     });
 
     //convert GPS coordinate to postal address and update marker array
-    // convertToAddress(markers);
+    convertToAddress(markers);
     //pass the GPS coordinate object to the MarkerData array
     setMarkerData(markers);
   };
