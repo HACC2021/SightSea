@@ -138,7 +138,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const optionsPerPage = [2, 3, 4];
+const optionsPerPage = [3, 3, 3];
 const animalTypes = ["Bird", "Seal", "Turtle"];
 var frontAnchorKeys = [];
 
