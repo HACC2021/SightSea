@@ -265,6 +265,7 @@ const ViewReport = ({route, navigation}) => {
           });
     } else if (animal === "Bird") {
       //For Bird Docs
+      // UGLY CODE WILL FIX LATER
       const reference = ref(db, `${animal}/documents/` + documentID);
       set(reference, {
         // Date: birdDate.value,
@@ -273,7 +274,7 @@ const ViewReport = ({route, navigation}) => {
         // Hotline_Operator_Initials: birdHOI.value,
         // ticket_type: birdTicketType.value,
         // Observer: birdObserver.value,
-        Observer_Contact_Nubmer: phoneNumFormat(),
+          Observer_Contact_Number: table.Observer_Contact_Number,
         // Observer_Type: birdObsType.value,
         // Observer_Initials: birdObsInitials.value,
         // Sector: birdSector.value,
@@ -308,179 +309,204 @@ const ViewReport = ({route, navigation}) => {
                 <View>
                     <Surface>
                           <Text style={styles.input}>Date: {table.Date}</Text>
-                          <TextInput
-                              id="birdDate"
-                              style={styles.input}
-                              // value={table.Date}
-                              // onPress={() => this.setState({ disabled: false })}
-                          >
-                          </TextInput>
+                          {/*<TextInput*/}
+                          {/*    id="birdDate"*/}
+                          {/*    style={styles.input}*/}
+                          {/*    // value={table.Date}*/}
+                          {/*    // onPress={() => this.setState({ disabled: false })}*/}
+                          {/*>*/}
+                          {/*</TextInput>*/}
                           <Text style={styles.input}>Delivered: {table.Delivered}</Text>
-                          <TextInput
-                              id="birdDelivered"
-                              style={styles.input} onChangeText={setName}
-                              value={table.Delivered}
-                          >
-                          </TextInput>
+                          {/*<TextInput*/}
+                          {/*    id="birdDelivered"*/}
+                          {/*    style={styles.input} onChangeText={setName}*/}
+                          {/*    value={table.Delivered}*/}
+                          {/*>*/}
+                          {/*</TextInput>*/}
                           <Text style={styles.input}>Hotline Operator Initals: {table.Hotline_Operator_Initals}</Text>
-                          <TextInput
-                              id="birdHOI"
-                              style={styles.input} onChangeText={setName}
-                              value={table.Hotline_Operator_Initals}
-                          >
-                          </TextInput>
+                          {/*<TextInput*/}
+                          {/*    id="birdHOI"*/}
+                          {/*    style={styles.input} onChangeText={setName}*/}
+                          {/*    value={table.Hotline_Operator_Initals}*/}
+                          {/*>*/}
+                          {/*</TextInput>*/}
                           <Text style={styles.input}>Location: {table.Location}</Text>
-                          <TextInput
-                              id="birdLocation"
-                              style={styles.input} onChangeText={setName}
-                              value={table.Location}
-                          >
-                          </TextInput>
+                          {/*<TextInput*/}
+                          {/*    id="birdLocation"*/}
+                          {/*    style={styles.input} onChangeText={setName}*/}
+                          {/*    value={table.Location}*/}
+                          {/*>*/}
+                          {/*</TextInput>*/}
                           <Text style={styles.input}>Location Notes: {table.Location_Notes}</Text>
-                          <TextInput
-                              id="birdLocNotes"
-                              style={styles.input} onChangeText={setName} value={table.Location_Notes}
-                          >
-                          </TextInput>
+                          {/*<TextInput*/}
+                          {/*    id="birdLocNotes"*/}
+                          {/*    style={styles.input} onChangeText={setName} value={table.Location_Notes}*/}
+                          {/*>*/}
+                          {/*</TextInput>*/}
                           <Text style={styles.input}>Number of Calls Received: {table.Number_of_Calls_Received}</Text>
-                          <TextInput
-                              id="birdNOCR"
-                              style={styles.input} onChangeText={setName} value={table.Number_of_Calls_Received}
-                          >
-                          </TextInput>
+                          {/*<TextInput*/}
+                          {/*    id="birdNOCR"*/}
+                          {/*    style={styles.input} onChangeText={setName} value={table.Number_of_Calls_Received}*/}
+                          {/*>*/}
+                          {/*</TextInput>*/}
                       {/*good*/}
                           <Text style={styles.input}>Observer: {table.Observer}</Text>
-                          <TextInput
-                              id="birdObserver"
-                              style={styles.input} onChangeText={setName} value={table.Observer}
-                          >
-                          </TextInput>
+                          {/*<TextInput*/}
+                          {/*    id="birdObserver"*/}
+                          {/*    style={styles.input} onChangeText={setName} value={table.Observer}*/}
+                          {/*>*/}
+                          {/*</TextInput>*/}
                           <Text style={styles.input}>Observer Number: {table.Observer_Contact_Number}</Text>
-                          <TextInput
-                              id="birdObsNum"
-                              style={styles.input} onChangeText={setPhoneNum} value={table.Observer_Contact_Number}
-                          >
-                          </TextInput>
+                          {/*<TextInput*/}
+                          {/*    id="birdObsNum"*/}
+                          {/*    style={styles.input} onChangeText={setPhoneNum} value={table.Observer_Contact_Number}*/}
+                          {/*>*/}
+                          {/*</TextInput>*/}
                           <Text style={styles.input}>Observer Initials: {table.Observer_Initials}</Text>
-                          <TextInput
-                              id="birdObsInitials"
-                              style={styles.input} onChangeText={setName} value={table.Observer_Initials}
-                          >
-                          </TextInput>
+                          {/*<TextInput*/}
+                          {/*    id="birdObsInitials"*/}
+                          {/*    style={styles.input} onChangeText={setName} value={table.Observer_Initials}*/}
+                          {/*>*/}
+                          {/*</TextInput>*/}
                           <Text style={styles.input}>Observer Type: {table.Observer_Type}</Text>
-                      <TextInput
-                          id="birdObsType"
-                          style={styles.input} onChangeText={setName} value={table.Observer_Type}
-                      >
-                      </TextInput>
-                          <Text style={styles.input}>Observer Notes: {table.Observer_Notes}</Text>
-                      <TextInput
-                          id="birdObsNotes"
-                          style={styles.input} onChangeText={setName} value={table.Observer_Notes}
-                      >
-                      </TextInput>
+                      {/*<TextInput*/}
+                      {/*    id="birdObsType"*/}
+                      {/*    style={styles.input} onChangeText={setName} value={table.Observer_Type}*/}
+                      {/*>*/}
+                      {/*</TextInput>*/}
+                          <Text style={styles.input}>Other Notes: {table.Other_Notes}</Text>
+                      {/*<TextInput*/}
+                      {/*    id="birdObsNotes"*/}
+                      {/*    style={styles.input} onChangeText={setName} value={table.Other_Notes}*/}
+                      {/*>*/}
+                      {/*</TextInput>*/}
                           <Text style={styles.input}>Outreach Provided By Operator: {table.Outreach_Provided_By_Operator}</Text>
-                      <TextInput
-                          id="birdOPBO"
-                          style={styles.input} onChangeText={setName} value={table.Outreach_Provided_By_Operator}
-                      >
-                      </TextInput>
+                      {/*<TextInput*/}
+                      {/*    id="birdOPBO"*/}
+                      {/*    style={styles.input} onChangeText={setName} value={table.Outreach_Provided_By_Operator}*/}
+                      {/*>*/}
+                      {/*</TextInput>*/}
                       <Text style={styles.input}>Responders Name: {table.Responders_name}</Text>
-                      <TextInput
-                          id="birdRespName"
-                          style={styles.input} onChangeText={setName} value={table.Responders_name}
-                      >
-                      </TextInput>
+                      {/*<TextInput*/}
+                      {/*    id="birdRespName"*/}
+                      {/*    style={styles.input} onChangeText={setName} value={table.Responders_name}*/}
+                      {/*>*/}
+                      {/*</TextInput>*/}
                           <Text style={styles.input}>Sector: {table.Sector}</Text>
-                      <TextInput
-                          id="birdSector"
-                          style={styles.input} onChangeText={setName} value={table.Sector}
-                      >
-                      </TextInput>
+                      {/*<TextInput*/}
+                      {/*    id="birdSector"*/}
+                      {/*    style={styles.input} onChangeText={setName} value={table.Sector}*/}
+                      {/*>*/}
+                      {/*</TextInput>*/}
                           <Text style={styles.input}>Ticket Number: {table.Ticket_Number}</Text>
-                      <TextInput
-                          id="birdTicketNum"
-                          style={styles.input} onChangeText={setName} value={table.Ticket_Number}
-                      >
-                      </TextInput>
+                      {/*<TextInput*/}
+                      {/*    id="birdTicketNum"*/}
+                      {/*    style={styles.input} onChangeText={setName} value={table.Ticket_Number}*/}
+                      {/*>*/}
+                      {/*</TextInput>*/}
                           <Text style={styles.input}>Time: {table.Time}</Text>
-                      <TextInput
-                          id="birdTime"
-                          style={styles.input} onChangeText={setName} value={table.Time}
-                      >
-                      </TextInput>
+                      {/*<TextInput*/}
+                      {/*    id="birdTime"*/}
+                      {/*    style={styles.input} onChangeText={setName} value={table.Time}*/}
+                      {/*>*/}
+                      {/*</TextInput>*/}
                           <Text style={styles.input}>Type of Bird: {table.Type_of_Bird}</Text>
-                      <TextInput
-                          id="birdType"
-                          style={styles.input} onChangeText={setName} value={table.Type_of_Bird}
-                      >
-                      </TextInput>
+                      {/*<TextInput*/}
+                      {/*    id="birdType"*/}
+                      {/*    style={styles.input} onChangeText={setName} value={table.Type_of_Bird}*/}
+                      {/*>*/}
+                      {/*</TextInput>*/}
                           <Text style={styles.input}>Verified: {table.Verified}</Text>
-                      <TextInput
-                          id="birdVerified"
-                          style={styles.input} onChangeText={setName} value={table.Verified}
-                      >
-                      </TextInput>
+                      {/*<TextInput*/}
+                      {/*    id="birdVerified"*/}
+                      {/*    style={styles.input} onChangeText={setName} value={table.Verified}*/}
+                      {/*>*/}
+                      {/*</TextInput>*/}
                           <Text style={styles.input}>Where To: {table.Where_To}</Text>
-                      <TextInput
-                          id="birdWhere"
-                          style={styles.input} onChangeText={setName} value={table.Where_To}
-                      >
-                      </TextInput>
+                      {/*<TextInput*/}
+                      {/*    id="birdWhere"*/}
+                      {/*    style={styles.input} onChangeText={setName} value={table.Where_To}*/}
+                      {/*>*/}
+                      {/*</TextInput>*/}
                           <Text style={styles.input}>Ticket Type: {table.Ticket_Type}</Text>
-                      <TextInput
-                          id="birdTicketType"
-                          style={styles.input} onChangeText={setName} value={table.Ticket_Type}
-                      >
-                      </TextInput>
+                      {/*<TextInput*/}
+                      {/*    id="birdTicketType"*/}
+                      {/*    style={styles.input} onChangeText={setName} value={table.Ticket_Type}*/}
+                      {/*>*/}
+                      {/*</TextInput>*/}
                     </Surface>
                 </View>
                         ) : animal === "Seal" ? (
                 <View>
                   <Surface>
+                          <Text style={styles.input}>Additional Notes on ID: {table.Additional_Notes_on_ID}</Text>
+                          <Text style={styles.input}>Beach Position: {table.Beach_Position}</Text>
                           <Text style={styles.input}>Date: {table.Date}</Text>
-                          <Text style={styles.input}>Delivered: {table.Delivered}</Text>
                           <Text style={styles.input}>Hotline Operator Initals: {table.Hotline_Operator_Initals}</Text>
+                          <Text style={styles.input}>How Identified: {table.How_Identified}</Text>
+                          <Text style={styles.input}>ID Perm: {table.ID_Perm}</Text>
+                          <Text style={styles.input}>ID Verified By: {table.ID_Verified_By}</Text>
+                          <Text style={styles.input}>ID Temp: {table.ID_temp}</Text>
                           <Text style={styles.input}>Location: {table.Location}</Text>
                           <Text style={styles.input}>Location Notes: {table.Location_Notes}</Text>
+                          <Text style={styles.input}>Molt: {table.Molt}</Text>
+                          <Text style={styles.input}>Mom and PupPair: {table.Mom_and_Pup_Pair}</Text>
+                          <Text style={styles.input}>Number of Volunteers Engaged: {table.Number_Volunteers_Engaged}</Text>
                           <Text style={styles.input}>Number of Calls Received: {table.Number_of_Calls_Received}</Text>
                           <Text style={styles.input}>Observer: {table.Observer}</Text>
-                          <Text style={styles.input}>Observer Number: {table.Observer_Number}</Text>
+                          <Text style={styles.input}>Observer Number: {table.Observer_Contact_Number}</Text>
                           <Text style={styles.input}>Observer Initials: {table.Observer_Initials}</Text>
                           <Text style={styles.input}>Observer Type: {table.Observer_Type}</Text>
-                          <Text style={styles.input}>Observer Notes: {table.Observer_Notes}</Text>
-                          <Text style={styles.input}>Outreach Provided By Operator: {table.Outreach_Provided_By_Operator}</Text>
+                          <Text style={styles.input}>ObserverO Notes: {table.Other_Notes}</Text>
+                          <Text style={styles.input}>SRA Set By: {table.SRA_Set_By}</Text>
+                          <Text style={styles.input}>SRA Set Up: {table.SRA_Set_Up}</Text>
+                          <Text style={styles.input}>Seal Depart Info Avial: {table.Seal_Depart_Info_Avial}</Text>
+                          <Text style={styles.input}>Seal Departed Date: {table.Seal_Departed_Date}</Text>
+                          <Text style={styles.input}>Seal Departed Time: {table.Seal_Departed_Time}</Text>
+                          <Text style={styles.input}>Seal Logging: {table.Seal_Logging}</Text>
+                          <Text style={styles.input}>Seal Present: {table.Seal_Present}</Text>
                           <Text style={styles.input}>Sector: {table.Sector}</Text>
-                          <Text style={styles.input}>Ticket Number: {table.Ticket_Number}</Text>
+                    <Text style={styles.input}>Sex: {table.Sex}</Text>
+                    <Text style={styles.input}>Size: {table.Size}</Text>
+
+                    <Text style={styles.input}>Tag Color: {table.Tag_Color}</Text>
+                    <Text style={styles.input}>Tag Number: {table.Tag_Number}</Text>
+                    <Text style={styles.input}>Tag Side: {table.Tag_Side}</Text>
+
+                    <Text style={styles.input}>Ticket Number: {table.Ticket_Number}</Text>
                           <Text style={styles.input}>Time: {table.Time}</Text>
-                          <Text style={styles.input}>Type of Bird: {table.Type_of_Bird}</Text>
                           <Text style={styles.input}>Verified: {table.Verified}</Text>
-                          <Text style={styles.input}>Where To: {table.Where_To}</Text>
                           <Text style={styles.input}>Ticket Type: {table.Ticket_Type}</Text>
                     </Surface>
                   </View>
             ) : (
                 <View>
                   <Surface>
-                    <TextInput style={styles.input}>Date: {table.Date}</TextInput>
-                    <TextInput style={styles.input} value={table.Date}></TextInput>
-                    <Text style={styles.input}>Delivered: {table.Delivered}</Text>
+                    <Text style={styles.input}>Date: {table.Date}</Text>
+                    <Text style={styles.input}>FAST: {table.FAST}</Text>
                     <Text style={styles.input}>Hotline Operator Initals: {table.Hotline_Operator_Initals}</Text>
+                    <Text style={styles.input}>Island: {table.Island}</Text>
+
                     <Text style={styles.input}>Location: {table.Location}</Text>
                     <Text style={styles.input}>Location Notes: {table.Location_Notes}</Text>
                     <Text style={styles.input}>Number of Calls Received: {table.Number_of_Calls_Received}</Text>
                     <Text style={styles.input}>Observer: {table.Observer}</Text>
-                    <Text style={styles.input}>Observer Number: {table.Observer_Number}</Text>
+                    <Text style={styles.input}>Observer Number: {table.Observer_Contact_Number}</Text>
                     <Text style={styles.input}>Observer Initials: {table.Observer_Initials}</Text>
                     <Text style={styles.input}>Observer Type: {table.Observer_Type}</Text>
-                    <Text style={styles.input}>Observer Notes: {table.Observer_Notes}</Text>
+                    <Text style={styles.input}>Other Notes: {table.Other_Notes}</Text>
                     <Text style={styles.input}>Outreach Provided By Operator: {table.Outreach_Provided_By_Operator}</Text>
+                    <Text style={styles.input}>Primary issue or cause of death: {table.Primary_issue_or_cause_of_death}</Text>
+                    <Text style={styles.input}>Responder: {table.Responder}</Text>
+                    <Text style={styles.input}>Responder Arrival Time: {table.Responder_arrival_time}</Text>
                     <Text style={styles.input}>Sector: {table.Sector}</Text>
+                    <Text style={styles.input}>Size: {table.Size}</Text>
+                    <Text style={styles.input}>Status: {table.Stauts}</Text>
                     <Text style={styles.input}>Ticket Number: {table.Ticket_Number}</Text>
                     <Text style={styles.input}>Time: {table.Time}</Text>
-                    <Text style={styles.input}>Type of Bird: {table.Type_of_Bird}</Text>
+                    <Text style={styles.input}>Time Responder Left: {table.Time_Responder_left}</Text>
+                    <Text style={styles.input}>Type of Turtle: {table.Type_of_Turtle}</Text>
                     <Text style={styles.input}>Verified: {table.Verified}</Text>
-                    <Text style={styles.input}>Where To: {table.Where_To}</Text>
                     <Text style={styles.input}>Ticket Type: {table.Ticket_Type}</Text>
                   </Surface>
                 </View>
