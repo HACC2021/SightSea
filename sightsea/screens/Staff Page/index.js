@@ -272,10 +272,10 @@ const StaffPage = ({ navigation }) => {
     const db = getDatabase();
     const pageref = ref(db, `${animal}/count`);
     onValue(pageref, (snapshot) => {
-      //console.log(snapshot.val());
-      //console.log(itemsPerPage);
-      //console.log((Number(snapshot.val()) / itemsPerPage) + 1)
-      setTotalPages(Math.floor(Number(snapshot.val()) / itemsPerPage + 1));
+      console.log(snapshot.val());
+      console.log(itemsPerPage);
+      console.log((Number(snapshot.val()) / itemsPerPage))
+      setTotalPages(Math.ceil(Number(snapshot.val()) / itemsPerPage));
     });
     var docCounter = 0;
     //console.log(pageVerifiedTable);
@@ -339,7 +339,8 @@ const StaffPage = ({ navigation }) => {
         latitude: element[1].GPS_Coordinate.latitude,
         longitude: element[1].GPS_Coordinate.longitude,
       });
-    });
+    }
+    );
 
     //convert GPS coordinate to postal address and update marker array
     convertToAddress(markers);
@@ -347,7 +348,7 @@ const StaffPage = ({ navigation }) => {
     setMarkerData(markers);
   };
 
-  console.log(markerData);
+  //console.log(markerData);
   //convert location coordinate to address
   function convertToAddress(arrayOfMarker) {
     /*************************Enable api key when using reverseGeocodeAsync function ************************/
