@@ -512,9 +512,9 @@ const ViewReport = ({route, navigation}) => {
                 </View>
             )}
           </View>
-            <Button style={styles.btn} mode="contained" onPress={() => addDoc()}>
+            {/* <Button style={styles.btn} mode="contained" onPress={() => addDoc()}>
               Update
-            </Button>
+            </Button> */}
         </View>
       </ScrollView>
   );

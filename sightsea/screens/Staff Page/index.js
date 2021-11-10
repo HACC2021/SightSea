@@ -344,22 +344,22 @@ const StaffPage = ({ navigation }) => {
     setBackAnchorKey(null);
     frontAnchorKeys = [];
     getDocs(animal, "switch");
-    tableData.map((element) => {
-      markers.push({
-        ticketNum: element[1].Ticket_Number,
-        latitude: element[1].GPS_Coordinate.latitude,
-        longitude: element[1].GPS_Coordinate.longitude,
-      });
-    }
-    );
+    // tableData.map((element) => {
+    //   markers.push({
+    //     ticketNum: element[1].Ticket_Number,
+    //     latitude: element[1].GPS_Coordinate.latitude,
+    //     longitude: element[1].GPS_Coordinate.longitude,
+    //   });
+    // }
+    // );
 
-    //convert GPS coordinate to postal address and update marker array
-    convertToAddress(markers);
-    //pass the GPS coordinate object to the MarkerData array
-    setMarkerData(markers);
+    // //convert GPS coordinate to postal address and update marker array
+    // convertToAddress(markers);
+    // //pass the GPS coordinate object to the MarkerData array
+    // setMarkerData(markers);
    };
 
-  console.log(markerData);
+  // console.log(markerData);
   //convert location coordinate to address
   function convertToAddress(arrayOfMarker) {
     /*************************Enable api key when using reverseGeocodeAsync function ************************/
@@ -602,7 +602,7 @@ const StaffPage = ({ navigation }) => {
             <GoogleMap
               center={mapProps.center}
               zoom={mapProps.zoom}
-              data={markerData}
+              // data={markerData}
             />
           ) : null}
           
