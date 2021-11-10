@@ -547,7 +547,9 @@ const StaffPage = ({ navigation }) => {
             {/* Loop over new reports to make rows */}
 
             {tableData.map((element, index) => (
-                <DataTable.Row key={index} onPress={ () => navigation.navigate('ViewReport', {table: element[1]})}>
+                <DataTable.Row key={index} onPress={ () => navigation.navigate(
+                    'ViewReport', {table: element[1], animal: animalDisplayType, documentID: element[0], }
+                )}>
                 <DataTable.Cell style={styles.columns} key={index}>
                   {/* <Checkbox
                   status={checked ? "checked" : "unchecked"}

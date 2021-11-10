@@ -150,13 +150,6 @@ const HomeScreen = ({ navigation }) => {
           >
             Staff Portal
           </Button>
-
-          <Button
-              style={styles.navButton}
-              onPress={() => navigation.navigate("ViewReport")}
-          >
-            View Report
-          </Button>
         </View>
       </View>
     </ImageBackground>
