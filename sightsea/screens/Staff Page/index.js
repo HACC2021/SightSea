@@ -150,13 +150,14 @@ var frontAnchorKeys = [];
 
 //protected route/login
 const StaffPage = ({ navigation }) => {
-  const [initializing, setInitializing] = useState(true);
+  const [initializing, setInitializing] = React.useState(true);
   const [user, setUser] = useState();
   const [pageNewTable, setPageNewTable] = React.useState(0);
   const [itemsPerPage, setItemsPerPage] = React.useState(optionsPerPage[0]);
   const [totalPages, setTotalPages] = React.useState(3);
   const [pageVerifiedTable, setPageVerifiedTable] = React.useState(0);
   const [tableData, setTableData] = React.useState([]);
+  const [markerData, setMarkerData] = React.useState([]);
   const [animalDisplayType, setAnimalDisplayType] = React.useState(null);
   const [backAnchorKey, setBackAnchorKey] = React.useState(null);
 
@@ -195,18 +196,18 @@ const StaffPage = ({ navigation }) => {
     zoom: 12,
   };
 
-  var markers = [
-    {
-      lat: 21.315601,
-      lng: -157.85813,
-      info: "828R+6P Joint Base Pearl Harbor-Hickam. Joint Base Pearl Harbor-Hickam, Hawaii undefined",
-    },
-    {
-      lat: 21.315601,
-      lng: -157.95813,
-      info: "828R+6P Joint Base Pearl Harbor-Hickam. Joint Base Pearl Harbor-Hickam, Hawaii undefined",
-    },
-  ];
+  // var markers = [
+  //   {
+  //     latitude: 21.315601,
+  //     longitude: -157.85813,
+  //     info: "828R+6P Joint Base Pearl Harbor-Hickam. Joint Base Pearl Harbor-Hickam, Hawaii undefined",
+  //   },
+  //   {
+  //     latitude: 21.315601,
+  //     longitude: -157.95813,
+  //     info: "828R+6P Joint Base Pearl Harbor-Hickam. Joint Base Pearl Harbor-Hickam, Hawaii undefined",
+  //   },
+  // ];
 
   //define marker info
   const InfoWindow = ({ marker, index, show }) => {
@@ -260,8 +261,8 @@ const StaffPage = ({ navigation }) => {
           return (
             <CustomMarker
               key={index}
-              lat={item.lat}
-              lng={item.lng}
+              lat={item.latitude}
+              lng={item.longitude}
               marker={item}
               index={index}
             />
@@ -279,15 +280,19 @@ const StaffPage = ({ navigation }) => {
       //console.log(snapshot.val());
       //console.log(itemsPerPage);
       //console.log((Number(snapshot.val()) / itemsPerPage) + 1)
-      setTotalPages(Math.floor((Number(snapshot.val()) / itemsPerPage) + 1))
-    })
+      setTotalPages(Math.floor(Number(snapshot.val()) / itemsPerPage + 1));
+    });
     var docCounter = 0;
     //console.log(pageVerifiedTable);
     //console.log(direction);
     //console.log("front keys: " + frontAnchorKeys);
     const reference =
       direction === "switch"
-        ? query(ref(db, `/${animal}/documents`), orderByKey(), limitToFirst(itemsPerPage))
+        ? query(
+            ref(db, `/${animal}/documents`),
+            orderByKey(),
+            limitToFirst(itemsPerPage)
+          )
         : direction === "forward"
         ? query(
             ref(db, `/${animal}/documents`),
@@ -326,30 +331,39 @@ const StaffPage = ({ navigation }) => {
     setPageVerifiedTable(page);
   };
 
-
   const handleRadioChange = (animal) => {
+    var markers = [];
     setAnimalDisplayType(animal);
     setPageVerifiedTable(0);
     setBackAnchorKey(null);
     frontAnchorKeys = [];
     getDocs(animal, "switch");
+    tableData.map((element, index) => {
+      markers.push({
+        latitude: element[1].GPS_Coordinate.latitude,
+        longitude: element[1].GPS_Coordinate.longitude,
+      });
+    });
+
+    //convert GPS coordinate to postal address and update marker array
+    // convertToAddress(markers);
+    //pass the GPS coordinate object to the MarkerData array
+    setMarkerData(markers);
   };
 
+  console.log(markerData);
   //convert location coordinate to address
-  function convertToAddress(markers) {
-    //convert coordinate to postal address
-    //@param object: {latitude: xxx, longitude:xxx}
-    //@param array: address
-
+  function convertToAddress(arrayOfMarker) {
     /*************************Enable api key when using reverseGeocodeAsync function ************************/
     Location.setGoogleApiKey("AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0");
     //loop through each marker object and convert them to postal address
-    markers.map((marker, index) => {
+    var string = "";
+    arrayOfMarker.map((obj, index) => {
       Location.reverseGeocodeAsync({
-        latitude: marker.lat,
-        longitude: marker.lng,
+        latitude: obj.latitude,
+        longitude: obj.longitude,
       }).then((address) => {
-        const addressString =
+        string =
           address[0]["name"] +
           ". " +
           address[0]["city"] +
@@ -358,14 +372,10 @@ const StaffPage = ({ navigation }) => {
           " " +
           address[0]["postalCode"];
 
-        //add the postal address to the info field to markers array
-        markers[index]["info"] = addressString;
+        arrayOfMarker[index]["info"] = string;
       });
     });
   }
-
-  //convertToAddress(markers);
-  console.log(markers);
 
   return (
     //Can only return 1 view object for Andriod
@@ -575,7 +585,7 @@ const StaffPage = ({ navigation }) => {
             <GoogleMap
               center={mapProps.center}
               zoom={mapProps.zoom}
-              data={markers}
+              data={markerData}
             />
           ) : (
             <MapView style={styles.map} region={mapProps.center}>
