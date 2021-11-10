@@ -337,13 +337,13 @@ const StaffPage = ({ navigation }) => {
     setPageVerifiedTable(page);
   };
 
-  const handleRadioChange = () => {
+  const handleRadioChange = (animal) => {
     var markers = [];
     setAnimalDisplayType(animal);
     setPageVerifiedTable(0);
     setBackAnchorKey(null);
     frontAnchorKeys = [];
-    getDocs(animalDisplayType, "switch");
+    getDocs(animal, "switch");
     tableData.map((element) => {
       markers.push({
         ticketNum: element[1].Ticket_Number,
