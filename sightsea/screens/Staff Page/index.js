@@ -27,7 +27,7 @@ import {
   Subheading,
 } from "react-native-paper";
 import GoogleMapReact from "google-map-react";
-import MapView, { Marker } from "react-native-maps";
+// import MapView, { Marker } from "react-native-maps";
 import {
   getDatabase,
   ref,
@@ -227,7 +227,7 @@ const StaffPage = ({ navigation }) => {
     );
   };
 
-  //define marker
+  // define marker
   function CustomMarker({ lat, lng, onMarkerClick, marker, index }) {
     //allow user to open/close info window by clicking the info window
     const [show, setShow] = React.useState(false);
@@ -252,7 +252,7 @@ const StaffPage = ({ navigation }) => {
         defaultZoom={zoom}
         defaultCenter={center}
       >
-        {data.map((item, index) => {
+        {markers.map((item, index) => {
           return (
             <CustomMarker
               key={index}
@@ -346,9 +346,9 @@ const StaffPage = ({ navigation }) => {
     convertToAddress(markers);
     //pass the GPS coordinate object to the MarkerData array
     setMarkerData(markers);
-  };
+   };
 
-  //console.log(markerData);
+  console.log(markerData);
   //convert location coordinate to address
   function convertToAddress(arrayOfMarker) {
     /*************************Enable api key when using reverseGeocodeAsync function ************************/
@@ -577,19 +577,21 @@ const StaffPage = ({ navigation }) => {
           <Button title="Export Database" onPress={ExportDatabase} />
         </View>
         {/* map */}
-        <View style={styles.map}>
+         <View style={styles.map}>
           {Platform.OS === "web" ? (
             <GoogleMap
               center={mapProps.center}
               zoom={mapProps.zoom}
               data={markerData}
             />
-          ) : (
-            <MapView style={styles.map} region={mapProps.center}>
-              <Marker key={0} coordinate={mapProps.center} title={"Marker"} />
-            </MapView>
-          )}
-        </View>
+          ) : null}
+          
+           {/* (
+             <MapView style={styles.map} region={mapProps.center}>
+               <Marker key={0} coordinate={mapProps.center} title={"Marker"} />
+             </MapView>
+           ) */}
+        </View> 
       </View>
     </ScrollView>
   );
