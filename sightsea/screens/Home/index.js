@@ -8,8 +8,9 @@ import {
   ImageBackground,
   Dimensions,
   Platform,
+  Linking,
 } from "react-native";
-import { Button } from "react-native-paper";
+import { Button, Dialog, Portal, Paragraph } from "react-native-paper";
 import { NavigationContainer, useTheme } from "@react-navigation/native";
 import { getDatabase, ref, onValue, set } from "firebase/database";
 
@@ -56,6 +57,10 @@ const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
 
 const HomeScreen = ({ navigation }) => {
+  const [visible, setVisible] = React.useState(false);
+  const showDialog = () => setVisible(true);
+  const hideDialog = () => setVisible(false);  
+
   const { colors } = useTheme();
   const styles = StyleSheet.create({
     container: {
@@ -141,7 +146,24 @@ const HomeScreen = ({ navigation }) => {
           >
             Report an Animal Sighting
           </Button>
-          <Button style={styles.navButton}>Report a Distressed Animal</Button>
+          <Button 
+          style={styles.navButton}
+          onPress={showDialog}
+          >Report a Distressed Animal</Button>
+          <Portal>
+            <Dialog visible={visible} onDismiss={hideDialog}>
+            <Dialog.Title> Animal in Distress</Dialog.Title>
+            <Dialog.Content>
+            <Paragraph>
+              Please press call the hotline
+            </Paragraph>
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button onPress={hideDialog}>Cancel</Button>
+              <Button onPress={()=>Linking.openURL('tel:808-256-9840')}>Call</Button>
+            </Dialog.Actions>
+            </Dialog>
+          </Portal>
           <Button
             style={styles.navButton}
             onPress={() => navigation.navigate("StaffLogin")}
