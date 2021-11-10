@@ -154,6 +154,7 @@ const StaffPage = ({ navigation }) => {
   const [user, setUser] = useState();
   const [pageNewTable, setPageNewTable] = React.useState(0);
   const [itemsPerPage, setItemsPerPage] = React.useState(optionsPerPage[0]);
+  const [totalPages, setTotalPages] = React.useState(3);
   const [pageVerifiedTable, setPageVerifiedTable] = React.useState(0);
   const [tableData, setTableData] = React.useState([]);
   const [animalDisplayType, setAnimalDisplayType] = React.useState(null);
@@ -273,22 +274,29 @@ const StaffPage = ({ navigation }) => {
   const getDocs = (animal, direction) => {
     console.log(backAnchorKey);
     const db = getDatabase();
+    const pageref = ref(db, `${animal}/count`);
+    onValue(pageref, (snapshot) => {
+      //console.log(snapshot.val());
+      //console.log(itemsPerPage);
+      //console.log((Number(snapshot.val()) / itemsPerPage) + 1)
+      setTotalPages(Math.floor((Number(snapshot.val()) / itemsPerPage) + 1))
+    })
     var docCounter = 0;
     //console.log(pageVerifiedTable);
     //console.log(direction);
     //console.log("front keys: " + frontAnchorKeys);
     const reference =
       direction === "switch"
-        ? query(ref(db, `/${animal}`), orderByKey(), limitToFirst(itemsPerPage))
+        ? query(ref(db, `/${animal}/documents`), orderByKey(), limitToFirst(itemsPerPage))
         : direction === "forward"
         ? query(
-            ref(db, `/${animal}`),
+            ref(db, `/${animal}/documents`),
             orderByKey(),
             startAfter(backAnchorKey),
             limitToFirst(itemsPerPage)
           )
         : query(
-            ref(db, `/${animal}`),
+            ref(db, `/${animal}/documents`),
             orderByKey(),
             startAt(frontAnchorKeys[pageVerifiedTable - 1]),
             limitToFirst(itemsPerPage)
@@ -311,12 +319,13 @@ const StaffPage = ({ navigation }) => {
     });
   };
 
-  const handlePageChange = (page) => {
+  const handlePageChange = (page, callback) => {
     page > pageVerifiedTable
       ? getDocs(animalDisplayType, "forward")
       : getDocs(animalDisplayType, "back");
     setPageVerifiedTable(page);
   };
+
 
   const handleRadioChange = (animal) => {
     setAnimalDisplayType(animal);
@@ -546,9 +555,9 @@ const StaffPage = ({ navigation }) => {
 
             <DataTable.Pagination
               page={pageVerifiedTable}
-              numberOfPages={3}
+              numberOfPages={totalPages}
               onPageChange={(page) => handlePageChange(page)}
-              label={pageVerifiedTable + 1 + "of 3"}
+              label={pageVerifiedTable + 1 + "of " + totalPages}
               // optionsPerPage={optionsPerPage}
               // itemsPerPage={itemsPerPage}
               // setItemsPerPage={setItemsPerPage}

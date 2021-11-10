@@ -23,7 +23,7 @@ import {
 
 import PhoneInput from "react-native-phone-input";
 import RNDateTimePicker from "@react-native-community/datetimepicker";
-import { getDatabase, ref, onValue, set, child, get } from "firebase/database";
+import { getDatabase, ref, onValue, set, child, get, runTransaction } from "firebase/database";
 import * as Location from "expo-location";
 //import Marker from "react-native-maps";
 //import DropDown from "react-native-paper-dropdown";
@@ -295,7 +295,7 @@ const SightForm = () => {
     //check if the gps coordinate object is empty
     if (animalDB === "Seal" && Object.keys(coordinate).length > 0) {
       //Seal Doc
-      const reference = ref(db, `${animalDB}/` + `${localdocID}`);
+      const reference = ref(db, `${animalDB}/documents/` + `${localdocID}`);
       set(reference, {
         GPS_Coordinate: {
           latitude: coordinate["latitude"],
@@ -351,7 +351,7 @@ const SightForm = () => {
       const observer_type = "P";
       var intitials = name.slice(0, 1) + observer_type;
 
-      const reference = ref(db, `${animalDB}/` + `${localdocID}`);
+      const reference = ref(db, `${animalDB}/documents/` + `${localdocID}`);
       set(reference, {
         GPS_Coordinate: {
           latitude: coordinate["latitude"],
@@ -393,7 +393,7 @@ const SightForm = () => {
         });
     } else if (animalDB === "Bird" && Object.keys(coordinate).length > 0) {
       //For Bird Docs
-      const reference = ref(db, `${animalDB}/` + `${localdocID}`);
+      const reference = ref(db, `${animalDB}/documents/` + `${localdocID}`);
       set(reference, {
         GPS_Coordinate: {
           latitude: coordinate["latitude"],
@@ -429,6 +429,15 @@ const SightForm = () => {
           //TODO Stay on page and flag errors
         });
     }
+    const countref = ref(db, `${animalDB}/`);
+    runTransaction(countref, (post) => {
+      if(post) {
+        if(post.count) {
+          post.count++;
+        }
+      }
+      return post;
+    })
   }
 
   return (
