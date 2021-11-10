@@ -453,7 +453,7 @@ const SightForm = () => {
       <ScrollView>
         <View style={styles.form}>
           <Headline>Report a Sighting</Headline>
-          <Subheading>
+          <Subheading style={{textAlign:"center",padding:3}}>
             Fill out the form below to submit a sighting and our staffs will
             review the submitted form shortly.
           </Subheading>

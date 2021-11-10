@@ -14,41 +14,6 @@ import { Button, Dialog, Portal, Paragraph } from "react-native-paper";
 import { NavigationContainer, useTheme } from "@react-navigation/native";
 import { getDatabase, ref, onValue, set } from "firebase/database";
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: "column",
-    backgroundColor: "aliceblue",
-    alignItems: "center",
-    //justifyContent: "center",
-  },
-  titleText: {
-    fontSize: 50,
-    fontWeight: "bold",
-    textAlign: "center",
-    paddingTop: "10%",
-  },
-  buttonGroup: {
-    position: "relative",
-    flex: 1,
-    alignItems: "center",
-    marginTop: "30%",
-  },
-  navButton: {
-    fontSize: 10,
-    textAlign: "center",
-    justifyContent: "center",
-    width: "160%",
-    height: 75,
-    //backgroundColor: "#DDDDDD",
-    padding: "3%",
-    borderWidth: 1,
-    borderRadius: 30,
-    // borderColor: "rgba(0,0,0,0.2)",
-    marginTop: "10%",
-  },
-});
-
 const image = {
   uri: "https://i.ibb.co/Wc2RzBV/Swimming-with-a-Hawaiian-Sea-Turtle-6-1024x683.jpg",
 };
@@ -97,12 +62,12 @@ const HomeScreen = ({ navigation }) => {
     navButton: {
       textAlign: "center",
       justifyContent: "center",
-      width: windowHeight * 0.45,
+      width: windowHeight * 0.52,
       height: 75,
       backgroundColor: "#DDDDDD",
       //backgroundColor: "lightblue",
       borderWidth: 1,
-      borderRadius: 50,
+      borderRadius: 20,
       borderColor: "rgba(0,0,0,0.2)",
 
       ...Platform.select({
@@ -115,7 +80,7 @@ const HomeScreen = ({ navigation }) => {
           marginTop: windowWidth * 0.05,
         },
         default: {
-          padding: windowWidth * 0.03,
+          padding: windowWidth * 0.01,
           marginTop: windowHeight * 0.03,
         },
       }),
@@ -140,8 +105,10 @@ const HomeScreen = ({ navigation }) => {
       <View style={styles.container}>
         <Text style={styles.titleText}>Welcome to SightSea!</Text>
         <View style={styles.buttonGroup}>
-          <Button
+          <Button          
             style={styles.navButton}
+
+            
             onPress={() => navigation.navigate("Form")}
           >
             Report an Animal Sighting
