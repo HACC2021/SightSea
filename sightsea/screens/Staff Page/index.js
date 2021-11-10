@@ -5,7 +5,6 @@ import {
   View,
   StatusBar,
   TextInput,
-  Button,
   Image,
   Dimensions,
   Platform,
@@ -25,6 +24,7 @@ import {
   Card,
   Paragraph,
   Subheading,
+  Button,
 } from "react-native-paper";
 import GoogleMapReact from "google-map-react";
 // import MapView, { Marker } from "react-native-maps";
@@ -42,7 +42,6 @@ import {
   onChildAdded,
 } from "firebase/database";
 import ExportDatabase from "../../scripts/ExportDatabase";
-
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import * as Location from "expo-location";
 
@@ -84,7 +83,7 @@ const styles = StyleSheet.create({
   },
   map: {
     alignContent: "center",
-    width: "100%",
+    width: "90%",
     height: 600,
   },
   marker: {
@@ -127,9 +126,19 @@ const styles = StyleSheet.create({
   cancel: {
     textAlign: "right",
   },
+  btn: {
+    width: "15%",
+    padding: 3,
+    margin: 20,
+  },
+  Exportbtn: {
+    width: windowWidth * 0.9,
+    padding: 3,
+    margin: 20,
+  },
 });
 
-const optionsPerPage = [2, 3, 4];
+const optionsPerPage = [3, 3, 3];
 const animalTypes = ["Bird", "Seal", "Turtle"];
 var frontAnchorKeys = [];
 
@@ -153,6 +162,7 @@ const StaffPage = ({ navigation }) => {
   const [markerData, setMarkerData] = React.useState([]);
   const [animalDisplayType, setAnimalDisplayType] = React.useState(null);
   const [backAnchorKey, setBackAnchorKey] = React.useState(null);
+  const [search, setSearch] = React.useState(false);
 
   React.useEffect(() => {
     const auth = getAuth();
@@ -251,6 +261,7 @@ const StaffPage = ({ navigation }) => {
         style={{ height: "100vh", width: "100%" }}
         defaultZoom={zoom}
         defaultCenter={center}
+        bootstrapURLKeys={{ key: "AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0" }}
       >
         {markers.map((item, index) => {
           return (
@@ -335,7 +346,7 @@ const StaffPage = ({ navigation }) => {
     getDocs(animal, "switch");
     tableData.map((element) => {
       markers.push({
-        ticketNum: element[1].GPS_Coordinate.Ticket_Number,
+        ticketNum: element[1].Ticket_Number,
         latitude: element[1].GPS_Coordinate.latitude,
         longitude: element[1].GPS_Coordinate.longitude,
       });
@@ -352,7 +363,7 @@ const StaffPage = ({ navigation }) => {
   //convert location coordinate to address
   function convertToAddress(arrayOfMarker) {
     /*************************Enable api key when using reverseGeocodeAsync function ************************/
-    Location.setGoogleApiKey("AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0");
+    // Location.setGoogleApiKey("AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0");
     //loop through each marker object and convert them to postal address
     var string = "";
     arrayOfMarker.map((obj, index) => {
@@ -509,6 +520,13 @@ const StaffPage = ({ navigation }) => {
               ))
             )}
           </RadioButton.Group>
+          {/* <Button
+            mode="contained"
+            style={styles.btn}
+            onPress={handleRadioChange}
+          >
+            Search
+          </Button> */}
           {/* Display map with pins for ALL new reports */}
           <DataTable>
             <DataTable.Header>
@@ -529,7 +547,9 @@ const StaffPage = ({ navigation }) => {
             {/* Loop over new reports to make rows */}
 
             {tableData.map((element, index) => (
-              <DataTable.Row key={index}>
+                <DataTable.Row key={index} onPress={ () => navigation.navigate(
+                    'ViewReport', {table: element[1], animal: animalDisplayType, documentID: element[0], }
+                )}>
                 <DataTable.Cell style={styles.columns} key={index}>
                   {/* <Checkbox
                   status={checked ? "checked" : "unchecked"}

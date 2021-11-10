@@ -7,6 +7,7 @@ import SightForm from "./screens/Form";
 import HomeScreen from "./screens/Home";
 import StaffPage from "./screens/Staff Page";
 import StaffLogin from "./screens/StaffLogin";
+import ViewReport from "./screens/Report";
 import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
 import { getAuth, signOut } from "firebase/auth";
 // Import the functions you need from the SDKs you need
@@ -94,6 +95,11 @@ export default function App() {
             name="Form"
             component={SightForm}
             options={{ headerLeft: null }}
+          />
+          <Stack.Screen
+              name="ViewReport"
+              component={ViewReport}
+              options={{ headerLeft: null }}
           />
           <Stack.Screen
             name="StaffLogin"

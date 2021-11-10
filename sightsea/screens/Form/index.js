@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
     width: windowWidth * 0.8,
   },
   btn: {
-    margin: 10,
+    margin: 20,
     width: windowWidth * 0.5,
   },
   map: {
@@ -431,13 +431,13 @@ const SightForm = () => {
     }
     const countref = ref(db, `${animalDB}/`);
     runTransaction(countref, (post) => {
-      if(post) {
-        if(post.count) {
+      if (post) {
+        if (post.count) {
           post.count++;
         }
       }
       return post;
-    })
+    });
   }
 
   return (
