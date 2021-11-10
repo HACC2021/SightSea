@@ -5,7 +5,6 @@ import {
   View,
   StatusBar,
   TextInput,
-  Button,
   Image,
   Dimensions,
   Platform,
@@ -25,6 +24,7 @@ import {
   Card,
   Paragraph,
   Subheading,
+  Button,
 } from "react-native-paper";
 import GoogleMapReact from "google-map-react";
 import MapView, { Marker } from "react-native-maps";
@@ -84,7 +84,7 @@ const styles = StyleSheet.create({
   },
   map: {
     alignContent: "center",
-    width: "100%",
+    width: "90%",
     height: 600,
   },
   marker: {
@@ -127,6 +127,16 @@ const styles = StyleSheet.create({
   cancel: {
     textAlign: "right",
   },
+  btn: {
+    width: "15%",
+    padding: 3,
+    margin: 20,
+  },
+  Exportbtn: {
+    width: windowWidth * 0.9,
+    padding: 3,
+    margin: 20,
+  },
 });
 
 const optionsPerPage = [2, 3, 4];
@@ -153,6 +163,7 @@ const StaffPage = ({ navigation }) => {
   const [markerData, setMarkerData] = React.useState([]);
   const [animalDisplayType, setAnimalDisplayType] = React.useState(null);
   const [backAnchorKey, setBackAnchorKey] = React.useState(null);
+  const [search, setSearch] = React.useState(false);
 
   React.useEffect(() => {
     const auth = getAuth();
@@ -251,6 +262,7 @@ const StaffPage = ({ navigation }) => {
         style={{ height: "100vh", width: "100%" }}
         defaultZoom={zoom}
         defaultCenter={center}
+        bootstrapURLKeys={{ key: "AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0" }}
       >
         {data.map((item, index) => {
           return (
@@ -326,13 +338,13 @@ const StaffPage = ({ navigation }) => {
     setPageVerifiedTable(page);
   };
 
-  const handleRadioChange = (animal) => {
+  const handleRadioChange = () => {
     var markers = [];
-    setAnimalDisplayType(animal);
+    //setAnimalDisplayType(animal);
     setPageVerifiedTable(0);
     setBackAnchorKey(null);
     frontAnchorKeys = [];
-    getDocs(animal, "switch");
+    getDocs(animalDisplayType, "switch");
     tableData.map((element) => {
       markers.push({
         ticketNum: element[1].GPS_Coordinate.Ticket_Number,
@@ -491,7 +503,7 @@ const StaffPage = ({ navigation }) => {
         <Surface style={styles.surface}>
           <Text style={styles.secondaryheader}>Verified Reports</Text>
           <RadioButton.Group
-            onValueChange={(value) => handleRadioChange(value)}
+            onValueChange={(value) => setAnimalDisplayType(value)}
             value={animalDisplayType}
           >
             {Platform.OS === "web" ? (
@@ -508,6 +520,13 @@ const StaffPage = ({ navigation }) => {
               ))
             )}
           </RadioButton.Group>
+          <Button
+            mode="contained"
+            style={styles.btn}
+            onPress={handleRadioChange}
+          >
+            Search
+          </Button>
           {/* Display map with pins for ALL new reports */}
           <DataTable>
             <DataTable.Header>
@@ -573,7 +592,13 @@ const StaffPage = ({ navigation }) => {
           </DataTable>
         </Surface>
         <View>
-          <Button title="Export Database" onPress={ExportDatabase} />
+          <Button
+            mode="contained"
+            onPress={ExportDatabase}
+            style={styles.Exportbtn}
+          >
+            Export Database
+          </Button>
         </View>
         {/* map */}
         <View style={styles.map}>
