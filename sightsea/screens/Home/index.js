@@ -3,16 +3,15 @@ import {
   StyleSheet,
   Text,
   View,
-  Button,
   StatusBar,
   TouchableOpacity,
   ImageBackground,
   Dimensions,
   Platform,
 } from "react-native";
+import { Button } from "react-native-paper";
 import { NavigationContainer, useTheme } from "@react-navigation/native";
-import { getDatabase, ref, onValue, set } from 'firebase/database';
-
+import { getDatabase, ref, onValue, set } from "firebase/database";
 
 const styles = StyleSheet.create({
   container: {
@@ -28,9 +27,6 @@ const styles = StyleSheet.create({
     textAlign: "center",
     paddingTop: "10%",
   },
-  buttonText: {
-    fontSize: 20,
-  },
   buttonGroup: {
     position: "relative",
     flex: 1,
@@ -38,15 +34,16 @@ const styles = StyleSheet.create({
     marginTop: "30%",
   },
   navButton: {
+    fontSize: 10,
     textAlign: "center",
     justifyContent: "center",
     width: "160%",
     height: 75,
-    backgroundColor: "#DDDDDD",
-    padding: "5%",
+    //backgroundColor: "#DDDDDD",
+    padding: "3%",
     borderWidth: 1,
-    borderRadius: 50,
-    borderColor: "rgba(0,0,0,0.2)",
+    borderRadius: 30,
+    // borderColor: "rgba(0,0,0,0.2)",
     marginTop: "10%",
   },
 });
@@ -124,37 +121,33 @@ const HomeScreen = ({ navigation }) => {
     },
   });
 
-async function addDoc() {
-  const db = getDatabase();
-  const reference = ref(db, 'test/' + 'testdoc');
-  await set(reference, {
-    field1: "hello2",
-  });
-  window.alert("clicked");
-}
+  async function addDoc() {
+    const db = getDatabase();
+    const reference = ref(db, "test/" + "testdoc");
+    await set(reference, {
+      field1: "hello2",
+    });
+    window.alert("clicked");
+  }
 
   return (
-
     <ImageBackground source={image} resizeMode="cover" style={styles.image}>
       <View style={styles.container}>
         <Text style={styles.titleText}>Welcome to SightSea!</Text>
         <View style={styles.buttonGroup}>
-          <TouchableOpacity
+          <Button
             style={styles.navButton}
             onPress={() => navigation.navigate("Form")}
           >
-            <Text style={styles.buttonText}>Report an Animal Sighting</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.navButton}>
-            <Text style={styles.buttonText}>Report a Distressed Animal</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
+            Report an Animal Sighting
+          </Button>
+          <Button style={styles.navButton}>Report a Distressed Animal</Button>
+          <Button
             style={styles.navButton}
             onPress={() => navigation.navigate("StaffLogin")}
           >
-            <Text style={styles.buttonText}>Staff Portal</Text>
-          </TouchableOpacity>
-
+            Staff Portal
+          </Button>
         </View>
       </View>
     </ImageBackground>
