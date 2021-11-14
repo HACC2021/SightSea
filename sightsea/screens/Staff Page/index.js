@@ -262,7 +262,7 @@ const StaffPage = ({ navigation }) => {
         style={{ height: "100vh", width: "100%" }}
         defaultZoom={zoom}
         defaultCenter={center}
-        bootstrapURLKeys={{ key: "AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0" }}
+        //   bootstrapURLKeys={{ key: "AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0" }}
       >
         {data.map((item, index) => {
           return (
@@ -286,7 +286,7 @@ const StaffPage = ({ navigation }) => {
     onValue(pageref, (snapshot) => {
       console.log(snapshot.val());
       console.log(itemsPerPage);
-      console.log((Number(snapshot.val()) / itemsPerPage))
+      console.log(Number(snapshot.val()) / itemsPerPage);
       setTotalPages(Math.ceil(Number(snapshot.val()) / itemsPerPage));
     });
     var docCounter = 0;
@@ -338,26 +338,25 @@ const StaffPage = ({ navigation }) => {
     setPageVerifiedTable(page);
   };
 
-  const handleRadioChange = () => {
+  const handleRadioChange = (animal) => {
     var markers = [];
-    //setAnimalDisplayType(animal);
+    setAnimalDisplayType(animal);
     setPageVerifiedTable(0);
     setBackAnchorKey(null);
     frontAnchorKeys = [];
-    getDocs(animalDisplayType, "switch");
-    tableData.map((element) => {
-      markers.push({
-        ticketNum: element[1].GPS_Coordinate.Ticket_Number,
-        latitude: element[1].GPS_Coordinate.latitude,
-        longitude: element[1].GPS_Coordinate.longitude,
-      });
-    }
-    );
+    getDocs(animal, "switch");
+    // tableData.map((element) => {
+    //   markers.push({
+    //     ticketNum: element[1].GPS_Coordinate.Ticket_Number,
+    //     latitude: element[1].GPS_Coordinate.latitude,
+    //     longitude: element[1].GPS_Coordinate.longitude,
+    //   });
+    // });
 
-    //convert GPS coordinate to postal address and update marker array
-    convertToAddress(markers);
-    //pass the GPS coordinate object to the MarkerData array
-    setMarkerData(markers);
+    // //convert GPS coordinate to postal address and update marker array
+    // convertToAddress(markers);
+    // //pass the GPS coordinate object to the MarkerData array
+    // setMarkerData(markers);
   };
 
   //console.log(markerData);
@@ -390,121 +389,67 @@ const StaffPage = ({ navigation }) => {
     //Can only return 1 view object for Andriod
     <ScrollView>
       <View style={styles.container}>
-        <Surface style={styles.surface}>
-          <Text style={styles.header}>New Reports</Text>
-          <DataTable>
-            <DataTable.Header>
-              {!checked ? (
+        {Platform.OS === "web" ? (
+          <Surface style={styles.surface}>
+            <Text style={styles.header}>New Reports</Text>
+            <DataTable>
+              <DataTable.Header>
                 <DataTable.Title></DataTable.Title>
-              ) : (
-                <DataTable.Title>
-                  <TouchableOpacity
-                    style={styles.verifyButton}
-                    onPress={Assign}
-                  >
-                    <Text style={{ color: "#3478F6" }}>Verify</Text>
-                  </TouchableOpacity>
+                <DataTable.Title>Ticket Number</DataTable.Title>
+                <DataTable.Title>Ticket Type</DataTable.Title>
+
+                <DataTable.Title style={styles.columns}>Date</DataTable.Title>
+                <DataTable.Title style={styles.columns}>Time</DataTable.Title>
+                <DataTable.Title style={styles.columns}>
+                  Location
                 </DataTable.Title>
-              )}
-              <DataTable.Title style={styles.columns}>
-                Ticket Number
-              </DataTable.Title>
-              <DataTable.Title style={styles.columns}>
-                Ticket Type
-              </DataTable.Title>
+              </DataTable.Header>
+              {/* Loop over new reports to make rows */}
 
-              {Platform.OS === "web" ? (
-                <>
-                  <DataTable.Title style={styles.columns}>Date</DataTable.Title>
-                  <DataTable.Title style={styles.columns}>Time</DataTable.Title>
-                  <DataTable.Title style={styles.columns}>
-                    Location
-                  </DataTable.Title>
-                </>
-              ) : null}
-            </DataTable.Header>
-            {/* Loop over new reports to make rows */}
+              {tableData.map((element, index) => (
+                <DataTable.Row key={index}>
+                  <DataTable.Cell
+                    style={styles.columns}
+                    key={index}
+                  ></DataTable.Cell>
+                  <DataTable.Cell numeric style={styles.row}>
+                    {element[0]}
+                  </DataTable.Cell>
+                  <DataTable.Cell style={styles.row}>
+                    {element[1].ticket_type}
+                  </DataTable.Cell>
 
-            {/* ###########USE when firebase is connected ####### */}
-
-            {/* {data.map((data) => {
-                return (
-                  <DataTable.Row key={data.id} onPress={() => navigation.navigate(data.id.toString())}>
-                  <DataTable.Cell style={styles.columns}>
-                <Checkbox
-                  status={checked ? "checked" : "unchecked"}
-                  onPress={() => {
-                    setChecked(!checked);
-                  }}
-                ></Checkbox>
+                  <DataTable.Cell numeric style={styles.row}>
+                    {element[1].Date}
                   </DataTable.Cell>
                   <DataTable.Cell numeric style={styles.row}>
-                {data.ticketNumber}
-              </DataTable.Cell>
-              <DataTable.Cell style={styles.row}>{data.ticketType}</DataTable.Cell>
+                    {element[1].Time}
+                  </DataTable.Cell>
+                  <DataTable.Cell style={styles.row}>
+                    {element[1].Location}
+                  </DataTable.Cell>
+                </DataTable.Row>
+              ))}
 
-              {Platform.OS === "web" ? (
-                <>
-                  <DataTable.Cell numeric style={styles.row}>
-                  {data.date}
-                  </DataTable.Cell>
-                  <DataTable.Cell numeric style={styles.row}>
-                    {data.time}
-                  </DataTable.Cell>
-                  <DataTable.Cell style={styles.row}>{data.location}</DataTable.Cell>
-                </>
-              ) : null}
-                  </DataTable.Row>
-                  
-                )
-              })} */}
-
-            {/* ###########USE when firebase is connected ####### */}
-            <DataTable.Row onPress={() => console.log("Clicked")}>
-              <DataTable.Cell style={styles.columns}>
-                <Checkbox
-                  status={checked ? "checked" : "unchecked"}
-                  onPress={() => {
-                    setChecked(!checked);
-                  }}
-                ></Checkbox>
-              </DataTable.Cell>
-              <DataTable.Cell numeric style={styles.row}>
-                123
-              </DataTable.Cell>
-              <DataTable.Cell style={styles.row}>C</DataTable.Cell>
-
-              {Platform.OS === "web" ? (
-                <>
-                  <DataTable.Cell numeric style={styles.row}>
-                    32132
-                  </DataTable.Cell>
-                  <DataTable.Cell numeric style={styles.row}>
-                    0500
-                  </DataTable.Cell>
-                  <DataTable.Cell style={styles.row}>a beach</DataTable.Cell>
-                </>
-              ) : null}
-            </DataTable.Row>
-            {/* ################## */}
-            <DataTable.Pagination
-              page={pageNewTable}
-              numberOfPages={3}
-              onPageChange={(page) => setPageNewTable(page)}
-              label="1-2 of 6"
-              optionsPerPage={optionsPerPage}
-              itemsPerPage={itemsPerPage}
-              setItemsPerPage={setItemsPerPage}
-              showFastPagination
-              optionsLabel={"Rows per page"}
-            />
-          </DataTable>
-        </Surface>
+              <DataTable.Pagination
+                page={pageVerifiedTable}
+                numberOfPages={totalPages}
+                onPageChange={(page) => handlePageChange(page)}
+                label={pageVerifiedTable + 1 + "of " + totalPages}
+                // optionsPerPage={optionsPerPage}
+                // itemsPerPage={itemsPerPage}
+                // setItemsPerPage={setItemsPerPage}
+                showFastPagination
+                optionsLabel={"Rows per page"}
+              />
+            </DataTable>
+          </Surface>
+        ) : null}
         <View />
         <Surface style={styles.surface}>
           <Text style={styles.secondaryheader}>Verified Reports</Text>
           <RadioButton.Group
-            onValueChange={(value) => setAnimalDisplayType(value)}
+            onValueChange={(value) => handleRadioChange(value)}
             value={animalDisplayType}
           >
             {Platform.OS === "web" ? (
@@ -521,13 +466,6 @@ const StaffPage = ({ navigation }) => {
               ))
             )}
           </RadioButton.Group>
-          <Button
-            mode="contained"
-            style={styles.btn}
-            onPress={handleRadioChange}
-          >
-            Search
-          </Button>
           {/* Display map with pins for ALL new reports */}
           <DataTable>
             <DataTable.Header>
@@ -607,13 +545,9 @@ const StaffPage = ({ navigation }) => {
             <GoogleMap
               center={mapProps.center}
               zoom={mapProps.zoom}
-              data={markerData}
+              data={markers}
             />
-          ) : (
-            <MapView style={styles.map} region={mapProps.center}>
-              <Marker key={0} coordinate={mapProps.center} title={"Marker"} />
-            </MapView>
-          )}
+          ) : null}
         </View>
       </View>
     </ScrollView>
