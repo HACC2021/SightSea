@@ -303,8 +303,9 @@ const SightForm = () => {
     //check if the gps coordinate object is empty
     if (animalDB === "Seal" && Object.keys(coordinate).length > 0) {
       //Seal Doc
-      const reference = ref(db, `${animalDB}/documents/` + `${localdocID}`);
+      const reference = ref(db, `Unverified/documents/` + `${localdocID}`);
       set(reference, {
+        AnimalType: animalDB,
         GPS_Coordinate: {
           latitude: coordinate["latitude"],
           longitude: coordinate["longitude"],
@@ -359,8 +360,9 @@ const SightForm = () => {
       const observer_type = "P";
       var intitials = name.slice(0, 1) + observer_type;
 
-      const reference = ref(db, `${animalDB}/documents/` + `${localdocID}`);
+      const reference = ref(db, `Unverified/documents/` + `${localdocID}`);
       set(reference, {
+        AnimalType: animalDB,
         GPS_Coordinate: {
           latitude: coordinate["latitude"],
           longitude: coordinate["longitude"],
@@ -401,8 +403,9 @@ const SightForm = () => {
         });
     } else if (animalDB === "Bird" && Object.keys(coordinate).length > 0) {
       //For Bird Docs
-      const reference = ref(db, `${animalDB}/documents/` + `${localdocID}`);
+      const reference = ref(db, `Unverified/documents/` + `${localdocID}`);
       set(reference, {
+        AnimalType: animalDB,
         GPS_Coordinate: {
           latitude: coordinate["latitude"],
           longitude: coordinate["longitude"],
