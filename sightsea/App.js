@@ -89,12 +89,36 @@ export default function App() {
     <PaperProvider theme={theme}>
       <NavigationContainer>
         {/* set Home as the landing page */}
-        <Stack.Navigator initialRouteName="SightSea">
-          <Stack.Screen name="SightSea" component={HomeScreen} />
+        <Stack.Navigator 
+        // screenOptions={{
+        // headerShown: false}} 
+        initialRouteName="SightSea">
+          <Stack.Screen 
+          name="SightSea" 
+          component={HomeScreen}
+          options={({navigation})=>({
+            headerRight:() => (
+              <Text
+                style={styles.button}
+                title="Home"
+                onPress={()=> navigation.navigate("SightSea")}>
+                  Home
+                </Text>
+            )
+            })} />
           <Stack.Screen
             name="Form"
             component={SightForm}
-            options={{ headerLeft: null }}
+            options={({navigation})=>({
+              headerRight:() => (
+                <Text
+                  style={styles.button}
+                  title="Home"
+                  onPress={()=> navigation.navigate("SightSea")}>
+                    Home
+                  </Text>
+              )
+              })}
           />
           <Stack.Screen
               name="ViewReport"
@@ -104,7 +128,16 @@ export default function App() {
           <Stack.Screen
             name="StaffLogin"
             component={StaffLogin}
-            options={{ headerLeft: null }}
+            options={({navigation})=>({
+              headerRight:() => (
+                <Text
+                  style={styles.button}
+                  title="Home"
+                  onPress={()=> navigation.navigate("SightSea")}>
+                    Home
+                  </Text>
+              )
+              })}
           />
           <Stack.Screen
             name="StaffPage"
@@ -119,6 +152,7 @@ export default function App() {
                 >
                   Logout
                 </Text>
+                
               ),
             }}
           />
