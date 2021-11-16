@@ -42,6 +42,7 @@ import {
   onChildAdded,
 } from "firebase/database";
 import ExportDatabase from "../../scripts/ExportDatabase";
+
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import * as Location from "expo-location";
 
@@ -138,7 +139,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const optionsPerPage = [3, 3, 3];
+const optionsPerPage = [2, 3, 4];
 const animalTypes = ["Bird", "Seal", "Turtle"];
 var frontAnchorKeysVerified = [];
 var frontAnchorKeysNew = [];
@@ -366,7 +367,7 @@ const StaffPage = ({ navigation }) => {
   //convert location coordinate to address
   function convertToAddress(arrayOfMarker) {
     /*************************Enable api key when using reverseGeocodeAsync function ************************/
-    // Location.setGoogleApiKey("AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0");
+    Location.setGoogleApiKey("AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0");
     //loop through each marker object and convert them to postal address
     var string = "";
     arrayOfMarker.map((obj, index) => {
@@ -487,6 +488,7 @@ const StaffPage = ({ navigation }) => {
               ) : null}
             </DataTable.Header>
             {/* Loop over new reports to make rows */}
+
             {tableDataVerified.map((element, index) => (
               <DataTable.Row key={index}>
                 <DataTable.Cell style={styles.columns} key={index}>
