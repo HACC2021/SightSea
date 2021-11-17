@@ -34,6 +34,8 @@ import {
 } from "firebase/database";
 import * as Location from "expo-location";
 import { NavigationContainer, useTheme } from "@react-navigation/native";
+
+import * as ImagePicker from "expo-image-picker";
 //import Marker from "react-native-maps";
 //import DropDown from "react-native-paper-dropdown";
 //import DateTimePicker from "@react-native-community/datetimepicker";
@@ -69,6 +71,7 @@ const styles = StyleSheet.create({
 });
 const SightForm = ({ navigation }) => {
   const [date, setDate] = React.useState(new Date());
+  const [image, setImage] = React.useState("");
   const [currentLocation, setCurrentLocation] = React.useState(null);
   const [errorMsg, setErrorMsg] = React.useState(null);
   const [name, setName] = React.useState("");
@@ -209,6 +212,18 @@ const SightForm = ({ navigation }) => {
       let currentLocation = await Location.getCurrentPositionAsync({});
       setCurrentLocation(currentLocation);
     })();
+
+    //effect to check for camera roll permission on IOS and Andriod
+    //cameraRollPermissions();
+    (async () => {
+      if (Platform.OS !== "web") {
+        const { status } =
+          await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== "granted") {
+          alert("Sorry, we need camera roll permissions to make this work!");
+        }
+      }
+    })();
   }, []);
 
   //get location coordinate from currentLocation (location object)
@@ -222,6 +237,8 @@ const SightForm = ({ navigation }) => {
 
       if (beach !== "") {
         locationCoordinate = addressToCoordinate(beach);
+      } else if (beach == "") {
+        setCoordinate({ latitude: 21.302877, longitude: -157.84388 });
       }
     }
     //convert to postal address if no errors are found
@@ -255,6 +272,41 @@ const SightForm = ({ navigation }) => {
 
     var num = first_three + "-" + middle_three + "-" + last_four;
     return num;
+  };
+
+  //Function to ask for permission to the camera roll
+  const cameraRollPermissions = async () => {
+    if (Platform.OS !== "web") {
+      const { status } = await ImagePicker.getMediaLibraryPermissionsAsync();
+      if (status !== "granted") {
+        alert(
+          "Please grant camera roll permissions inside your system's settings"
+        );
+      } else {
+        console.log("Media Permissions are granted");
+      }
+    }
+    //No need to premission check on Web
+  };
+
+  //Grab the Image from the UI of the Device
+  //Works for Web and Andriod
+  //TODO test for IOS
+  const handleImageSubmit = async () => {
+    var newImage = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: false,
+      aspect: [4, 3],
+      //scale down to half of the incoming quality to
+      //prevent overly large image submissions
+      quality: 0.5,
+    });
+
+    console.log(JSON.stringify(newImage));
+    //If an image was picked then store it
+    if (!newImage.cancelled) {
+      setImage(newImage.uri);
+    }
   };
 
   //window.alert(date.getHours() + ":" + date.getMinutes());
@@ -324,10 +376,10 @@ const SightForm = ({ navigation }) => {
     var currentday = currentDate();
 
     var currenttime = currentTime();
-
+    //21.302877, -157.843880
     const observer_type = "P";
     var intitials = name.slice(0, 1) + observer_type;
-
+    //console.log(image);
     //check if the gps coordinate object is empty
     if (animalDB === "Seal" && Object.keys(coordinate).length > 0) {
       //Seal Doc
@@ -335,8 +387,8 @@ const SightForm = ({ navigation }) => {
       set(reference, {
         AnimalType: animalDB,
         GPS_Coordinate: {
-          latitude: coordinate["latitude"],
-          longitude: coordinate["longitude"],
+          latitude: 21.302877,
+          longitude: -157.84388,
         },
         Date: currentday,
         Time: currenttime,
@@ -374,10 +426,11 @@ const SightForm = ({ navigation }) => {
         Number_of_Calls_Received: 0,
         Other_Notes: "",
         Verified: "",
+        Image: image,
       })
         .then(() => {
           console.log("Report Submitted Successfully!");
-
+          //Navigate back the home page
           navigation.navigate("SightSea");
         })
         .catch((error) => {
@@ -393,8 +446,8 @@ const SightForm = ({ navigation }) => {
       set(reference, {
         AnimalType: animalDB,
         GPS_Coordinate: {
-          latitude: coordinate["latitude"],
-          longitude: coordinate["longitude"],
+          latitude: 21.302877,
+          longitude: -157.84388,
         },
         Date: currentday,
         Time: currenttime,
@@ -421,6 +474,7 @@ const SightForm = ({ navigation }) => {
         Number_of_Calls_Received: 0,
         Other_Notes: "",
         Verified: "",
+        Image: image,
       })
         .then(() => {
           window.alert("Report Submitted Successfully!");
@@ -437,8 +491,8 @@ const SightForm = ({ navigation }) => {
       set(reference, {
         AnimalType: animalDB,
         GPS_Coordinate: {
-          latitude: coordinate["latitude"],
-          longitude: coordinate["longitude"],
+          latitude: 21.302877,
+          longitude: -157.84388,
         },
         Date: currentday,
         Time: currenttime,
@@ -460,6 +514,7 @@ const SightForm = ({ navigation }) => {
         Number_of_Calls_Received: 0,
         Other_Notes: "",
         Verified: "",
+        Image: image,
       })
         .then(() => {
           window.alert("Report Submitted Successfully!");
@@ -471,6 +526,9 @@ const SightForm = ({ navigation }) => {
           //Should stay on page while throwing error
         });
     }
+
+    //TODO Count not updating when at 0
+    //Ensure it can update when at 0
     const countref = ref(db, `Unverified/`);
     runTransaction(countref, (post) => {
       if (post) {
@@ -1215,6 +1273,14 @@ const SightForm = ({ navigation }) => {
                 {/*/>*/}
               </View>
             )}
+
+            <Button
+              stlye={styles.btn}
+              mode="contained"
+              onPress={() => handleImageSubmit()}
+            >
+              Choose or Take Image
+            </Button>
           </View>
           <Button style={styles.btn} mode="contained" onPress={() => addDoc()}>
             Submit
