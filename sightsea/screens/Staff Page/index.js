@@ -40,6 +40,9 @@ import {
   query,
   limitToFirst,
   onChildAdded,
+  set,
+  runTransaction,
+  remove,
 } from "firebase/database";
 import ExportDatabase from "../../scripts/ExportDatabase";
 
@@ -379,9 +382,11 @@ const StaffPage = ({ navigation }) => {
       }
     });
     onValue(reference, (snapshot) => {
+      snapshot.val() === null ? setTableDataNew([]) :
       setTableDataNew(Object.entries(snapshot.val()));
-      console.log(snapshot.val());
+
     });
+
   }
 
   const handlePageChange = (page, callback) => {
@@ -428,7 +433,34 @@ const StaffPage = ({ navigation }) => {
   }
 
   const handleVerify = () => {
-
+    newChecked.map((checked, index) => {
+      if (checked === true) {
+        const db = getDatabase();
+        const item = tableDataNew[index];
+        const addref = ref(db, `${item[1].AnimalType}/documents/${item[0]}`);
+        set(addref, item[1]);
+        const addCountRef = ref(db, `${item[1].AnimalType}/`);
+        runTransaction(addCountRef, (post) => {
+          if (post) {
+            if(post.count) {
+              post.count++;
+            }
+          }
+          return post;
+        });
+        const removeref = ref(db, `Unverified/documents/${item[0]}`);
+        remove(removeref);
+        const removeCountRef = ref(db, `Unverified/`);
+        runTransaction(removeCountRef, (post) => {
+          if (post) {
+            if(post.count) {
+              post.count--;
+            }
+          }
+          return post;
+        });
+      }
+    })
   }
 
   //console.log(markerData);
