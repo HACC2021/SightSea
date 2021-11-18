@@ -19,6 +19,7 @@ import {
   Paragraph,
   List,
   Menu,
+  TouchableRipple,
 } from "react-native-paper";
 
 import PhoneInput from "react-native-phone-input";
@@ -78,7 +79,7 @@ const SightForm = ({ navigation }) => {
   const [docID, setDocID] = React.useState("");
   const [phoneNum, setPhoneNum] = React.useState("");
   const [validPhone, setValidPhone] = React.useState(false);
-
+  const [coordinate, setCoordinate] = React.useState({});
   const [location, setLocation] = React.useState("");
   const [allowLocation, setAllowLocation] = React.useState(null);
   const [turtleSize, setTurtleSize] = React.useState("");
@@ -107,10 +108,6 @@ const SightForm = ({ navigation }) => {
   const [island, setIsland] = React.useState("Oahu");
   const [showIslandDropDown, setIslandDropDown] = React.useState(false);
 
-  //Beach Drop Down
-  const [beach, setBeach] = React.useState("");
-  const [showBeachDropDown, setBeachDropDown] = React.useState(false);
-
   //Type of Turtle Drop Down
   const [turtle, setTurtle] = React.useState("Unknown");
   const [showTurtuleDropDown, setTurtleDropDown] = React.useState(false);
@@ -129,7 +126,10 @@ const SightForm = ({ navigation }) => {
     { label: "Seal", value: "Seal" },
   ];
 
-  const [coordinate, setCoordinate] = React.useState({});
+  const beachList = ["", "Turtle Bay", "Hanauma Bay", "Waimea Bay"];
+  var beach = "";
+  const [beachText, setBeachText] = React.useState(beachList[0]);
+  const [showBeachDropDown, setBeachDropDown] = React.useState(false);
 
   const closePresentDropdown = () => {
     setPresentDropDown(!showPresentDropDown);
@@ -197,6 +197,21 @@ const SightForm = ({ navigation }) => {
     return time;
   };
 
+  //component for listitem
+  function ListItem({ onItemClick, item, title }) {
+    function onItemClick() {
+      beach = item;
+      setBeachText(beach);
+      console.log(beach);
+      closeBeachDropdown();
+    }
+    return (
+      <div onClick={onItemClick}>
+        <List.Item title={title}></List.Item>
+      </div>
+    );
+  }
+
   //get current user location
   React.useEffect(() => {
     (async () => {
@@ -204,11 +219,11 @@ const SightForm = ({ navigation }) => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         setErrorMsg("Permission to access location was denied");
-        setAllowLocation(false);
+        setAllowLocation(false); //display beach drop down if location is not enabled
         return;
       }
       //get user current location
-      setAllowLocation(true);
+      setAllowLocation(true); //hide beach drop down if location is enabled
       let currentLocation = await Location.getCurrentPositionAsync({});
       setCurrentLocation(currentLocation);
     })();
@@ -234,13 +249,14 @@ const SightForm = ({ navigation }) => {
 
     if (errorMsg) {
       console.log(errorText);
-
-      if (beach !== "") {
-        locationCoordinate = addressToCoordinate(beach);
-      } else if (beach == "") {
-        setCoordinate({ latitude: 21.302877, longitude: -157.84388 });
+      console.log("beachText = " + beachText);
+      if (beachText == "") {
+        locationCoordinate = { latitude: 21.302877, longitude: -157.84388 };
+      } else {
+        locationCoordinate = addressToCoordinate(beachText);
       }
     }
+
     //convert to postal address if no errors are found
     else if (currentLocation) {
       //convert to array of values
@@ -364,7 +380,6 @@ const SightForm = ({ navigation }) => {
   function addDoc() {
     //get GPS location if location service is enabled
     getUserLocation();
-
     //filter to correct DB based on animal type
     var animalDB = animalType;
     //generate the random doc ID
@@ -387,8 +402,8 @@ const SightForm = ({ navigation }) => {
       set(reference, {
         AnimalType: animalDB,
         GPS_Coordinate: {
-          latitude: 21.302877,
-          longitude: -157.84388,
+          latitude: coordinate["latitude"],
+          longitude: coordinate["longitude"],
         },
         Date: currentday,
         Time: currenttime,
@@ -446,8 +461,8 @@ const SightForm = ({ navigation }) => {
       set(reference, {
         AnimalType: animalDB,
         GPS_Coordinate: {
-          latitude: 21.302877,
-          longitude: -157.84388,
+          latitude: coordinate["latitude"],
+          longitude: coordinate["longitude"],
         },
         Date: currentday,
         Time: currenttime,
@@ -478,7 +493,8 @@ const SightForm = ({ navigation }) => {
       })
         .then(() => {
           window.alert("Report Submitted Successfully!");
-
+          beach = "";
+          console.log(coordinate);
           navigation.navigate("SightSea");
         })
         .catch((error) => {
@@ -491,8 +507,8 @@ const SightForm = ({ navigation }) => {
       set(reference, {
         AnimalType: animalDB,
         GPS_Coordinate: {
-          latitude: 21.302877,
-          longitude: -157.84388,
+          latitude: coordinate["latitude"],
+          longitude: coordinate["longitude"],
         },
         Date: currentday,
         Time: currenttime,
@@ -611,31 +627,15 @@ const SightForm = ({ navigation }) => {
                 {!allowLocation && (
                   <List.Section title="Where is the Seal located?">
                     <List.Accordion
-                      title={beach}
+                      title={beachText}
                       expanded={showBeachDropDown}
                       onPress={closeBeachDropdown}
                     >
-                      <List.Item
-                        title="Hanauma Bay"
-                        onPress={function () {
-                          setBeach("Hanauma Bay");
-                          closeBeachDropdown();
-                        }}
-                      />
-                      <List.Item
-                        title="Turtle Bay"
-                        onPress={function () {
-                          setBeach("Turtle Bay");
-                          closeBeachDropdown();
-                        }}
-                      />
-                      <List.Item
-                        title="Waimea Bay"
-                        onPress={function () {
-                          setBeach("Waimea Bay");
-                          closeBeachDropdown();
-                        }}
-                      />
+                      {beachList.map((item, index) => {
+                        return (
+                          <ListItem key={index} title={item} item={item} />
+                        );
+                      })}
                     </List.Accordion>
                   </List.Section>
                 )}
@@ -849,31 +849,15 @@ const SightForm = ({ navigation }) => {
                     {!allowLocation && (
                       <List.Section title="Where is the Turtle located?">
                         <List.Accordion
-                          title={beach}
+                          title={beachText}
                           expanded={showBeachDropDown}
                           onPress={closeBeachDropdown}
                         >
-                          <List.Item
-                            title="Hanauma Bay"
-                            onPress={function () {
-                              setBeach("Hanauma Bay");
-                              closeBeachDropdown();
-                            }}
-                          />
-                          <List.Item
-                            title="Turtle Bay"
-                            onPress={function () {
-                              setBeach("Turtle Bay");
-                              closeBeachDropdown();
-                            }}
-                          />
-                          <List.Item
-                            title="Waimea Bay"
-                            onPress={function () {
-                              setBeach("Waimea Bay");
-                              closeBeachDropdown();
-                            }}
-                          />
+                          {beachList.map((item, index) => {
+                            return (
+                              <ListItem key={index} title={item} item={item} />
+                            );
+                          })}
                         </List.Accordion>
                       </List.Section>
                     )}
@@ -1024,31 +1008,15 @@ const SightForm = ({ navigation }) => {
                     {!allowLocation && (
                       <List.Section title="Where is the Bird located?">
                         <List.Accordion
-                          title={beach}
+                          title={beachText}
                           expanded={showBeachDropDown}
                           onPress={closeBeachDropdown}
                         >
-                          <List.Item
-                            title="Hanauma Bay"
-                            onPress={function () {
-                              setBeach("Hanauma Bay");
-                              closeBeachDropdown();
-                            }}
-                          />
-                          <List.Item
-                            title="Turtle Bay"
-                            onPress={function () {
-                              setBeach("Turtle Bay");
-                              closeBeachDropdown();
-                            }}
-                          />
-                          <List.Item
-                            title="Waimea Bay"
-                            onPress={function () {
-                              setBeach("Waimea Bay");
-                              closeBeachDropdown();
-                            }}
-                          />
+                          {beachList.map((item, index) => {
+                            return (
+                              <ListItem key={index} title={item} item={item} />
+                            );
+                          })}
                         </List.Accordion>
                       </List.Section>
                     )}
