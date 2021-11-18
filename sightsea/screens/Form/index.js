@@ -19,6 +19,7 @@ import {
   Paragraph,
   List,
   Menu,
+  HelperText,
 } from "react-native-paper";
 
 import PhoneInput from "react-native-phone-input";
@@ -203,12 +204,21 @@ const SightForm = ({ navigation }) => {
     })();
 
     //effect to check for camera roll permission on IOS and Andriod
-    //cameraRollPermissions();
     (async () => {
       if (Platform.OS !== 'web') {
         const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== 'granted') {
           alert('Sorry, we need camera roll permissions to make this work!');
+        }
+      }
+    })();
+
+    //effect to check for camera permissions on IOS and Andriod
+    (async () => {
+      if (Platform.OS !== 'web') {
+        const { status } = await ImagePicker.requestCameraPermissionsAsync();
+        if (status !== 'granted') {
+          alert('Sorry, we need camera permissions to make this work!');
         }
       }
     })();
@@ -247,37 +257,37 @@ const SightForm = ({ navigation }) => {
     return num;
   };
 
-  //Function to ask for permission to the camera roll
-  const cameraRollPermissions = async () => {
-    if(Platform.OS !== 'web'){
-      const { status } = await ImagePicker.getMediaLibraryPermissionsAsync();
-      if (status !== 'granted') {
-        alert("Please grant camera roll permissions inside your system's settings");
-      } else {
-        console.log('Media Permissions are granted')
-      }
-    }
-    //No need to premission check on Web
-  }
-
   //Grab the Image from the UI of the Device
   //Works for Web and Andriod
   //TODO test for IOS
-   const  handleImageSubmit = async () => {
-     var newImage = await ImagePicker.launchImageLibraryAsync({
-       mediaTypes: ImagePicker.MediaTypeOptions.Images,
-       allowsEditing: false,
-       aspect: [4,3],
-       //scale down to half of the incoming quality to
-       //prevent overly large image submissions
-       quality: 0.5,
-     });
+  const handleImageSelection = async () => {
+    var newImage = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: false,
+      aspect: [4, 3],
+      //scale down to half of the incoming quality to
+      //prevent overly large image submissions
+      quality: 0.5,
+    });
 
-     console.log(JSON.stringify(newImage))
+    console.log(JSON.stringify(newImage))
     //If an image was picked then store it
-     if(!newImage.cancelled){
-       setImage(newImage.uri);
-     }
+    if (!newImage.cancelled) {
+      setImage(newImage.uri);
+    }
+  }
+
+  //Grab the image from the camera
+  //Works for Andriod, should be hidden on web
+  //TODO test for IOS
+  const handleCameraSelection = async () => {
+    var newImage = await ImagePicker.launchCameraAsync();
+
+    console.log(JSON.stringify(newImage))
+    //If an image was picked then store it
+    if (!newImage.cancelled) {
+      setImage(newImage.uri);
+    }
   }
 
   //window.alert(date.getHours() + ":" + date.getMinutes());
@@ -500,8 +510,13 @@ const SightForm = ({ navigation }) => {
               });
         }
 
+    const hasErrorsName = () => {
+      let nameLength = name.length;
+      if (nameLength === 0) {
+        return nameLength;
+      }
 
-
+    }
 
     //TODO Count not updating when at 0
     //Ensure it can update when at 0
@@ -560,6 +575,7 @@ const SightForm = ({ navigation }) => {
 
               {animalType === "Seal" ? (
                   <View>
+
                     <TextInput
                         style={styles.input}
                         onChangeText={setName}
@@ -568,6 +584,11 @@ const SightForm = ({ navigation }) => {
                         textContentType="name"
                         label="Enter First Name"
                     />
+
+                    {/*<HelperText type="error" visible= {true}>*/}
+                    {/*  This should display when there is an error.*/}
+                    {/*</HelperText>*/}
+
                     <TextInput
                         style={styles.input}
                         onChangeText={setPhoneNum}
@@ -1072,32 +1093,28 @@ const SightForm = ({ navigation }) => {
                     )}
 
                     {/* Catch All For all three Types */}
-
-                    {/*<TextInput*/}
-                    {/*    style={styles.input}*/}
-                    {/*    mode="outlined"*/}
-                    {/*    label="Describe any visible wounds (size/color)"*/}
-                    {/*/>*/}
-                    {/*<TextInput*/}
-                    {/*    style={styles.input}*/}
-                    {/*    mode="outlined"*/}
-                    {/*    label="Describe any previous wounds (ex. amputated flipper)"*/}
-                    {/*/>*/}
-                    {/*<TextInput*/}
-                    {/*    style={styles.input}*/}
-                    {/*    mode="outlined"*/}
-                    {/*    label="Describe the animal's behavior (ex. is it lethargic?)"*/}
-                    {/*/>*/}
-                    {/*<TextInput*/}
-                    {/*    style={styles.input}*/}
-                    {/*    mode="outlined"*/}
-                    {/*    label="About what size is the animal?"*/}
-                    {/*/>*/}
+                    
                   </View>
               )}
-              <Button stlye={ styles.btn} mode = "contained" onPress={() => handleImageSubmit()}>
-                  Choose or Take Image
+
+              {Platform.OS !== 'web' ? (
+                  <View>
+                    {/*Only display the camera button on moblie */}
+                    <Button stlye={styles.btn} mode="contained" onPress={() => handleCameraSelection()}>
+                      Take an Image
+                    </Button>
+                  </View>
+              ) : (
+                <View>
+                  {/* Don't Return anything*/}
+                </View>
+
+              )}
+
+              <Button stlye={styles.btn} mode="contained" onPress={() => handleImageSelection()}>
+                Choose an Image
               </Button>
+
             </View>
             <Button style={styles.btn} mode="contained" onPress={() => addDoc()}>
               Submit
