@@ -169,6 +169,7 @@ const StaffPage = ({ navigation }) => {
     React.useState(null);
   const [backAnchorKeyNew, setBackAnchorKeyNew] = React.useState(null);
   const [search, setSearch] = React.useState(false);
+  const [newChecked, setNewChecked] = React.useState(new Array(optionsPerPage[0]).fill(false));
 
   React.useEffect(() => {
     const auth = getAuth();
@@ -416,6 +417,20 @@ const StaffPage = ({ navigation }) => {
     // setMarkerData(markers);
   };
 
+  const handleNewCheckedChange = (position) => {
+    console.log(position);
+    const newState = new Array(itemsPerPage);
+    newChecked.map((x, index) => {
+      console.log(x);
+      newState[index] = index === position ? !x : x
+    });
+    setNewChecked(newState);
+  }
+
+  const handleVerify = () => {
+
+  }
+
   //console.log(markerData);
   //convert location coordinate to address
   function convertToAddress(arrayOfMarker) {
@@ -441,7 +456,7 @@ const StaffPage = ({ navigation }) => {
       });
     });
   }
-
+console.log(newChecked);
   return (
     //Can only return 1 view object for Andriod
     <ScrollView>
@@ -465,6 +480,12 @@ const StaffPage = ({ navigation }) => {
 
               {tableDataNew.map((element, index) => (
                 <DataTable.Row key={index}>
+                  <Checkbox
+                  status={newChecked[index] ? "checked" : "unchecked"}
+                  onPress={() => {
+                    handleNewCheckedChange(index);
+                  }}
+                ></Checkbox>
                   <DataTable.Cell
                     style={styles.columns}
                     key={index}
@@ -500,6 +521,14 @@ const StaffPage = ({ navigation }) => {
                 optionsLabel={"Rows per page"}
               />
             </DataTable>
+            <Button
+            mode="contained"
+            onPress={() => handleVerify()}
+            style={styles.Exportbtn}
+          >
+            Verify
+          </Button>
+
           </Surface>
         ) : null}
         <View />
