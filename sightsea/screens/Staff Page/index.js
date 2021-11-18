@@ -159,6 +159,7 @@ const StaffPage = ({ navigation }) => {
   const [pageNewTable, setPageNewTable] = React.useState(0);
   const [itemsPerPage, setItemsPerPage] = React.useState(optionsPerPage[0]);
   const [totalPages, setTotalPages] = React.useState(3);
+  const [totalPagesNew, setTotalPagesNew] = React.useState(3);
   const [pageVerifiedTable, setPageVerifiedTable] = React.useState(0);
   const [tableDataVerified, setTableDataVerified] = React.useState([]);
   const [tableDataNew, setTableDataNew] = React.useState([]);
@@ -179,6 +180,7 @@ const StaffPage = ({ navigation }) => {
 
     //setPageNewTable(0);
     //setPageVerifiedTable(0);
+    getNewDocs("switch");
   }, [itemsPerPage]);
 
   // ##########adding Firebase query ##########
@@ -335,12 +337,63 @@ const StaffPage = ({ navigation }) => {
     });
   };
 
+  const getNewDocs = (direction) => {
+    const db = getDatabase();
+    const pageref = ref(db, `Unverified/count`);
+    onValue(pageref, (snapshot) => {
+      setTotalPagesNew(Math.ceil(Number(snapshot.val()) / itemsPerPage));
+    });
+    var docCounter = 0;
+    const reference =
+    direction === "switch"
+      ? query(
+          ref(db, `Unverified/documents`),
+          orderByKey(),
+          limitToFirst(itemsPerPage)
+        )
+      : direction === "forward"
+      ? query(
+          ref(db, `/Unverified/documents`),
+          orderByKey(),
+          startAfter(backAnchorKeyNew),
+          limitToFirst(itemsPerPage)
+        )
+      : query(
+          ref(db, `/Unverified/documents`),
+          orderByKey(),
+          startAt(frontAnchorKeysNew[pageNewTable - 1]),
+          limitToFirst(itemsPerPage)
+        );
+    onChildAdded(reference, (snapshot) => {
+      setBackAnchorKeyNew(snapshot.key);
+      docCounter++;
+      if (
+        docCounter === 1 &&
+        (direction === "forward" || direction === "switch")
+      ) {
+        frontAnchorKeysNew.push(snapshot.key);
+        console.log(frontAnchorKeysNew);
+      } else if (docCounter === 1 && direction === "back") {
+        frontAnchorKeysNew.pop();
+      }
+    });
+    onValue(reference, (snapshot) => {
+      setTableDataNew(Object.entries(snapshot.val()));
+      console.log(snapshot.val());
+    });
+  }
+
   const handlePageChange = (page, callback) => {
     page > pageVerifiedTable
       ? getDocs(animalDisplayType, "forward")
       : getDocs(animalDisplayType, "back");
     setPageVerifiedTable(page);
   };
+
+  const handlePageChangeNew = (page) => {
+    page > pageNewTable ? getNewDocs("forward") : getNewDocs("back");
+    setPageNewTable(page);
+  }
 
   const handleRadioChange = (animal) => {
     var markers = [];
@@ -438,7 +491,7 @@ const StaffPage = ({ navigation }) => {
               <DataTable.Pagination
                 page={pageNewTable}
                 numberOfPages={totalPages}
-                onPageChange={(page) => handlePageChange(page)}
+                onPageChange={(page) => handlePageChangeNew(page)}
                 label={pageNewTable + 1 + "of " + totalPages}
                 // optionsPerPage={optionsPerPage}
                 // itemsPerPage={itemsPerPage}
