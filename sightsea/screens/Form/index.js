@@ -19,6 +19,7 @@ import {
   Paragraph,
   List,
   Menu,
+  TouchableRipple,
 } from "react-native-paper";
 
 import PhoneInput from "react-native-phone-input";
@@ -33,6 +34,9 @@ import {
   runTransaction,
 } from "firebase/database";
 import * as Location from "expo-location";
+import { NavigationContainer, useTheme } from "@react-navigation/native";
+
+import * as ImagePicker from "expo-image-picker";
 //import Marker from "react-native-maps";
 //import DropDown from "react-native-paper-dropdown";
 //import DateTimePicker from "@react-native-community/datetimepicker";
@@ -66,16 +70,18 @@ const styles = StyleSheet.create({
     height: 50,
   },
 });
-const SightForm = () => {
+const SightForm = ({ navigation }) => {
   const [date, setDate] = React.useState(new Date());
+  const [image, setImage] = React.useState("");
   const [currentLocation, setCurrentLocation] = React.useState(null);
   const [errorMsg, setErrorMsg] = React.useState(null);
   const [name, setName] = React.useState("");
   const [docID, setDocID] = React.useState("");
   const [phoneNum, setPhoneNum] = React.useState("");
   const [validPhone, setValidPhone] = React.useState(false);
-
+  const [coordinate, setCoordinate] = React.useState({});
   const [location, setLocation] = React.useState("");
+  const [allowLocation, setAllowLocation] = React.useState(null);
   const [turtleSize, setTurtleSize] = React.useState("");
 
   // Animal Type dropdown
@@ -120,7 +126,10 @@ const SightForm = () => {
     { label: "Seal", value: "Seal" },
   ];
 
-  var coordinate = {};
+  const beachList = ["", "Turtle Bay", "Hanauma Bay", "Waimea Bay"];
+  var beach = "";
+  const [beachText, setBeachText] = React.useState(beachList[0]);
+  const [showBeachDropDown, setBeachDropDown] = React.useState(false);
 
   const closePresentDropdown = () => {
     setPresentDropDown(!showPresentDropDown);
@@ -144,6 +153,10 @@ const SightForm = () => {
 
   const closeIslandDropdown = () => {
     setIslandDropDown(!showIslandDropDown);
+  };
+
+  const closeBeachDropdown = () => {
+    setBeachDropDown(!showBeachDropDown);
   };
 
   const closeTurtleDropdown = () => {
@@ -184,6 +197,21 @@ const SightForm = () => {
     return time;
   };
 
+  //component for listitem
+  function ListItem({ onItemClick, item, title }) {
+    function onItemClick() {
+      beach = item;
+      setBeachText(beach);
+      console.log(beach);
+      closeBeachDropdown();
+    }
+    return (
+      <div onClick={onItemClick}>
+        <List.Item title={title}></List.Item>
+      </div>
+    );
+  }
+
   //get current user location
   React.useEffect(() => {
     (async () => {
@@ -191,11 +219,25 @@ const SightForm = () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         setErrorMsg("Permission to access location was denied");
+        setAllowLocation(false); //display beach drop down if location is not enabled
         return;
       }
       //get user current location
+      setAllowLocation(true); //hide beach drop down if location is enabled
       let currentLocation = await Location.getCurrentPositionAsync({});
       setCurrentLocation(currentLocation);
+    })();
+
+    //effect to check for camera roll permission on IOS and Andriod
+    //cameraRollPermissions();
+    (async () => {
+      if (Platform.OS !== "web") {
+        const { status } =
+          await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (status !== "granted") {
+          alert("Sorry, we need camera roll permissions to make this work!");
+        }
+      }
     })();
   }, []);
 
@@ -204,10 +246,17 @@ const SightForm = () => {
   function getUserLocation() {
     let locationCoordinate = {};
     let errorText = "Waiting..";
+
     if (errorMsg) {
-      //console.log(errorText);
-      window.alert(errorText);
+      console.log(errorText);
+      console.log("beachText = " + beachText);
+      if (beachText == "") {
+        locationCoordinate = { latitude: 21.302877, longitude: -157.84388 };
+      } else {
+        locationCoordinate = addressToCoordinate(beachText);
+      }
     }
+
     //convert to postal address if no errors are found
     else if (currentLocation) {
       //convert to array of values
@@ -216,9 +265,21 @@ const SightForm = () => {
       locationCoordinate["latitude"] = locationArray[0].latitude;
       locationCoordinate["longitude"] = locationArray[0].longitude;
     }
-
-    return locationCoordinate;
+    setCoordinate(locationCoordinate);
   }
+
+  //convert place name to gps coordinate object
+  function addressToCoordinate(address) {
+    let addressCoordinate = {};
+    Location.setGoogleApiKey("AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0");
+    Location.geocodeAsync(address).then((result) => {
+      addressCoordinate["latitude"] = result[0].latitude;
+      addressCoordinate["longitude"] = result[0].longitude;
+    });
+
+    return addressCoordinate;
+  }
+
   //format number form input
   const phoneNumFormat = () => {
     var first_three = phoneNum.toString().slice(0, 3);
@@ -227,6 +288,41 @@ const SightForm = () => {
 
     var num = first_three + "-" + middle_three + "-" + last_four;
     return num;
+  };
+
+  //Function to ask for permission to the camera roll
+  const cameraRollPermissions = async () => {
+    if (Platform.OS !== "web") {
+      const { status } = await ImagePicker.getMediaLibraryPermissionsAsync();
+      if (status !== "granted") {
+        alert(
+          "Please grant camera roll permissions inside your system's settings"
+        );
+      } else {
+        console.log("Media Permissions are granted");
+      }
+    }
+    //No need to premission check on Web
+  };
+
+  //Grab the Image from the UI of the Device
+  //Works for Web and Andriod
+  //TODO test for IOS
+  const handleImageSubmit = async () => {
+    var newImage = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: false,
+      aspect: [4, 3],
+      //scale down to half of the incoming quality to
+      //prevent overly large image submissions
+      quality: 0.5,
+    });
+
+    console.log(JSON.stringify(newImage));
+    //If an image was picked then store it
+    if (!newImage.cancelled) {
+      setImage(newImage.uri);
+    }
   };
 
   //window.alert(date.getHours() + ":" + date.getMinutes());
@@ -281,10 +377,9 @@ const SightForm = () => {
     return tempID;
   };
 
-  //get location coordinate
-  coordinate = getUserLocation();
-
   function addDoc() {
+    //get GPS location if location service is enabled
+    getUserLocation();
     //filter to correct DB based on animal type
     var animalDB = animalType;
     //generate the random doc ID
@@ -296,15 +391,16 @@ const SightForm = () => {
     var currentday = currentDate();
 
     var currenttime = currentTime();
-
+    //21.302877, -157.843880
     const observer_type = "P";
     var intitials = name.slice(0, 1) + observer_type;
-
+    //console.log(image);
     //check if the gps coordinate object is empty
     if (animalDB === "Seal" && Object.keys(coordinate).length > 0) {
       //Seal Doc
-      const reference = ref(db, `${animalDB}/documents/` + `${localdocID}`);
+      const reference = ref(db, `Unverified/documents/` + `${localdocID}`);
       set(reference, {
+        AnimalType: animalDB,
         GPS_Coordinate: {
           latitude: coordinate["latitude"],
           longitude: coordinate["longitude"],
@@ -319,7 +415,7 @@ const SightForm = () => {
         Observer_Type: "P",
         Observer_Initials: intitials,
         Sector: "",
-        Location: location,
+        Location: beachText || "",
         Location_Notes: "",
         Seal_Present: present,
         Size: size,
@@ -345,22 +441,25 @@ const SightForm = () => {
         Number_of_Calls_Received: 0,
         Other_Notes: "",
         Verified: "",
+        Image: image,
       })
         .then(() => {
-          window.alert("Report Submitted Successfully!");
-          //TODO back to main page
+          console.log("Report Submitted Successfully!");
+          //Navigate back the home page
+          navigation.navigate("SightSea");
         })
         .catch((error) => {
           window.alert("Report Failed to submit.");
-          //TODO Stay on page and flag errors
+          //Should stay on page while throwing error
         });
     } else if (animalDB === "Turtle" && Object.keys(coordinate).length > 0) {
       //Turtle Doc
       const observer_type = "P";
       var intitials = name.slice(0, 1) + observer_type;
 
-      const reference = ref(db, `${animalDB}/documents/` + `${localdocID}`);
+      const reference = ref(db, `Unverified/documents/` + `${localdocID}`);
       set(reference, {
+        AnimalType: animalDB,
         GPS_Coordinate: {
           latitude: coordinate["latitude"],
           longitude: coordinate["longitude"],
@@ -376,7 +475,7 @@ const SightForm = () => {
         Observer_Type: "P",
         Island: island,
         Sector: "",
-        Location: location,
+        Location: beachText || "",
         Location_Notes: "",
         Type_of_Turtle: turtle,
         Size: turtleSize,
@@ -390,19 +489,23 @@ const SightForm = () => {
         Number_of_Calls_Received: 0,
         Other_Notes: "",
         Verified: "",
+        Image: image,
       })
         .then(() => {
           window.alert("Report Submitted Successfully!");
-          //TODO back to main page
+          beach = "";
+          console.log(coordinate);
+          navigation.navigate("SightSea");
         })
         .catch((error) => {
           window.alert("Report Failed to submit.");
-          //TODO Stay on page and flag errors
+          //Should stay on page while throwing error
         });
     } else if (animalDB === "Bird" && Object.keys(coordinate).length > 0) {
       //For Bird Docs
-      const reference = ref(db, `${animalDB}/documents/` + `${localdocID}`);
+      const reference = ref(db, `Unverified/documents/` + `${localdocID}`);
       set(reference, {
+        AnimalType: animalDB,
         GPS_Coordinate: {
           latitude: coordinate["latitude"],
           longitude: coordinate["longitude"],
@@ -417,7 +520,7 @@ const SightForm = () => {
         Observer_Initials: intitials,
         Observer_Type: "P",
         Sector: "",
-        Location: location,
+        Location: beachText || "",
         Location_Notes: "",
         Type_of_Bird: birdType,
         Responders_name: "",
@@ -427,17 +530,22 @@ const SightForm = () => {
         Number_of_Calls_Received: 0,
         Other_Notes: "",
         Verified: "",
+        Image: image,
       })
         .then(() => {
           window.alert("Report Submitted Successfully!");
-          //TODO back to main page
+
+          navigation.navigate("SightSea");
         })
         .catch((error) => {
           window.alert("Report Failed to submit.");
-          //TODO Stay on page and flag errors
+          //Should stay on page while throwing error
         });
     }
-    const countref = ref(db, `${animalDB}/`);
+
+    //TODO Count not updating when at 0
+    //Ensure it can update when at 0
+    const countref = ref(db, `Unverified/`);
     runTransaction(countref, (post) => {
       if (post) {
         if (post.count) {
@@ -453,7 +561,7 @@ const SightForm = () => {
       <ScrollView>
         <View style={styles.form}>
           <Headline>Report a Sighting</Headline>
-          <Subheading style={{textAlign:"center",padding:3}}>
+          <Subheading style={{ textAlign: "center", padding: 3 }}>
             Fill out the form below to submit a sighting and our staffs will
             review the submitted form shortly.
           </Subheading>
@@ -508,12 +616,29 @@ const SightForm = () => {
                   label="Phone number"
                 />
 
-                <TextInput
+                {/* <TextInput
                   style={styles.input}
                   mode="outlined"
                   label="Where is the seal located?"
                   onChangeText={setLocation}
-                />
+                /> */}
+
+                {/* Beach Drop Down */}
+                {!allowLocation && (
+                  <List.Section title="Where is the Seal located?">
+                    <List.Accordion
+                      title={beachText}
+                      expanded={showBeachDropDown}
+                      onPress={closeBeachDropdown}
+                    >
+                      {beachList.map((item, index) => {
+                        return (
+                          <ListItem key={index} title={item} item={item} />
+                        );
+                      })}
+                    </List.Accordion>
+                  </List.Section>
+                )}
 
                 {/*Values of 1 for land and 0 for water */}
                 <List.Section title="Is the seal in the water or on land?">
@@ -615,7 +740,7 @@ const SightForm = () => {
                   </List.Accordion>
                 </List.Section>
 
-                {/*Make a drop down with male,female or unknown*/}
+                {/* Make a drop down with male,female or unknown */}
                 <List.Section title="Is the Seal Male or Female?">
                   <List.Accordion
                     title={sex}
@@ -720,12 +845,91 @@ const SightForm = () => {
                       </List.Accordion>
                     </List.Section>
 
+                    {/* Beach Drop Down */}
+                    {!allowLocation && (
+                      <List.Section title="Where is the Turtle located?">
+                        <List.Accordion
+                          title={beachText}
+                          expanded={showBeachDropDown}
+                          onPress={closeBeachDropdown}
+                        >
+                          {beachList.map((item, index) => {
+                            return (
+                              <ListItem key={index} title={item} item={item} />
+                            );
+                          })}
+                        </List.Accordion>
+                      </List.Section>
+                    )}
+
+                    {/*Type of Turtle Drop Down */}
+                    <List.Section title="What type of Turtle is it?">
+                      <List.Accordion
+                        title={turtle}
+                        expanded={showTurtuleDropDown}
+                        onPress={closeTurtleDropdown}
+                      >
+                        <List.Item
+                          title="Green Turtle"
+                          onPress={function () {
+                            setTurtle("Cm");
+                            closeTurtleDropdown();
+                          }}
+                        />
+                        <List.Item
+                          title="Hawksbill Turtle"
+                          onPress={function () {
+                            setTurtle("Ei");
+                            closeTurtleDropdown();
+                          }}
+                        />
+                        <List.Item
+                          title="Unknown"
+                          onPress={function () {
+                            setTurtle("Unknown");
+                            closeTurtleDropdown();
+                          }}
+                        />
+                      </List.Accordion>
+                    </List.Section>
+
                     <TextInput
                       style={styles.input}
                       mode="outlined"
-                      label="Where is the Turtle located?"
-                      onChangeText={setLocation}
+                      label="How big is the Turtle?"
+                      onChangeText={setTurtleSize}
                     />
+
+                    {/* Alive or Dead Drop Down */}
+                    <List.Section title="Is the Turtle Alive?">
+                      <List.Accordion
+                        title={turtleStatus}
+                        expanded={showTurtleStatus}
+                        onPress={closeTurtleStatusDropdown}
+                      >
+                        <List.Item
+                          title="Alive"
+                          onPress={function () {
+                            setTurtleStatus("Alive");
+                            closeTurtleStatusDropdown();
+                          }}
+                        />
+                        <List.Item
+                          title="Deceased"
+                          onPress={function () {
+                            setTurtleStatus("Deceased");
+                            closeTurtleStatusDropdown();
+                          }}
+                        />
+                        <List.Item
+                          title="Unknown"
+                          onPress={function () {
+                            setTurtleStatus("Unknown");
+                            closeTurtleStatusDropdown();
+                          }}
+                        />
+                      </List.Accordion>
+                    </List.Section>
 
                     {/*Type of Turtle Drop Down */}
                     <List.Section title="What type of Turtle is it?">
@@ -800,12 +1004,22 @@ const SightForm = () => {
                   <View>
                     {/* Bird Specific Questions*/}
 
-                    <TextInput
-                      style={styles.input}
-                      mode="outlined"
-                      label="Where is the Bird located?"
-                      onChangeText={setLocation}
-                    />
+                    {/* Beach Drop Down */}
+                    {!allowLocation && (
+                      <List.Section title="Where is the Bird located?">
+                        <List.Accordion
+                          title={beachText}
+                          expanded={showBeachDropDown}
+                          onPress={closeBeachDropdown}
+                        >
+                          {beachList.map((item, index) => {
+                            return (
+                              <ListItem key={index} title={item} item={item} />
+                            );
+                          })}
+                        </List.Accordion>
+                      </List.Section>
+                    )}
 
                     {/* Drop Down for Bird Type */}
                     {/* TODO Break out the Same types after they select the generic Type into seperate drop downs */}
@@ -1027,6 +1241,14 @@ const SightForm = () => {
                 {/*/>*/}
               </View>
             )}
+
+            <Button
+              stlye={styles.btn}
+              mode="contained"
+              onPress={() => handleImageSubmit()}
+            >
+              Choose or Take Image
+            </Button>
           </View>
           <Button style={styles.btn} mode="contained" onPress={() => addDoc()}>
             Submit

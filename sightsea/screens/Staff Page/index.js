@@ -27,7 +27,6 @@ import {
   Button,
 } from "react-native-paper";
 import GoogleMapReact from "google-map-react";
-import MapView, { Marker } from "react-native-maps";
 import {
   getDatabase,
   ref,
