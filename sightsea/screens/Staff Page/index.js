@@ -587,18 +587,19 @@ const StaffPage = ({ navigation }) => {
                 ) : null}
               </DataTable.Row>
             ))}
-            {animalDisplayType !== null ?
-            <DataTable.Pagination
-              page={pageVerifiedTable}
-              numberOfPages={totalPages}
-              onPageChange={(page) => handlePageChange(page)}
-              label={pageVerifiedTable + 1 + "of " + totalPages}
-              // optionsPerPage={optionsPerPage}
-              // itemsPerPage={itemsPerPage}
-              // setItemsPerPage={setItemsPerPage}
-              showFastPagination
-              optionsLabel={"Rows per page"}
-            /> : null}
+            {animalDisplayType !== null ? (
+              <DataTable.Pagination
+                page={pageVerifiedTable}
+                numberOfPages={totalPages}
+                onPageChange={(page) => handlePageChange(page)}
+                label={pageVerifiedTable + 1 + "of " + totalPages}
+                // optionsPerPage={optionsPerPage}
+                // itemsPerPage={itemsPerPage}
+                // setItemsPerPage={setItemsPerPage}
+                showFastPagination
+                optionsLabel={"Rows per page"}
+              />
+            ) : null}
           </DataTable>
         </Surface>
         <View>
