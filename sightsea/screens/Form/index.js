@@ -71,6 +71,7 @@ const styles = StyleSheet.create({
     height: 50,
   },
 });
+
 const SightForm = ({ navigation }) => {
   const [date, setDate] = React.useState(new Date());
   const [image, setImage] = React.useState("");
@@ -203,23 +204,25 @@ const SightForm = ({ navigation }) => {
     function onItemClick() {
       beach = item;
       setBeachText(beach);
-      console.log(beach);
+      window.alert(beach);
       closeBeachDropdown();
     }
+
     return (
-      <div onClick={onItemClick}>
-        <List.Item title={title}></List.Item>
-      </div>
+        <View onClick={onItemClick}>
+          <List.Item title={title} onPress={() => onItemClick()}></List.Item>
+        </View>
     );
   }
 
-  //get current user location
+  //Get Information while the Page is Rendering
   React.useEffect(() => {
+    //Get User Data Permission
     (async () => {
       //check if location is enabled by user
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
+        //setErrorMsg("Permission to access location was denied");
         setAllowLocation(false); //display beach drop down if location is not enabled
         return;
       }
@@ -229,18 +232,18 @@ const SightForm = ({ navigation }) => {
       setCurrentLocation(currentLocation);
     })();
 
-    //effect to check for camera roll permission on IOS and Andriod
+    //Get camera roll permission on IOS and Andriod
     (async () => {
       if (Platform.OS !== "web") {
         const { status } =
-          await ImagePicker.requestMediaLibraryPermissionsAsync();
+            await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== "granted") {
           alert("Sorry, we need camera roll permissions to make this work!");
         }
       }
     })();
 
-    //effect to check for camera permissions on IOS and Andriod
+    //Get camera permissions on IOS and Andriod
     (async () => {
       if (Platform.OS !== 'web') {
         const { status } = await ImagePicker.requestCameraPermissionsAsync();
@@ -249,7 +252,6 @@ const SightForm = ({ navigation }) => {
         }
       }
     })();
-
 
   }, []);
 
@@ -270,13 +272,14 @@ const SightForm = ({ navigation }) => {
     }
 
     //convert to postal address if no errors are found
-    else if (currentLocation) {
-      //convert to array of values
-      const locationArray = Object.values(currentLocation);
-      //store location coordinate in a object
-      locationCoordinate["latitude"] = locationArray[0].latitude;
-      locationCoordinate["longitude"] = locationArray[0].longitude;
-    }
+    else
+      if (currentLocation) {
+        //convert to array of values
+        const locationArray = Object.values(currentLocation);
+        //store location coordinate in a object
+        locationCoordinate["latitude"] = locationArray[0].latitude;
+        locationCoordinate["longitude"] = locationArray[0].longitude;
+      }
     setCoordinate(locationCoordinate);
   }
 
@@ -301,7 +304,6 @@ const SightForm = ({ navigation }) => {
     var num = first_three + "-" + middle_three + "-" + last_four;
     return num;
   };
-
 
   //Grab the Image from the UI of the Device
   //Works for Web and Andriod
@@ -367,7 +369,6 @@ const SightForm = ({ navigation }) => {
 
   };
 
-
   //window.alert(date.getHours() + ":" + date.getMinutes());
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -423,6 +424,7 @@ const SightForm = ({ navigation }) => {
   function addDoc() {
     //get GPS location if location service is enabled
     getUserLocation();
+
     //filter to correct DB based on animal type
     var animalDB = animalType;
     //generate the random doc ID
@@ -430,23 +432,25 @@ const SightForm = ({ navigation }) => {
 
     //Get the db Reference
     const db = getDatabase();
-
     var currentday = currentDate();
-
     var currenttime = currentTime();
+
     //21.302877, -157.843880
     const observer_type = "P";
     var intitials = name.slice(0, 1) + observer_type;
     //console.log(image);
     //check if the gps coordinate object is empty
-    if (animalDB === "Seal" && Object.keys(coordinate).length > 0) {
+    window.alert(Object.keys(coordinate).length)
+
+    //&& Object.keys(coordinate).length > 0
+    if (animalDB === "Seal") {
       //Seal Doc
       const reference = ref(db, `Unverified/documents/` + `${localdocID}`);
       set(reference, {
         AnimalType: animalDB,
         GPS_Coordinate: {
-          latitude: coordinate["latitude"],
-          longitude: coordinate["longitude"],
+          latitude: 21.302877,
+          longitude: -157.843880,
         },
         Date: currentday,
         Time: currenttime,
@@ -487,158 +491,110 @@ const SightForm = ({ navigation }) => {
         Image: image,
       })
           .then(() => {
+            window.alert("Report Submitted Successfully!");
+            navigation.navigate("SightSea")
+          })
+          .catch((error) => {
+            window.alert("Report Failed to submit.");
+            //Should stay on page while throwing error
+          });
+
+      //&& Object.keys(coordinate).length > 0
+    } else
+      if (animalDB === "Turtle") {
+        //Turtle Doc
+        const observer_type = "P";
+        var intitials = name.slice(0, 1) + observer_type;
+
+        const reference = ref(db, `Unverified/documents/` + `${localdocID}`);
+        set(reference, {
+          AnimalType: animalDB,
+          GPS_Coordinate: {
+            latitude: 21.302877,
+            longitude: -157.843880,
+          },
+          Date: currentday,
+          Time: currenttime,
+          Ticket_Number: "XX" + "" + currentday + "" + currenttime,
+          Hotline_Operator_Initials: "",
+          ticket_type: "R",
+          Observer: name,
+          Observer_Contact_Number: phoneNumFormat(),
+          Observer_Initials: intitials,
+          Observer_Type: "P",
+          Island: island,
+          Sector: "",
+          Location: beachText || "",
+          Location_Notes: "",
+          Type_of_Turtle: turtle,
+          Size: turtleSize,
+          Stauts: turtleStatus,
+          Primary_issue_or_cause_of_death: "",
+          Responder: "",
+          Time_Responder_left: "",
+          Responder_arrival_time: "",
+          Outreach_provided_by_operator: "",
+          FAST: "",
+          Number_of_Calls_Received: 0,
+          Other_Notes: "",
+          Verified: "",
+          Image: image,
+        })
+            .then(() => {
               window.alert("Report Submitted Successfully!");
-              navigation.navigate("SightSea")
+              beach = "";
+              console.log(coordinate);
+              navigation.navigate("SightSea");
             })
             .catch((error) => {
               window.alert("Report Failed to submit.");
               //Should stay on page while throwing error
             });
-      // } else
-      //   if (animalDB === "Bird" && Object.keys(coordinate).length > 0) {
-      //     //For Bird Docs
-      //     const reference = ref(db, `Unverified/documents/` + `${localdocID}`);
-      //     set(reference, {
-      //       AnimalType: animalDB,
-      //       GPS_Coordinate: {
-      //         latitude: 21.302877,
-      //         longitude: -157.843880,
-      //       },
-      //       Date: currentday,
-      //       Time: currenttime,
-      //       Ticket_Number: "XX" + "" + currentday + "" + currenttime,
-      //       Hotline_Operator_Initials: "",
-      //       ticket_type: "C",
-      //       Observer: name,
-      //       Observer_Contact_Nubmer: phoneNumFormat(),
-      //       Observer_Initials: intitials,
-      //       Observer_Type: "P",
-      //       Sector: "",
-      //       Location: location,
-      //       Location_Notes: "",
-      //       Type_of_Bird: birdType,
-      //       Responders_name: "",
-      //       Delivered: "",
-      //       Where_to: "",
-      //       Outreach_provided_by_operator: "",
-      //       Number_of_Calls_Received: 0,
-      //       Other_Notes: "",
-      //       Verified: "",
-      //       Image: image,
-      //     })
-      //         .then(() => {
-      //           window.alert("Report Submitted Successfully!");
-      //
-      //           navigation.navigate("SightSea")
-      //         })
-      //         .catch((error) => {
-      //           window.alert("Report Failed to submit.");
-      //           //Should stay on page while throwing error
-      //         });
+        //&& Object.keys(coordinate).length > 0
+      } else
+        if (animalDB === "Bird") {
+          //For Bird Docs
 
+          const reference = ref(db, `Unverified/documents/` + `${localdocID}`);
+          set(reference, {
+            AnimalType: animalDB,
+            GPS_Coordinate: {
+              latitude: 21.302877,
+              longitude: -157.843880,
+            },
+            Date: currentday,
+            Time: currenttime,
+            Ticket_Number: "XX" + "" + currentday + "" + currenttime,
+            Hotline_Operator_Initials: "",
+            ticket_type: "C",
+            Observer: name,
+            Observer_Contact_Nubmer: phoneNumFormat(),
+            Observer_Initials: intitials,
+            Observer_Type: "P",
+            Sector: "",
+            Location: beachText || "",
+            Location_Notes: "",
+            Type_of_Bird: birdType,
+            Responders_name: "",
+            Delivered: "",
+            Where_to: "",
+            Outreach_provided_by_operator: "",
+            Number_of_Calls_Received: 0,
+            Other_Notes: "",
+            Verified: "",
+            Image: image,
+          })
+              .then(() => {
+                window.alert("Report Submitted Successfully!");
 
-    // const hasErrorsName = () => {
-    //   let nameLength = name.length;
-    //   if (nameLength === 0) {
-    //     return nameLength;
-    //   }
+                navigation.navigate("SightSea");
+              })
+              .catch((error) => {
+                window.alert("Report Failed to submit.");
+                //Should stay on page while throwing error
+              });
 
-
-        // .catch((error) => {
-        //   window.alert("Report Failed to submit.");
-        //   //Should stay on page while throwing error
-        // });
-    } else if (animalDB === "Turtle" && Object.keys(coordinate).length > 0) {
-      //Turtle Doc
-      const observer_type = "P";
-      var intitials = name.slice(0, 1) + observer_type;
-
-      const reference = ref(db, `Unverified/documents/` + `${localdocID}`);
-      set(reference, {
-        AnimalType: animalDB,
-        GPS_Coordinate: {
-          latitude: coordinate["latitude"],
-          longitude: coordinate["longitude"],
-        },
-        Date: currentday,
-        Time: currenttime,
-        Ticket_Number: "XX" + "" + currentday + "" + currenttime,
-        Hotline_Operator_Initials: "",
-        ticket_type: "R",
-        Observer: name,
-        Observer_Contact_Number: phoneNumFormat(),
-        Observer_Initials: intitials,
-        Observer_Type: "P",
-        Island: island,
-        Sector: "",
-        Location: beachText || "",
-        Location_Notes: "",
-        Type_of_Turtle: turtle,
-        Size: turtleSize,
-        Stauts: turtleStatus,
-        Primary_issue_or_cause_of_death: "",
-        Responder: "",
-        Time_Responder_left: "",
-        Responder_arrival_time: "",
-        Outreach_provided_by_operator: "",
-        FAST: "",
-        Number_of_Calls_Received: 0,
-        Other_Notes: "",
-        Verified: "",
-        Image: image,
-      })
-        .then(() => {
-          window.alert("Report Submitted Successfully!");
-          beach = "";
-          console.log(coordinate);
-          navigation.navigate("SightSea");
-        })
-        .catch((error) => {
-          window.alert("Report Failed to submit.");
-          //Should stay on page while throwing error
-        });
-    } else if (animalDB === "Bird" && Object.keys(coordinate).length > 0) {
-      //For Bird Docs
-      const reference = ref(db, `Unverified/documents/` + `${localdocID}`);
-      set(reference, {
-        AnimalType: animalDB,
-        GPS_Coordinate: {
-          latitude: coordinate["latitude"],
-          longitude: coordinate["longitude"],
-        },
-        Date: currentday,
-        Time: currenttime,
-        Ticket_Number: "XX" + "" + currentday + "" + currenttime,
-        Hotline_Operator_Initials: "",
-        ticket_type: "C",
-        Observer: name,
-        Observer_Contact_Nubmer: phoneNumFormat(),
-        Observer_Initials: intitials,
-        Observer_Type: "P",
-        Sector: "",
-        Location: beachText || "",
-        Location_Notes: "",
-        Type_of_Bird: birdType,
-        Responders_name: "",
-        Delivered: "",
-        Where_to: "",
-        Outreach_provided_by_operator: "",
-        Number_of_Calls_Received: 0,
-        Other_Notes: "",
-        Verified: "",
-        Image: image,
-      })
-        .then(() => {
-          window.alert("Report Submitted Successfully!");
-
-          navigation.navigate("SightSea");
-        })
-        .catch((error) => {
-          window.alert("Report Failed to submit.");
-          //Should stay on page while throwing error
-        });
-
-    }
+        }
 
     //TODO Count not updating when at 0
     //Ensure it can update when at 0
@@ -654,429 +610,605 @@ const SightForm = ({ navigation }) => {
   }
 
   return (
-    <View style={styles.container}>
-      <ScrollView>
-        <View style={styles.form}>
-          <Headline>Report a Sighting</Headline>
-          <Subheading style={{ textAlign: "center", padding: 3 }}>
-            Fill out the form below to submit a sighting and our staffs will
-            review the submitted form shortly.
-          </Subheading>
-          <View>
-            <List.Section title="Animal Type">
-              <List.Accordion
-                title={animalType}
-                expanded={showAnimalDropDown}
-                onPress={closeAnimalDropdown}
-              >
-                <List.Item
-                  title="Turtle"
-                  onPress={function () {
-                    setAnimalType("Turtle");
-                    closeAnimalDropdown();
-                  }}
-                />
-                <List.Item
-                  title="Seal"
-                  onPress={function () {
-                    setAnimalType("Seal");
-                    closeAnimalDropdown();
-                  }}
-                />
-                <List.Item
-                  title="Bird"
-                  onPress={function () {
-                    setAnimalType("Bird");
-                    closeAnimalDropdown();
-                  }}
-                />
-              </List.Accordion>
-            </List.Section>
-
-            {/* Using as the list of Seal questions */}
-
-            {animalType === "Seal" ? (
-              <View>
-                <TextInput
-                  style={styles.input}
-                  onChangeText={setName}
-                  value={name}
-                  mode="outlined"
-                  textContentType="name"
-                  label="Enter First Name"
-                />
-                <TextInput
-                  style={styles.input}
-                  onChangeText={setPhoneNum}
-                  mode="outlined"
-                  keyboardType="decimal-pad"
-                  label="Phone number"
-                />
-
-                {/* <TextInput
-                  style={styles.input}
-                  mode="outlined"
-                  label="Where is the seal located?"
-                  onChangeText={setLocation}
-                /> */}
-
-                {/* Beach Drop Down */}
-                {!allowLocation && (
-                  <List.Section title="Where is the Seal located?">
-                    <List.Accordion
-                      title={beachText}
-                      expanded={showBeachDropDown}
-                      onPress={closeBeachDropdown}
-                    >
-                      {beachList.map((item, index) => {
-                        return (
-                          <ListItem key={index} title={item} item={item} />
-                        );
-                      })}
-                    </List.Accordion>
-                  </List.Section>
-                )}
-
-                {/*Values of 1 for land and 0 for water */}
-                <List.Section title="Is the seal in the water or on land?">
-                  <List.Accordion
-                    title={beachLocation}
-                    expanded={showLocationDropDown}
-                    onPress={closeLocationDropdown}
-                  >
-                    <List.Item
-                      title="Water"
+      <View style={styles.container}>
+        <ScrollView>
+          <View style={styles.form}>
+            <Headline>Report a Sighting</Headline>
+            <Subheading style={{ textAlign: "center", padding: 3 }}>
+              Fill out the form below to submit a sighting and our staffs will
+              review the submitted form shortly.
+            </Subheading>
+            <View>
+              <List.Section title="Animal Type">
+                <List.Accordion
+                    title={animalType}
+                    expanded={showAnimalDropDown}
+                    onPress={closeAnimalDropdown}
+                >
+                  <List.Item
+                      title="Turtle"
                       onPress={function () {
-                        setBeachLocation(0);
-                        closeLocationDropdown();
-                      }}
-                    />
-                    <List.Item
-                      title="Land"
-                      onPress={function () {
-                        setBeachLocation(1);
-                        closeLocationDropdown();
-                      }}
-                    />
-                  </List.Accordion>
-                </List.Section>
-
-                {/* Drop down for if the seal is still present or not*/}
-                <List.Section title="Is the Seal still present?">
-                  <List.Accordion
-                    title={present}
-                    expanded={showPresentDropDown}
-                    onPress={closePresentDropdown}
-                  >
-                    <List.Item
-                      title="Yes"
-                      onPress={function () {
-                        setPresent("Y");
-                        closePresentDropdown();
+                        setAnimalType("Turtle");
+                        closeAnimalDropdown();
                       }}
                   />
-              {/*  </List.Accordion>*/}
-              {/*</List.Section>*/}
+                  <List.Item
+                      title="Seal"
+                      onPress={function () {
+                        setAnimalType("Seal");
+                        closeAnimalDropdown();
+                      }}
+                  />
+                  <List.Item
+                      title="Bird"
+                      onPress={function () {
+                        setAnimalType("Bird");
+                        closeAnimalDropdown();
+                      }}
+                  />
+                </List.Accordion>
+              </List.Section>
 
               {/* Using as the list of Seal questions */}
 
-              {/*{animalType === "Seal" ? (*/}
-              {/*    <View>*/}
+              {animalType === "Seal" ? (
+                  <View>
 
-              {/*      <TextInput*/}
-              {/*          style={styles.input}*/}
-              {/*          onChangeText={setName}*/}
-              {/*          value={name}*/}
-              {/*          mode="outlined"*/}
-              {/*          textContentType="name"*/}
-              {/*          label="Enter First Name"*/}
-              {/*      />*/}
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={setName}
+                        value={name}
+                        mode="outlined"
+                        textContentType="name"
+                        label="Enter First Name"
+                    />
 
                     {/*<HelperText type="error" visible= {true}>*/}
                     {/*  This should display when there is an error.*/}
                     {/*</HelperText>*/}
 
-{/*                    <TextInput*/}
-{/*                        style={styles.input}*/}
-{/*                        onChangeText={setPhoneNum}*/}
-{/*                        mode="outlined"*/}
-{/*                        keyboardType="decimal-pad"*/}
-{/*                        label="Phone number"*/}
-{/*=======*/}
-{/*                    />*/}
-                    <List.Item
-                      title="No"
-                      onPress={function () {
-                        setPresent("N");
-                        closePresentDropdown();
-                      }}
-
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={setPhoneNum}
+                        mode="outlined"
+                        keyboardType="decimal-pad"
+                        label="Phone number"
                     />
-                  </List.Accordion>
-                </List.Section>
-
-                {/*Make a drop down with Pup, Weaner, Juvenile, subAudult, Adult, Uknown*/}
-                <List.Section title="How big is the Seal?">
-                  <List.Accordion
-                    title={size}
-                    expanded={showSizeDropDown}
-                    onPress={closeSizeDropdown}
-                  >
-                    <List.Item
-                      title="Pup"
-                      onPress={function () {
-                        setSize("Pup");
-                        closeSizeDropdown();
-                      }}
-                    />
-                    <List.Item
-                      title="Weaner"
-                      onPress={function () {
-                        setSize("Weaner");
-                        closeSizeDropdown();
-                      }}
-                    />
-                    <List.Item
-                      title="Juvenile"
-                      onPress={function () {
-                        setSize("Juvenile");
-                        closeSizeDropdown();
-                      }}
-                    />
-                    <List.Item
-                      title="Subadult"
-                      onPress={function () {
-                        setSize("Subadult");
-                        closeSizeDropdown();
-                      }}
-                    />
-                    <List.Item
-                      title="Adult"
-                      onPress={function () {
-                        setSize("Adult");
-                        closeSizeDropdown();
-                      }}
-                    />
-                    <List.Item
-                      title="Unknown"
-                      onPress={function () {
-                        setSize("Unknown");
-                        closeSizeDropdown();
-                      }}
-                    />
-                  </List.Accordion>
-                </List.Section>
-
-                {/* Make a drop down with male,female or unknown */}
-                <List.Section title="Is the Seal Male or Female?">
-                  <List.Accordion
-                    title={sex}
-                    expanded={showSexDropDown}
-                    onPress={closeSexDropdown}
-                  >
-                    <List.Item
-                      title="Male"
-                      onPress={function () {
-                        setSex("Male");
-                        closeSexDropdown();
-                      }}
-                    />
-                    <List.Item
-                      title="Female"
-                      onPress={function () {
-                        setSex("Female");
-                        closeSexDropdown();
-                      }}
-                    />
-                    <List.Item
-                      title="Unknown"
-                      onPress={function () {
-                        setSex("Unknown");
-                        closeSexDropdown();
-                      }}
-                    />
-                  </List.Accordion>
-                </List.Section>
-              </View>
-            ) : (
-              <View>
-                {/* Questions for turtles and Birds*/}
-                <TextInput
-                  style={styles.input}
-                  onChangeText={setName}
-                  value={name}
-                  mode="outlined"
-                  textContentType="name"
-                  label="Enter First Name"
-                />
-                <TextInput
-                  style={styles.input}
-                  onChangeText={setPhoneNum}
-                  mode="outlined"
-                  keyboardType="decimal-pad"
-                  label="Phone number"
-                />
-
-                {/*Turtle Specific Questions */}
-                {animalType === "Turtle" ? (
-                  <View>
-                    {/*Island Drop Down */}
-                    <List.Section title="Which Island are you Located on?">
-                      <List.Accordion
-                        title={island}
-                        expanded={showIslandDropDown}
-                        onPress={closeIslandDropdown}
-                      >
-                        <List.Item
-                          title="Oahu"
-                          onPress={function () {
-                            setIsland("Oahu");
-                            closeIslandDropdown();
-                          }}
-                        />
-                        <List.Item
-                          title="Maui"
-                          onPress={function () {
-                            setIsland("Maui");
-                            closeIslandDropdown();
-                          }}
-                        />
-                        <List.Item
-                          title="Hawaii"
-                          onPress={function () {
-                            setIsland("Hawaii");
-                            closeIslandDropdown();
-                          }}
-                        />
-                        <List.Item
-                          title="Kauai"
-                          onPress={function () {
-                            setIsland("Kauai");
-                            closeIslandDropdown();
-                          }}
-                        />
-                        <List.Item
-                          title="Molokai"
-                          onPress={function () {
-                            setIsland("Molokai");
-                            closeIslandDropdown();
-                          }}
-                        />
-                        <List.Item
-                          title="Uknown"
-                          onPress={function () {
-                            setIsland("Uknown");
-                            closeIslandDropdown();
-                          }}
-                        />
-                      </List.Accordion>
-                    </List.Section>
 
                     {/* Beach Drop Down */}
                     {!allowLocation && (
-                      <List.Section title="Where is the Turtle located?">
-                        <List.Accordion
-                          title={beachText}
-                          expanded={showBeachDropDown}
-                          onPress={closeBeachDropdown}
-                        >
-                          {beachList.map((item, index) => {
-                            return (
-                              <ListItem key={index} title={item} item={item} />
-                            );
-                          })}
-                        </List.Accordion>
-                      </List.Section>
+                        <List.Section title="Where is the Seal located?">
+                          <List.Accordion
+                              title={beachText}
+                              expanded={showBeachDropDown}
+                              onPress={closeBeachDropdown}
+                          >
+                            {beachList.map((item, index) => {
+                              return (
+                                  <ListItem key={index} title={item} item={item}/>
+                              );
+                            })}
+                          </List.Accordion>
+                        </List.Section>
                     )}
 
-                    {/*Type of Turtle Drop Down */}
-                    <List.Section title="What type of Turtle is it?">
+                    {/*Values of 1 for land and 0 for water */}
+                    <List.Section title="Is the seal in the water or on land?">
                       <List.Accordion
-                        title={turtle}
-                        expanded={showTurtuleDropDown}
-                        onPress={closeTurtleDropdown}
+                          title={beachLocation}
+                          expanded={showLocationDropDown}
+                          onPress={closeLocationDropdown}
                       >
                         <List.Item
-                          title="Green Turtle"
-                          onPress={function () {
-                            setTurtle("Cm");
-                            closeTurtleDropdown();
-                          }}
+                            title="Water"
+                            onPress={function () {
+                              setBeachLocation(0);
+                              closeLocationDropdown();
+                            }}
                         />
                         <List.Item
-                          title="Hawksbill Turtle"
-                          onPress={function () {
-                            setTurtle("Ei");
-                            closeTurtleDropdown();
-                          }}
-                        />
-                        <List.Item
-                          title="Unknown"
-                          onPress={function () {
-                            setTurtle("Unknown");
-                            closeTurtleDropdown();
-                          }}
+                            title="Land"
+                            onPress={function () {
+                              setBeachLocation(1);
+                              closeLocationDropdown();
+                            }}
                         />
                       </List.Accordion>
                     </List.Section>
 
+                    {/* Drop down for if the seal is still present or not*/}
+                    <List.Section title="Is the Seal still present?">
+                      <List.Accordion
+                          title={present}
+                          expanded={showPresentDropDown}
+                          onPress={closePresentDropdown}
+                      >
+                        <List.Item
+                            title="Yes"
+                            onPress={function () {
+                              setPresent("Y");
+                              closePresentDropdown();
+                            }}
+                        />
+                        <List.Item
+                            title="No"
+                            onPress={function () {
+                              setPresent("N");
+                              closePresentDropdown();
+                            }}
+                        />
+                      </List.Accordion>
+                    </List.Section>
+
+                    {/*Make a drop down with Pup, Weaner, Juvenile, subAudult, Adult, Uknown*/}
+                    <List.Section title="How big is the Seal?">
+                      <List.Accordion
+                          title={size}
+                          expanded={showSizeDropDown}
+                          onPress={closeSizeDropdown}
+                      >
+                        <List.Item
+                            title="Pup"
+                            onPress={function () {
+                              setSize("Pup");
+                              closeSizeDropdown();
+                            }}
+                        />
+                        <List.Item
+                            title="Weaner"
+                            onPress={function () {
+                              setSize("Weaner");
+                              closeSizeDropdown();
+                            }}
+                        />
+                        <List.Item
+                            title="Juvenile"
+                            onPress={function () {
+                              setSize("Juvenile");
+                              closeSizeDropdown();
+                            }}
+                        />
+                        <List.Item
+                            title="Subadult"
+                            onPress={function () {
+                              setSize("Subadult");
+                              closeSizeDropdown();
+                            }}
+                        />
+                        <List.Item
+                            title="Adult"
+                            onPress={function () {
+                              setSize("Adult");
+                              closeSizeDropdown();
+                            }}
+                        />
+                        <List.Item
+                            title="Unknown"
+                            onPress={function () {
+                              setSize("Unknown");
+                              closeSizeDropdown();
+                            }}
+                        />
+                      </List.Accordion>
+                    </List.Section>
+
+                    {/*Make a drop down with male,female or unknown*/}
+                    <List.Section title="Is the Seal Male or Female?">
+                      <List.Accordion
+                          title={sex}
+                          expanded={showSexDropDown}
+                          onPress={closeSexDropdown}
+                      >
+                        <List.Item
+                            title="Male"
+                            onPress={function () {
+                              setSex("Male");
+                              closeSexDropdown();
+                            }}
+                        />
+                        <List.Item
+                            title="Female"
+                            onPress={function () {
+                              setSex("Female");
+                              closeSexDropdown();
+                            }}
+                        />
+                        <List.Item
+                            title="Unknown"
+                            onPress={function () {
+                              setSex("Unknown");
+                              closeSexDropdown();
+                            }}
+                        />
+                      </List.Accordion>
+                    </List.Section>
+
+
+                  </View>
+              ) : (
+                  <View>
+                    {/* Questions for turtles and Birds*/}
                     <TextInput
-                      style={styles.input}
-                      mode="outlined"
-                      label="How big is the Turtle?"
-                      onChangeText={setTurtleSize}
+                        style={styles.input}
+                        onChangeText={setName}
+                        value={name}
+                        mode="outlined"
+                        textContentType="name"
+                        label="Enter First Name"
+                    />
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={setPhoneNum}
+                        mode="outlined"
+                        keyboardType="decimal-pad"
+                        label="Phone number"
                     />
 
-                    {/* Alive or Dead Drop Down */}
-                    <List.Section title="Is the Turtle Alive?">
-                      <List.Accordion
-                        title={turtleStatus}
-                        expanded={showTurtleStatus}
-                        onPress={closeTurtleStatusDropdown}
-                      >
-                        <List.Item
-                          title="Alive"
-                          onPress={function () {
-                            setTurtleStatus("Alive");
-                            closeTurtleStatusDropdown();
-                          }}
-                        />
-                        <List.Item
-                          title="Deceased"
-                          onPress={function () {
-                            setTurtleStatus("Deceased");
-                            closeTurtleStatusDropdown();
-                          }}
-                        />
-                        <List.Item
-                          title="Unknown"
-                          onPress={function () {
-                            setTurtleStatus("Unknown");
-                            closeTurtleStatusDropdown();
-                          }}
-                        />
-                      </List.Accordion>
-                    </List.Section>
-                  </View>
-                ) : (
-                  <View>
-                    {/* Bird Specific Questions*/}
+                    {/*Turtle Specific Questions */}
+                    {animalType === "Turtle" ? (
+                        <View>
+                          {/*Island Drop Down */}
+                          <List.Section title="Which Island are you Located on?">
+                            <List.Accordion
+                                title={island}
+                                expanded={showIslandDropDown}
+                                onPress={closeIslandDropdown}
+                            >
+                              <List.Item
+                                  title="Oahu"
+                                  onPress={function () {
+                                    setIsland("Oahu");
+                                    closeIslandDropdown();
+                                  }}
+                              />
+                              <List.Item
+                                  title="Maui"
+                                  onPress={function () {
+                                    setIsland("Maui");
+                                    closeIslandDropdown();
+                                  }}
+                              />
+                              <List.Item
+                                  title="Hawaii"
+                                  onPress={function () {
+                                    setIsland("Hawaii");
+                                    closeIslandDropdown();
+                                  }}
+                              />
+                              <List.Item
+                                  title="Kauai"
+                                  onPress={function () {
+                                    setIsland("Kauai");
+                                    closeIslandDropdown();
+                                  }}
+                              />
+                              <List.Item
+                                  title="Molokai"
+                                  onPress={function () {
+                                    setIsland("Molokai");
+                                    closeIslandDropdown();
+                                  }}
+                              />
+                              <List.Item
+                                  title="Uknown"
+                                  onPress={function () {
+                                    setIsland("Uknown");
+                                    closeIslandDropdown();
+                                  }}
+                              />
+                            </List.Accordion>
+                          </List.Section>
 
-                    {/* Beach Drop Down */}
-                    {!allowLocation && (
-                      <List.Section title="Where is the Bird located?">
-                        <List.Accordion
-                          title={beachText}
-                          expanded={showBeachDropDown}
-                          onPress={closeBeachDropdown}
-                        >
-                          {beachList.map((item, index) => {
-                            return (
-                              <ListItem key={index} title={item} item={item} />
-                            );
-                          })}
-                        </List.Accordion>
-                      </List.Section>
+                          {/* Beach Drop Down */}
+                          {!allowLocation && (
+                              <List.Section title="Where is the Turtle located?">
+                                <List.Accordion
+                                    title={beachText}
+                                    expanded={showBeachDropDown}
+                                    onPress={closeBeachDropdown}
+                                >
+                                  {beachList.map((item, index) => {
+                                    return (
+                                        <ListItem key={index} title={item} item={item}/>
+                                    );
+                                  })}
+                                </List.Accordion>
+                              </List.Section>
+                          )}
+
+                          {/*Type of Turtle Drop Down */}
+                          <List.Section title="What type of Turtle is it?">
+                            <List.Accordion
+                                title={turtle}
+                                expanded={showTurtuleDropDown}
+                                onPress={closeTurtleDropdown}
+                            >
+                              <List.Item
+                                  title="Green Turtle"
+                                  onPress={function () {
+                                    setTurtle("Cm");
+                                    closeTurtleDropdown();
+                                  }}
+                              />
+                              <List.Item
+                                  title="Hawksbill Turtle"
+                                  onPress={function () {
+                                    setTurtle("Ei");
+                                    closeTurtleDropdown();
+                                  }}
+                              />
+                              <List.Item
+                                  title="Unknown"
+                                  onPress={function () {
+                                    setTurtle("Unknown");
+                                    closeTurtleDropdown();
+                                  }}
+                              />
+                            </List.Accordion>
+                          </List.Section>
+
+                          <TextInput
+                              style={styles.input}
+                              mode="outlined"
+                              label="How big is the Turtle?"
+                              onChangeText={setTurtleSize}
+                          />
+
+                          {/* Alive or Dead Drop Down */}
+                          <List.Section title="Is the Turtle Alive?">
+                            <List.Accordion
+                                title={turtleStatus}
+                                expanded={showTurtleStatus}
+                                onPress={closeTurtleStatusDropdown}
+                            >
+                              <List.Item
+                                  title="Alive"
+                                  onPress={function () {
+                                    setTurtleStatus("Alive");
+                                    closeTurtleStatusDropdown();
+                                  }}
+                              />
+                              <List.Item
+                                  title="Deceased"
+                                  onPress={function () {
+                                    setTurtleStatus("Deceased");
+                                    closeTurtleStatusDropdown();
+                                  }}
+                              />
+                              <List.Item
+                                  title="Unknown"
+                                  onPress={function () {
+                                    setTurtleStatus("Unknown");
+                                    closeTurtleStatusDropdown();
+                                  }}
+                              />
+                            </List.Accordion>
+                          </List.Section>
+                        </View>
+                    ) : (
+                        <View>
+                          {/* Bird Specific Questions*/}
+
+                          <TextInput
+                              style={styles.input}
+                              mode="outlined"
+                              label="Where is the Bird located?"
+                              onChangeText={setLocation}
+                          />
+
+                          {/* Drop Down for Bird Type */}
+                          {/* TODO Break out the Same types after they select the generic Type into seperate drop downs */}
+                          <List.Section title="What type of Bird is it?">
+                            <List.Accordion
+                                title={birdType}
+                                expanded={showBirdType}
+                                onPress={closeBirdTypeDropdown}
+                            >
+                              <List.Item
+                                  title="Blackfoot Albatross"
+                                  onPress={function () {
+                                    setBirdType("BFAL");
+                                    closeBirdTypeDropdown();
+                                  }}
+                              />
+                              <List.Item
+                                  title="Short Tail Albatross"
+                                  onPress={function () {
+                                    setBirdType("STAL");
+                                    closeBirdTypeDropdown();
+                                  }}
+                              />
+                              <List.Item
+                                  title="Albatross"
+                                  onPress={function () {
+                                    setBirdType("Unknown");
+                                    closeBirdTypeDropdown();
+                                  }}
+                              />
+                              <List.Item
+                                  title="Brown Booby"
+                                  onPress={function () {
+                                    setBirdType("BRBO");
+                                    closeBirdTypeDropdown();
+                                  }}
+                              />
+                              <List.Item
+                                  title="Masked Booby"
+                                  onPress={function () {
+                                    setBirdType("MABO");
+                                    closeBirdTypeDropdown();
+                                  }}
+                              />
+
+                              <List.Item
+                                  title="Red Footed Booby"
+                                  onPress={function () {
+                                    setBirdType("RFBO");
+                                    closeBirdTypeDropdown();
+                                  }}
+                              />
+                              <List.Item
+                                  title="Booby"
+                                  onPress={function () {
+                                    setBirdType("Unknown");
+                                    closeBirdTypeDropdown();
+                                  }}
+                              />
+                              <List.Item
+                                  title="Great Frigate"
+                                  onPress={function () {
+                                    setBirdType("GRFR");
+                                    closeBirdTypeDropdown();
+                                  }}
+                              />
+                              <List.Item
+                                  title="Blue Noddy"
+                                  onPress={function () {
+                                    setBirdType("BGNO");
+                                    closeBirdTypeDropdown();
+                                  }}
+                              />
+                              <List.Item
+                                  title="Brown Noddy"
+                                  onPress={function () {
+                                    setBirdType("BRNO");
+                                    closeBirdTypeDropdown();
+                                  }}
+                              />
+                              <List.Item
+                                  title="Noddy"
+                                  onPress={function () {
+                                    setBirdType("Unknown");
+                                    closeBirdTypeDropdown();
+                                  }}
+                              />
+                              <List.Item
+                                  title="Bonin Petrel"
+                                  onPress={function () {
+                                    setBirdType("BOPE");
+                                    closeBirdTypeDropdown();
+                                  }}
+                              />
+                              <List.Item
+                                  title="Bluwer's Petrel"
+                                  onPress={function () {
+                                    setBirdType("BUPE");
+                                    closeBirdTypeDropdown();
+                                  }}
+                              />
+                              <List.Item
+                                  title="Tristam's Storm Petrel"
+                                  onPress={function () {
+                                    setBirdType("TRSP");
+                                    closeBirdTypeDropdown();
+                                  }}
+                              />
+                              <List.Item
+                                  title="Petrel"
+                                  onPress={function () {
+                                    setBirdType("Unknown");
+                                    closeBirdTypeDropdown();
+                                  }}
+                              />
+                              <List.Item
+                                  title="Wedge Tail Shearwater"
+                                  onPress={function () {
+                                    setBirdType("WTSH");
+                                    closeBirdTypeDropdown();
+                                  }}
+                              />
+                              <List.Item
+                                  title="Newell Shearwater"
+                                  onPress={function () {
+                                    setBirdType("NESH");
+                                    closeBirdTypeDropdown();
+                                  }}
+                              />
+                              <List.Item
+                                  title="Christmas Shearwater"
+                                  onPress={function () {
+                                    setBirdType("CHSH");
+                                    closeBirdTypeDropdown();
+                                  }}
+                              />
+                              <List.Item
+                                  title="Shearwater"
+                                  onPress={function () {
+                                    setBirdType("Unknown");
+                                    closeBirdTypeDropdown();
+                                  }}
+                              />
+                              <List.Item
+                                  title="Gray-Black Tern"
+                                  onPress={function () {
+                                    setBirdType("GRAT");
+                                    closeBirdTypeDropdown();
+                                  }}
+                              />
+                              <List.Item
+                                  title="Sooty Tern"
+                                  onPress={function () {
+                                    setBirdType("SOTE");
+                                    closeBirdTypeDropdown();
+                                  }}
+                              />
+                              <List.Item
+                                  title="White Tern"
+                                  onPress={function () {
+                                    setBirdType("WHTE");
+                                    closeBirdTypeDropdown();
+                                  }}
+                              />
+                              <List.Item
+                                  title="Tern"
+                                  onPress={function () {
+                                    setBirdType("Unknown");
+                                    closeBirdTypeDropdown();
+                                  }}
+                              />
+                              <List.Item
+                                  title="Red Tail Tropicbird"
+                                  onPress={function () {
+                                    setBirdType("RTTR");
+                                    closeBirdTypeDropdown();
+                                  }}
+                              />
+                              <List.Item
+                                  title="White Tail Tropicbird"
+                                  onPress={function () {
+                                    setBirdType("WTTR");
+                                    closeBirdTypeDropdown();
+                                  }}
+                              />
+                              <List.Item
+                                  title="Tropicbird"
+                                  onPress={function () {
+                                    setBirdType("Unknown");
+                                    closeBirdTypeDropdown();
+                                  }}
+                              />
+                            </List.Accordion>
+                          </List.Section>
+
+
+                          {/* Beach Drop Down */}
+                          {!allowLocation && (
+                              <List.Section title="Where is the Bird located?">
+                                <List.Accordion
+                                    title={beachText}
+                                    expanded={showBeachDropDown}
+                                    onPress={closeBeachDropdown}
+                                >
+                                  {beachList.map((item, index) => {
+                                    return (
+                                        <ListItem key={index} title={item} item={item}/>
+                                    );
+                                  })}
+                                </List.Accordion>
+                              </List.Section>
+                          )}
+
+                        </View>
                     )}
 
                     {/* Catch All For all three Types */}
@@ -1092,9 +1224,9 @@ const SightForm = ({ navigation }) => {
                     </Button>
                   </View>
               ) : (
-                <View>
-                  {/* Don't Return anything*/}
-                </View>
+                  <View>
+                    {/* Don't Return anything*/}
+                  </View>
 
               )}
 
@@ -1103,13 +1235,12 @@ const SightForm = ({ navigation }) => {
               </Button>
 
             </View>
+            <Button style={styles.btn} mode="contained" onPress={() => addDoc()}>
+              Submit
+            </Button>
           </View>
-          <Button style={styles.btn} mode="contained" onPress={() => addDoc()}>
-            Submit
-          </Button>
-        </View>
-      </ScrollView>
-    </View>
+        </ScrollView>
+      </View>
   );
 };
 
