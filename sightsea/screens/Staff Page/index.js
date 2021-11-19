@@ -45,6 +45,7 @@ import {
   remove,
 } from "firebase/database";
 import ExportDatabase from "../../scripts/ExportDatabase";
+
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import * as Location from "expo-location";
 
@@ -141,7 +142,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const optionsPerPage = [3, 3, 3];
+const optionsPerPage = [2, 3, 4];
 const animalTypes = ["Bird", "Seal", "Turtle"];
 var frontAnchorKeysVerified = [];
 var frontAnchorKeysNew = [];
@@ -172,7 +173,7 @@ const StaffPage = ({ navigation }) => {
   const [backAnchorKeyNew, setBackAnchorKeyNew] = React.useState(null);
   const [search, setSearch] = React.useState(false);
   const [newChecked, setNewChecked] = React.useState(
-    new Array(optionsPerPage[0]).fill(false)
+      new Array(optionsPerPage[0]).fill(false)
   );
   const [showItemNumDropdown, setShowItemNumDropdown] = React.useState(false);
 
@@ -279,7 +280,7 @@ const StaffPage = ({ navigation }) => {
             style={{ height: "100vh", width: "100%" }}
             defaultZoom={zoom}
             defaultCenter={center}
-            // bootstrapURLKeys={{ key: "AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0" }}
+            //   bootstrapURLKeys={{ key: "AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0" }}
         >
           {data.map((item, index) => {
             return (
@@ -345,7 +346,7 @@ const StaffPage = ({ navigation }) => {
     });
     onValue(reference, (snapshot) => {
       snapshot.val() === null ? null :
-      setTableDataVerified(Object.entries(snapshot.val()));
+          setTableDataVerified(Object.entries(snapshot.val()));
     });
   };
 
@@ -357,31 +358,31 @@ const StaffPage = ({ navigation }) => {
     });
     var docCounter = 0;
     const reference =
-      direction === "switch"
-        ? query(
+        direction === "switch"
+            ? query(
             ref(db, `Unverified/documents`),
             orderByKey(),
             limitToFirst(itemsPerPage)
-          )
-        : direction === "forward"
-        ? query(
-            ref(db, `/Unverified/documents`),
-            orderByKey(),
-            startAfter(backAnchorKeyNew),
-            limitToFirst(itemsPerPage)
-          )
-        : query(
-            ref(db, `/Unverified/documents`),
-            orderByKey(),
-            startAt(frontAnchorKeysNew[pageNewTable - 1]),
-            limitToFirst(itemsPerPage)
-          );
+            )
+            : direction === "forward"
+            ? query(
+                ref(db, `/Unverified/documents`),
+                orderByKey(),
+                startAfter(backAnchorKeyNew),
+                limitToFirst(itemsPerPage)
+            )
+            : query(
+                ref(db, `/Unverified/documents`),
+                orderByKey(),
+                startAt(frontAnchorKeysNew[pageNewTable - 1]),
+                limitToFirst(itemsPerPage)
+            );
     onChildAdded(reference, (snapshot) => {
       setBackAnchorKeyNew(snapshot.key);
       docCounter++;
       if (
-        docCounter === 1 &&
-        (direction === "forward" || direction === "switch")
+          docCounter === 1 &&
+          (direction === "forward" || direction === "switch")
       ) {
         frontAnchorKeysNew.push(snapshot.key);
         console.log(frontAnchorKeysNew);
@@ -391,8 +392,8 @@ const StaffPage = ({ navigation }) => {
     });
     onValue(reference, (snapshot) => {
       snapshot.val() === null
-        ? setTableDataNew([])
-        : setTableDataNew(Object.entries(snapshot.val()));
+          ? setTableDataNew([])
+          : setTableDataNew(Object.entries(snapshot.val()));
     });
   };
 
@@ -416,17 +417,16 @@ const StaffPage = ({ navigation }) => {
     frontAnchorKeysVerified = [];
     getDocs(animal, "switch");
     // tableDataVerified.map((element) => {
-    //       markers.push({
-    //         ticketNum: element[1].Ticket_Number,
-    //         latitude: element[1].GPS_Coordinate.latitude,
-    //         longitude: element[1].GPS_Coordinate.longitude,
-    //       });
-    //     }
-    // );
+    //   markers.push({
+    //     ticketNum: element[1].GPS_Coordinate.Ticket_Number,
+    //     latitude: element[1].GPS_Coordinate.latitude,
+    //     longitude: element[1].GPS_Coordinate.longitude,
+    //   });
+    // });
 
-    //convert GPS coordinate to postal address and update marker array
+    // //convert GPS coordinate to postal address and update marker array
     // convertToAddress(markers);
-    //pass the GPS coordinate object to the MarkerData array
+    // //pass the GPS coordinate object to the MarkerData array
     // setMarkerData(markers);
   };
 
@@ -475,8 +475,8 @@ const StaffPage = ({ navigation }) => {
   //convert location coordinate to address
   function convertToAddress(arrayOfMarker) {
     /*************************Enable api key when using reverseGeocodeAsync function ************************/
-        // Location.setGoogleApiKey("AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0");
-        //loop through each marker object and convert them to postal address
+    Location.setGoogleApiKey("AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0");
+    //loop through each marker object and convert them to postal address
     var string = "";
     arrayOfMarker.map((obj, index) => {
       Location.reverseGeocodeAsync({
@@ -502,60 +502,73 @@ const StaffPage = ({ navigation }) => {
       <ScrollView>
         <View style={styles.container}>
           {Platform.OS === "web" ? (
-                  <Surface style={styles.surface}>
-                    <Text style={styles.header}>New Reports</Text>
-                    <DataTable>
-                      <DataTable.Header>
-                        <DataTable.Title></DataTable.Title>
-                        <DataTable.Title>Ticket Number</DataTable.Title>
-                        <DataTable.Title>Ticket Type</DataTable.Title>
+              <Surface style={styles.surface}>
+                <Text style={styles.header}>New Reports</Text>
+                <DataTable>
+                  <DataTable.Header>
+                    <DataTable.Title></DataTable.Title>
+                    <DataTable.Title>Ticket Number</DataTable.Title>
+                    <DataTable.Title>Ticket Type</DataTable.Title>
 
-                        <DataTable.Title style={styles.columns}>Date</DataTable.Title>
-                        <DataTable.Title style={styles.columns}>Time</DataTable.Title>
-                        <DataTable.Title style={styles.columns}>
-                          Location
-                        </DataTable.Title>
-                      </DataTable.Header>
-                      {/* Loop over new reports to make rows */}
+                    <DataTable.Title style={styles.columns}>Date</DataTable.Title>
+                    <DataTable.Title style={styles.columns}>Time</DataTable.Title>
+                    <DataTable.Title style={styles.columns}>
+                      Location
+                    </DataTable.Title>
+                  </DataTable.Header>
+                  {/* Loop over new reports to make rows */}
 
-                      {tableDataNew.map((element, index) => (
-                          <DataTable.Row key={index}>
-                            <DataTable.Cell
-                                style={styles.columns}
-                                key={index}
-                            ></DataTable.Cell>
-                            <DataTable.Cell numeric style={styles.row}>
-                              {element[0]}
-                            </DataTable.Cell>
-                            <DataTable.Cell style={styles.row}>
-                              {element[1].ticket_type}
-                            </DataTable.Cell>
+                  {tableDataNew.map((element, index) => (
+                      <DataTable.Row key={index}>
+                        <Checkbox
+                            status={newChecked[index] ? "checked" : "unchecked"}
+                            onPress={() => {
+                              handleNewCheckedChange(index);
+                            }}
+                        ></Checkbox>
+                        <DataTable.Cell
+                            style={styles.columns}
+                            key={index}
+                        ></DataTable.Cell>
+                        <DataTable.Cell numeric style={styles.row}>
+                          {element[0]}
+                        </DataTable.Cell>
+                        <DataTable.Cell style={styles.row}>
+                          {element[1].ticket_type}
+                        </DataTable.Cell>
 
-                            <DataTable.Cell numeric style={styles.row}>
-                              {element[1].Date}
-                            </DataTable.Cell>
-                            <DataTable.Cell numeric style={styles.row}>
-                              {element[1].Time}
-                            </DataTable.Cell>
-                            <DataTable.Cell style={styles.row}>
-                              {element[1].Location}
-                            </DataTable.Cell>
-                          </DataTable.Row>
-                      ))}
+                        <DataTable.Cell numeric style={styles.row}>
+                          {element[1].Date}
+                        </DataTable.Cell>
+                        <DataTable.Cell numeric style={styles.row}>
+                          {element[1].Time}
+                        </DataTable.Cell>
+                        <DataTable.Cell style={styles.row}>
+                          {element[1].Location}
+                        </DataTable.Cell>
+                      </DataTable.Row>
+                  ))}
 
-                      <DataTable.Pagination
-                          page={pageVerifiedTable}
-                          numberOfPages={totalPages}
-                          onPageChange={(page) => handlePageChange(page)}
-                          label={pageVerifiedTable + 1 + "of " + totalPages}
-                          // optionsPerPage={optionsPerPage}
-                          // itemsPerPage={itemsPerPage}
-                          // setItemsPerPage={setItemsPerPage}
-                          showFastPagination
-                          optionsLabel={"Rows per page"}
-                      />
-                    </DataTable>
-                  </Surface>
+                  <DataTable.Pagination
+                      page={pageNewTable}
+                      numberOfPages={totalPagesNew}
+                      onPageChange={(page) => handlePageChangeNew(page)}
+                      label={pageNewTable + 1 + "of " + totalPagesNew}
+                      // optionsPerPage={optionsPerPage}
+                      // itemsPerPage={itemsPerPage}
+                      // setItemsPerPage={setItemsPerPage}
+                      showFastPagination
+                      optionsLabel={"Rows per page"}
+                  />
+                </DataTable>
+                <Button
+                    mode="contained"
+                    onPress={() => handleVerify()}
+                    style={styles.Exportbtn}
+                >
+                  Verify
+                </Button>
+              </Surface>
           ) : null}
           <View />
           <Surface style={styles.surface}>
@@ -578,6 +591,31 @@ const StaffPage = ({ navigation }) => {
                   ))
               )}
             </RadioButton.Group>
+            <View>
+              <List.Section title="Entries per Page">
+                <List.Accordion
+                    title={itemsPerPage}
+                    expanded={showItemNumDropdown}
+                    onPress={closeItemNumDropdown}
+                >
+                  {optionsPerPage.map((x, index) => (
+                      <List.Item
+                          key={index}
+                          title={x}
+                          onPress={() => {
+                            frontAnchorKeysNew = [];
+                            setItemsPerPage(x);
+                            closeItemNumDropdown();
+                            getDocs(animalDisplayType, "switch");
+                            getNewDocs("switch");
+                            setPageNewTable(0);
+                            setPageVerifiedTable(0);
+                          }}
+                      />
+                  ))}
+                </List.Accordion>
+              </List.Section>
+            </View>
             {/* Display map with pins for ALL new reports */}
             <DataTable>
               <DataTable.Header>
@@ -595,174 +633,55 @@ const StaffPage = ({ navigation }) => {
                     </>
                 ) : null}
               </DataTable.Header>
+              {/* Loop over new reports to make rows */}
 
-                  {tableDataVerified.map((element, index) => (
-                      <DataTable.Row key={index} onPress={ () => navigation.navigate(
-                          'ViewReport', {table: element[1], animal: animalDisplayType, documentID: element[0], }
-                      )}>
-                        <Checkbox
-                    status={newChecked[index] ? "checked" : "unchecked"}
-                    onPress={() => {
-                      handleNewCheckedChange(index);
-                    }}
-                  ></Checkbox>
-                        <DataTable.Cell style={styles.columns} key={index}>
-                        </DataTable.Cell>
-                  <DataTable.Cell numeric style={styles.row}>
-                    {element[0]}
-                  </DataTable.Cell>
-                  <DataTable.Cell style={styles.row}>
-                    {element[1].ticket_type}
-                  </DataTable.Cell>
-
-                  <DataTable.Cell numeric style={styles.row}>
-                    {element[1].Date}
-                  </DataTable.Cell>
-                  <DataTable.Cell numeric style={styles.row}>
-                    {element[1].Time}
-                  </DataTable.Cell>
-                  <DataTable.Cell style={styles.row}>
-                    {element[1].Location}
-                  </DataTable.Cell>
-                </DataTable.Row>
+              {tableDataVerified.map((element, index) => (
+                  <DataTable.Row key={index} onPress={ () => navigation.navigate(
+                      'ViewReport', {table: element[1], animal: animalDisplayType, documentID: element[0], }
+                  )}>
+                    <DataTable.Cell style={styles.columns} key={index}>
+                      {/* <Checkbox
+                  status={checked ? "checked" : "unchecked"}
+                  onPress={() => {
+                    setChecked(!checked);
+                  }}
+                ></Checkbox> */}
+                    </DataTable.Cell>
+                    <DataTable.Cell numeric style={styles.row}>
+                      {element[0]}
+                    </DataTable.Cell>
+                    <DataTable.Cell style={styles.row}>
+                      {element[1].ticket_type}
+                    </DataTable.Cell>
+                    {Platform.OS === "web" ? (
+                        <>
+                          <DataTable.Cell numeric style={styles.row}>
+                            {element[1].Date}
+                          </DataTable.Cell>
+                          <DataTable.Cell numeric style={styles.row}>
+                            {element[1].Time}
+                          </DataTable.Cell>
+                          <DataTable.Cell style={styles.row}>
+                            {element[1].Location}
+                          </DataTable.Cell>
+                        </>
+                    ) : null}
+                  </DataTable.Row>
               ))}
 
               <DataTable.Pagination
-                page={pageNewTable}
-                numberOfPages={totalPagesNew}
-                onPageChange={(page) => handlePageChangeNew(page)}
-                label={pageNewTable + 1 + "of " + totalPagesNew}
-                // optionsPerPage={optionsPerPage}
-                // itemsPerPage={itemsPerPage}
-                // setItemsPerPage={setItemsPerPage}
-                showFastPagination
-                optionsLabel={"Rows per page"}
+                  page={pageVerifiedTable}
+                  numberOfPages={totalPages}
+                  onPageChange={(page) => handlePageChange(page)}
+                  label={pageVerifiedTable + 1 + "of " + totalPages}
+                  // optionsPerPage={optionsPerPage}
+                  // itemsPerPage={itemsPerPage}
+                  // setItemsPerPage={setItemsPerPage}
+                  showFastPagination
+                  optionsLabel={"Rows per page"}
               />
             </DataTable>
-            <Button
-              mode="contained"
-              onPress={() => handleVerify()}
-              style={styles.Exportbtn}
-            >
-              Verify
-            </Button>
           </Surface>
-
-
-
-
-        <View />
-        {/*<Surface style={styles.surface}>*/}
-        {/*  <Text style={styles.secondaryheader}>Verified Reports</Text>*/}
-        {/*  <RadioButton.Group*/}
-        {/*    onValueChange={(value) => handleRadioChange(value)}*/}
-        {/*    value={animalDisplayType}*/}
-        {/*  >*/}
-        {/*    {Platform.OS === "web" ? (*/}
-        {/*      <View style={{ flexDirection: "row" }}>*/}
-        {/*        {animalTypes.map((x, index) => (*/}
-        {/*          <View style={{ flexDirection: "column" }} key={index}>*/}
-        {/*            <RadioButton.Item key={index} label={x} value={x} />*/}
-        {/*          </View>*/}
-        {/*        ))}*/}
-        {/*      </View>*/}
-        {/*    ) : (*/}
-        {/*      animalTypes.map((x, index) => (*/}
-        {/*        <RadioButton.Item key={index} label={x} value={x} />*/}
-        {/*      ))*/}
-        {/*    )}*/}
-        {/*  </RadioButton.Group>*/}
-        {/*  <View>*/}
-        {/*    <List.Section title="Entries per Page">*/}
-        {/*      <List.Accordion*/}
-        {/*        title={itemsPerPage}*/}
-        {/*        expanded={showItemNumDropdown}*/}
-        {/*        onPress={closeItemNumDropdown}*/}
-        {/*      >*/}
-        {/*        {optionsPerPage.map((x, index) => (*/}
-        {/*          <List.Item*/}
-        {/*          key={index}*/}
-        {/*            title={x}*/}
-        {/*            onPress={() => {*/}
-        {/*              frontAnchorKeysNew = [];*/}
-        {/*              setItemsPerPage(x);*/}
-        {/*              closeItemNumDropdown();*/}
-        {/*              getDocs(animalDisplayType, "switch");*/}
-        {/*              getNewDocs("switch");*/}
-        {/*              setPageNewTable(0);*/}
-        {/*              setPageVerifiedTable(0);*/}
-        {/*            }}*/}
-        {/*          />*/}
-        {/*        ))}*/}
-        {/*      </List.Accordion>*/}
-        {/*    </List.Section>*/}
-        {/*  </View>*/}
-        {/*  /!* Display map with pins for ALL new reports *!/*/}
-        {/*  <DataTable>*/}
-        {/*    <DataTable.Header>*/}
-        {/*      <DataTable.Title></DataTable.Title>*/}
-        {/*      <DataTable.Title>Ticket Number</DataTable.Title>*/}
-        {/*      <DataTable.Title>Ticket Type</DataTable.Title>*/}
-
-        {/*      {Platform.OS === "web" ? (*/}
-        {/*        <>*/}
-        {/*          <DataTable.Title style={styles.columns}>Date</DataTable.Title>*/}
-        {/*          <DataTable.Title style={styles.columns}>Time</DataTable.Title>*/}
-        {/*          <DataTable.Title style={styles.columns}>*/}
-        {/*            Location*/}
-        {/*          </DataTable.Title>*/}
-        {/*        </>*/}
-        {/*      ) : null}*/}
-        {/*    </DataTable.Header>*/}
-        {/*    /!* Loop over new reports to make rows *!/*/}
-
-        {/*    {tableDataVerified.map((element, index) => (*/}
-        {/*        <DataTable.Row key={index} onPress={ () => navigation.navigate(*/}
-        {/*            'ViewReport', {table: element[1], animal: animalDisplayType, documentID: element[0], }*/}
-        {/*        )}>*/}
-        {/*          <DataTable.Cell style={styles.columns} key={index}>*/}
-        {/*            /!* <Checkbox*/}
-        {/*          status={checked ? "checked" : "unchecked"}*/}
-        {/*          onPress={() => {*/}
-        {/*            setChecked(!checked);*/}
-        {/*          }}*/}
-        {/*        ></Checkbox> *!/*/}
-        {/*            </DataTable.Cell>*/}
-        {/*            <DataTable.Cell numeric style={styles.row}>*/}
-        {/*              {element[0]}*/}
-        {/*            </DataTable.Cell>*/}
-        {/*            <DataTable.Cell style={styles.row}>*/}
-        {/*              {element[1].ticket_type}*/}
-        {/*            </DataTable.Cell>*/}
-        {/*            {Platform.OS === "web" ? (*/}
-        {/*                <>*/}
-        {/*                  <DataTable.Cell numeric style={styles.row}>*/}
-        {/*                    {element[1].Date}*/}
-        {/*                  </DataTable.Cell>*/}
-        {/*                  <DataTable.Cell numeric style={styles.row}>*/}
-        {/*                    {element[1].Time}*/}
-        {/*                  </DataTable.Cell>*/}
-        {/*                  <DataTable.Cell style={styles.row}>*/}
-        {/*                    {element[1].Location}*/}
-        {/*                  </DataTable.Cell>*/}
-        {/*                </>*/}
-        {/*            ) : null}*/}
-        {/*          </DataTable.Row>*/}
-        {/*      ))}*/}
-
-        {/*      <DataTable.Pagination*/}
-        {/*          page={pageNewTable}*/}
-        {/*          numberOfPages={totalPages}*/}
-        {/*          onPageChange={(page) => handlePageChange(page)}*/}
-        {/*          label={pageNewTable + 1 + "of " + totalPages}*/}
-        {/*          // optionsPerPage={optionsPerPage}*/}
-        {/*          // itemsPerPage={itemsPerPage}*/}
-        {/*          // setItemsPerPage={setItemsPerPage}*/}
-        {/*          showFastPagination*/}
-        {/*          optionsLabel={"Rows per page"}*/}
-        {/*      />*/}
-        {/*    </DataTable>*/}
-        {/*  </Surface>*/}
           <View>
             <Button
                 mode="contained"
@@ -780,7 +699,7 @@ const StaffPage = ({ navigation }) => {
                     zoom={mapProps.zoom}
                     data={markers}
                 />
-            ) : null }
+            ) : null}
           </View>
         </View>
       </ScrollView>
