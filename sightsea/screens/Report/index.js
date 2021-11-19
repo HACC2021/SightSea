@@ -13,6 +13,7 @@ import {
   Dimensions,
   ScrollView,
   Image,
+    form,
 } from "react-native";
 import {
   TextInput,
@@ -123,62 +124,63 @@ const ViewReport = ({route, navigation}) => {
 
 
 
-  const [delivered, setDelivered] = React.useState("");
-  const [hoi, setHOI] = React.useState("");
-  const [Location_Notes, setLocation_Notes] = React.useState("");
+  const [delivered, setDelivered] = React.useState(table.Delivered);
+  const [hoi, setHOI] = React.useState(table.Hotline_Operator_Initials);
+  const [Location_Notes, setLocation_Notes] = React.useState(table.Location_Notes);
 
-  const [Number_of_Calls_Received, setNumber_of_Calls_Received] = React.useState("");
-  const [Observer, setObserver] = React.useState("");
-  const [Observer_Contact_Number, setObserver_Contact_Number] = React.useState("");
-  const [Observer_Initials, setObserver_Initials] = React.useState("");
-  const [Observer_Type, setObserver_Type] = React.useState("");
-  const [Other_Notes, setOther_Notes] = React.useState("");
-  const [opbo, setOPBO] = React.useState("");
-  const [Responders_name, setResponders_name] = React.useState("");
-  const [Sector, setSector] = React.useState("");
-  const [Ticket_Number, setTicket_Number] = React.useState("");
-  const [Type_of_Bird, setType_of_Bird] = React.useState("");
-  const [Verified, setVerified] = React.useState("");
-  const [WhereTo, setWhereTo] = React.useState("");
-  const [TicketType, setTicketType] = React.useState("");
+  const [Number_of_Calls_Received, setNumber_of_Calls_Received] = React.useState(table.Number_of_Calls_Received);
+  const [Observer, setObserver] = React.useState(table.Observer);
+  const [Observer_Contact_Number, setObserver_Contact_Number] = React.useState(table.Observer_Contact_Number);
+  const [Observer_Initials, setObserver_Initials] = React.useState(table.Observer_Initials);
+  const [Observer_Type, setObserver_Type] = React.useState(table.Observer_Type);
+  const [Other_Notes, setOther_Notes] = React.useState(table.Other_Notes);
+  const [opbo, setOPBO] = React.useState(table.Outreach_provided_by_operator);
+  const [Responders_name, setResponders_name] = React.useState(table.Responders_name);
+  const [Sector, setSector] = React.useState(table.Sector);
+  const [Ticket_Number, setTicket_Number] = React.useState(table.Ticket_Number);
+  const [Type_of_Bird, setType_of_Bird] = React.useState(table.Type_of_Bird);
+  const [Verified, setVerified] = React.useState(table.Verified);
+  const [WhereTo, setWhereTo] = React.useState(table.Where_to);
+  const [TicketType, setTicketType] = React.useState(table.ticket_type);
 
 
 
-  const [Additional_Notes_on_ID, setAdditional_Notes_on_ID] = React.useState("");
-  const [Beach_Position, setBeach_Position] = React.useState("");
-  const [How_Identified, setHow_Identified] = React.useState("");
-  const [ID_Perm, setID_Perm] = React.useState("");
-  const [ID_Verified_By, setID_Verified_By] = React.useState("");
-  const [ID_temp, setID_temp] = React.useState("");
-  const [Molt, setMolt] = React.useState("");
-  const [Mom_and_Pup_Pair, setMom_and_Pup_Pair] = React.useState("");
-  const [Number_Volunteers_Engaged, setNumber_Volunteers_Engaged] = React.useState("");
-  const [SRA_Set_By, setSRA_Set_By] = React.useState("");
-  const [SRA_Set_Up, setSRA_Set_Up] = React.useState("");
-  const [Seal_Depart_Info_Avial, setSeal_Depart_Info_Avial] = React.useState("");
-  const [Seal_Departed_Date, setSeal_Departed_Date] = React.useState("");
-  const [Seal_Departed_Time, setSeal_Departed_Time] = React.useState("");
-  const [Seal_Logging, setSeal_Logging] = React.useState("");
-  const [Seal_Present, setSeal_Present] = React.useState("");
-  const [Tag_Color, setTag_Color] = React.useState("");
-  const [Tag_Number, setTag_Number] = React.useState("");
-  const [Tag_Side, setTag_Side] = React.useState("");
+  const [Additional_Notes_on_ID, setAdditional_Notes_on_ID] = React.useState(table.Additional_Notes_on_ID);
+  const [Beach_Position, setBeach_Position] = React.useState(table.Beach_Position);
+  const [How_Identified, setHow_Identified] = React.useState(table.How_Identified);
+  const [ID_Perm, setID_Perm] = React.useState(table.ID_Perm);
+  const [ID_Verified_By, setID_Verified_By] = React.useState(table.ID_Verified_By);
+  const [ID_temp, setID_temp] = React.useState(table.ID_temp);
+  const [Molt, setMolt] = React.useState(table.Molt);
+  const [Mom_and_Pup_Pair, setMom_and_Pup_Pair] = React.useState(table.Mom_and_Pup_Pair);
+  const [Number_Volunteers_Engaged, setNumber_Volunteers_Engaged] = React.useState(table.Number_Volunteers_Engaged);
+  const [SRA_Set_By, setSRA_Set_By] = React.useState(table.SRA_Set_By);
+  const [SRA_Set_Up, setSRA_Set_Up] = React.useState(table.SRA_Set_Up);
+  const [Seal_Depart_Info_Avial, setSeal_Depart_Info_Avial] = React.useState(table.Seal_Depart_Info_Avial);
+  const [Seal_Departed_Date, setSeal_Departed_Date] = React.useState(table.Seal_Departed_Date);
+  const [Seal_Departed_Time, setSeal_Departed_Time] = React.useState(table.Seal_Departed_Time);
+  const [Seal_Logging, setSeal_Logging] = React.useState(table.Seal_Logging);
+  const [Seal_Present, setSeal_Present] = React.useState(table.Seal_Present);
+  const [Tag_Color, setTag_Color] = React.useState(table.Tag_Color);
+  const [Tag_Number, setTag_Number] = React.useState(table.Tag_Number);
+  const [Tag_Side, setTag_Side] = React.useState(table.Tag_Side);
 
-  const [Primary_issue_or_cause_of_death, setPrimary_issue_or_cause_of_death] = React.useState("");
-  const [FAST, setFAST] = React.useState("");
-  const [Responder, setResponder] = React.useState("");
-  const [Responder_arrival_time, setResponder_arrival_time] = React.useState("");
-  const [Stauts, setStauts] = React.useState("");
-  const [Time_Responder_left, setTime_Responder_left] = React.useState("");
-  const [Type_of_Turtle, setType_of_Turtle] = React.useState("");
+  const [Primary_issue_or_cause_of_death, setPrimary_issue_or_cause_of_death] = React.useState(table.Primary_issue_or_cause_of_death);
+  const [FAST, setFAST] = React.useState(table.FAST);
+  const [Responder, setResponder] = React.useState(table.Responder);
+  const [Responder_arrival_time, setResponder_arrival_time] = React.useState(table.Responder_arrival_time);
+  const [Stauts, setStauts] = React.useState(table.Stauts);
+  const [Time_Responder_left, setTime_Responder_left] = React.useState(table.Time_Responder_left);
+  const [Type_of_Turtle, setType_of_Turtle] = React.useState(table.Type_of_Turtle);
 
-  const [date, setDate] = React.useState(new Date());
+  // const [date, setDate] = React.useState(new Date());
+  const [date, setDate] = React.useState(table.Date);
   const [currentLocation, setCurrentLocation] = React.useState(null);
   const [errorMsg, setErrorMsg] = React.useState(null);
   const [docID, setDocID] = React.useState("");
 
-  const [location, setLocation] = React.useState("");
-  const [turtleSize, setTurtleSize] = React.useState("");
+  const [location, setLocation] = React.useState(table.Location);
+  const [turtleSize, setTurtleSize] = React.useState(table.turtleSize);
 
   // Animal Type dropdown
   const [animalType, setAnimalType] = React.useState("Turtle");
@@ -581,6 +583,7 @@ const ViewReport = ({route, navigation}) => {
                         id="birdDate"
                         style={styles.input}
                         onChangeText={setDate}
+                        // onChange={ e => setDate(e.target.value)}
                         defaultValue={table.Date}
                         // onPress={() => this.setState({ disabled: false })}
                     >
@@ -588,7 +591,9 @@ const ViewReport = ({route, navigation}) => {
                     <Text style={styles.input}>Delivered: {table.Delivered}</Text>
                     <TextInput
                         id="birdDelivered"
-                        style={styles.input} onChangeText={setDelivered}
+                        style={styles.input}
+                        onChangeText={setDelivered}
+                        // onChange={ e => setDelivered(e.target.value)}
                         defaultValue={table.Delivered}
                     >
                     </TextInput>
@@ -724,7 +729,7 @@ const ViewReport = ({route, navigation}) => {
                     <img id="image" src={table.Image}/>
                   </div>
                 </View>
-            ) : animal === "Seal" ? (
+              ) : animal === "Seal" ? (
                 <View>
                   <Surface>
                     <Text style={styles.input}>Additional Notes on ID: {table.Additional_Notes_on_ID}</Text>
@@ -1109,13 +1114,13 @@ const ViewReport = ({route, navigation}) => {
                   </Surface>
                 </View>
             )}
-          </View>
+            </View>
           <Button style={styles.btn} mode="contained" onPress={() => addDoc()}>
             Update
           </Button>
 
 
-          <Surface style={styles.surface}>
+        <Surface style={styles.surface}>
             <Text style={styles.header}>New Reports</Text>
             <DataTable>
               <DataTable.Header>
@@ -1181,8 +1186,8 @@ const ViewReport = ({route, navigation}) => {
             {/*>*/}
             {/*  Verify*/}
             {/*</Button>*/}
-          </Surface>
 
+          </Surface>
 
         </View>
       </ScrollView>
