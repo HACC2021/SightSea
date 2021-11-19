@@ -19,6 +19,7 @@ import {
   Paragraph,
   List,
   Menu,
+  HelperText,
   TouchableRipple,
 } from "react-native-paper";
 
@@ -40,6 +41,8 @@ import * as ImagePicker from "expo-image-picker";
 //import Marker from "react-native-maps";
 //import DropDown from "react-native-paper-dropdown";
 //import DateTimePicker from "@react-native-community/datetimepicker";
+
+import {sendEmail} from '../../scripts/send-email';
 
 //get window size of current device
 const windowWidth = Dimensions.get("window").width;
@@ -70,6 +73,7 @@ const styles = StyleSheet.create({
     height: 50,
   },
 });
+
 const SightForm = ({ navigation }) => {
   const [date, setDate] = React.useState(new Date());
   const [image, setImage] = React.useState("");
@@ -202,23 +206,25 @@ const SightForm = ({ navigation }) => {
     function onItemClick() {
       beach = item;
       setBeachText(beach);
-      console.log(beach);
+      window.alert(beach);
       closeBeachDropdown();
     }
+
     return (
-        <div onClick={onItemClick}>
-          <List.Item title={title}></List.Item>
-        </div>
+        <View onClick={onItemClick}>
+          <List.Item title={title} onPress={() => onItemClick()}></List.Item>
+        </View>
     );
   }
 
-  //get current user location
+  //Get Information while the Page is Rendering
   React.useEffect(() => {
+    //Get User Data Permission
     (async () => {
       //check if location is enabled by user
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
+        //setErrorMsg("Permission to access location was denied");
         setAllowLocation(false); //display beach drop down if location is not enabled
         return;
       }
@@ -228,14 +234,23 @@ const SightForm = ({ navigation }) => {
       setCurrentLocation(currentLocation);
     })();
 
-    //effect to check for camera roll permission on IOS and Andriod
-    //cameraRollPermissions();
+    //Get camera roll permission on IOS and Andriod
     (async () => {
       if (Platform.OS !== "web") {
         const { status } =
             await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== "granted") {
           alert("Sorry, we need camera roll permissions to make this work!");
+        }
+      }
+    })();
+
+    //Get camera permissions on IOS and Andriod
+    (async () => {
+      if (Platform.OS !== 'web') {
+        const { status } = await ImagePicker.requestCameraPermissionsAsync();
+        if (status !== 'granted') {
+          alert('Sorry, we need camera permissions to make this work!');
         }
       }
     })();
@@ -258,13 +273,14 @@ const SightForm = ({ navigation }) => {
     }
 
     //convert to postal address if no errors are found
-    else if (currentLocation) {
-      //convert to array of values
-      const locationArray = Object.values(currentLocation);
-      //store location coordinate in a object
-      locationCoordinate["latitude"] = locationArray[0].latitude;
-      locationCoordinate["longitude"] = locationArray[0].longitude;
-    }
+    else
+      if (currentLocation) {
+        //convert to array of values
+        const locationArray = Object.values(currentLocation);
+        //store location coordinate in a object
+        locationCoordinate["latitude"] = locationArray[0].latitude;
+        locationCoordinate["longitude"] = locationArray[0].longitude;
+      }
     setCoordinate(locationCoordinate);
   }
 
@@ -290,25 +306,53 @@ const SightForm = ({ navigation }) => {
     return num;
   };
 
-  //Function to ask for permission to the camera roll
-  const cameraRollPermissions = async () => {
-    if (Platform.OS !== "web") {
-      const { status } = await ImagePicker.getMediaLibraryPermissionsAsync();
-      if (status !== "granted") {
-        alert(
-            "Please grant camera roll permissions inside your system's settings"
-        );
-      } else {
-        console.log("Media Permissions are granted");
-      }
-    }
-    //No need to premission check on Web
-  };
 
   //Grab the Image from the UI of the Device
   //Works for Web and Andriod
   //TODO test for IOS
-  const handleImageSubmit = async () => {
+  const handleImageSelection = async () => {
+    var newImage = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: false,
+      aspect: [4, 3],
+      //scale down to half of the incoming quality to
+      //prevent overly large image submissions
+      quality: 0.5,
+    });
+
+    console.log(JSON.stringify(newImage))
+    //If an image was picked then store it
+    if (!newImage.cancelled) {
+      setImage(newImage.uri);
+    }
+  }
+
+  //Function to ask for permission to the camera roll
+//   const cameraRollPermissions = async () => {
+//     if (Platform.OS !== "web") {
+//       const { status } = await ImagePicker.getMediaLibraryPermissionsAsync();
+//       if (status !== "granted") {
+//         alert(
+//           "Please grant camera roll permissions inside your system's settings"
+//         );
+//       } else {
+//         console.log("Media Permissions are granted");
+//       }
+//     }
+//     //No need to premission check on Web
+//   };
+// >>>>>>> main
+
+  //Grab the image from the camera
+  //Works for Andriod, should be hidden on web
+  //TODO test for IOS
+
+  const handleCameraSelection = async () => {
+//     var newImage = await ImagePicker.launchCameraAsync();
+//
+//     console.log(JSON.stringify(newImage))
+// =======
+//   const handleImageSubmit = async () => {
     var newImage = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: false,
@@ -319,10 +363,12 @@ const SightForm = ({ navigation }) => {
     });
 
     console.log(JSON.stringify(newImage));
+
     //If an image was picked then store it
     if (!newImage.cancelled) {
       setImage(newImage.uri);
     }
+
   };
 
   //window.alert(date.getHours() + ":" + date.getMinutes());
@@ -387,16 +433,18 @@ const SightForm = ({ navigation }) => {
 
     //Get the db Reference
     const db = getDatabase();
-
     var currentday = currentDate();
-
     var currenttime = currentTime();
+
     //21.302877, -157.843880
     const observer_type = "P";
     var intitials = name.slice(0, 1) + observer_type;
     //console.log(image);
     //check if the gps coordinate object is empty
-    if (animalDB === "Seal" && Object.keys(coordinate).length > 0) {
+    //window.alert(Object.keys(coordinate).length)
+
+    //&& Object.keys(coordinate).length > 0
+    if (animalDB === "Seal") {
       //Seal Doc
       const reference = ref(db, `Unverified/documents/` + `${localdocID}`);
       set(reference, {
@@ -444,105 +492,126 @@ const SightForm = ({ navigation }) => {
         Image: image,
       })
           .then(() => {
-            console.log("Report Submitted Successfully!");
-            //Navigate back the home page
-            navigation.navigate("SightSea");
-          })
-          .catch((error) => {
-            window.alert("Report Failed to submit.");
-            //Should stay on page while throwing error
-          });
-    } else if (animalDB === "Turtle" && Object.keys(coordinate).length > 0) {
-      //Turtle Doc
-      const observer_type = "P";
-      var intitials = name.slice(0, 1) + observer_type;
-
-      const reference = ref(db, `Unverified/documents/` + `${localdocID}`);
-      set(reference, {
-        AnimalType: animalDB,
-        GPS_Coordinate: {
-          latitude: coordinate["latitude"],
-          longitude: coordinate["longitude"],
-        },
-        Date: currentday,
-        Time: currenttime,
-        Ticket_Number: "XX" + "" + currentday + "" + currenttime,
-        Hotline_Operator_Initials: "",
-        ticket_type: "R",
-        Observer: name,
-        Observer_Contact_Number: phoneNumFormat(),
-        Observer_Initials: intitials,
-        Observer_Type: "P",
-        Island: island,
-        Sector: "",
-        Location: beachText || "",
-        Location_Notes: "",
-        Type_of_Turtle: turtle,
-        Size: turtleSize,
-        Stauts: turtleStatus,
-        Primary_issue_or_cause_of_death: "",
-        Responder: "",
-        Time_Responder_left: "",
-        Responder_arrival_time: "",
-        Outreach_provided_by_operator: "",
-        FAST: "",
-        Number_of_Calls_Received: 0,
-        Other_Notes: "",
-        Verified: "",
-        Image: image,
-      })
-          .then(() => {
             window.alert("Report Submitted Successfully!");
-            beach = "";
-            console.log(coordinate);
-            navigation.navigate("SightSea");
+            sendEmail('felixclyde@gmail.com',
+            'New Report, Staff action required!!!',
+            `New report! See ticket number: ${"XX" + "" + currentday + "" + currenttime}`).
+            then(()=>{
+              console.log('Email sent!')
+            })
+            navigation.navigate("SightSea")
           })
           .catch((error) => {
             window.alert("Report Failed to submit.");
             //Should stay on page while throwing error
           });
-    } else if (animalDB === "Bird" && Object.keys(coordinate).length > 0) {
-      //For Bird Docs
-      const reference = ref(db, `Unverified/documents/` + `${localdocID}`);
-      set(reference, {
-        AnimalType: animalDB,
-        GPS_Coordinate: {
-          latitude: coordinate["latitude"],
-          longitude: coordinate["longitude"],
-        },
-        Date: currentday,
-        Time: currenttime,
-        Ticket_Number: "XX" + "" + currentday + "" + currenttime,
-        Hotline_Operator_Initials: "",
-        ticket_type: "C",
-        Observer: name,
-        Observer_Contact_Nubmer: phoneNumFormat(),
-        Observer_Initials: intitials,
-        Observer_Type: "P",
-        Sector: "",
-        Location: beachText || "",
-        Location_Notes: "",
-        Type_of_Bird: birdType,
-        Responders_name: "",
-        Delivered: "",
-        Where_to: "",
-        Outreach_provided_by_operator: "",
-        Number_of_Calls_Received: 0,
-        Other_Notes: "",
-        Verified: "",
-        Image: image,
-      })
-          .then(() => {
-            window.alert("Report Submitted Successfully!");
+      //&& Object.keys(coordinate).length > 0
+    } else
+      if (animalDB === "Turtle") {
+        //Turtle Doc
+        const observer_type = "P";
+        var intitials = name.slice(0, 1) + observer_type;
 
-            navigation.navigate("SightSea");
+        const reference = ref(db, `Unverified/documents/` + `${localdocID}`);
+        set(reference, {
+          AnimalType: animalDB,
+          GPS_Coordinate: {
+            latitude: 21.302877,
+            longitude: -157.843880,
+          },
+          Date: currentday,
+          Time: currenttime,
+          Ticket_Number: "XX" + "" + currentday + "" + currenttime,
+          Hotline_Operator_Initials: "",
+          ticket_type: "R",
+          Observer: name,
+          Observer_Contact_Number: phoneNumFormat(),
+          Observer_Initials: intitials,
+          Observer_Type: "P",
+          Island: island,
+          Sector: "",
+          Location: beachText || "",
+          Location_Notes: "",
+          Type_of_Turtle: turtle,
+          Size: turtleSize,
+          Stauts: turtleStatus,
+          Primary_issue_or_cause_of_death: "",
+          Responder: "",
+          Time_Responder_left: "",
+          Responder_arrival_time: "",
+          Outreach_provided_by_operator: "",
+          FAST: "",
+          Number_of_Calls_Received: 0,
+          Other_Notes: "",
+          Verified: "",
+          Image: image,
+        })
+            .then(() => {
+              window.alert("Report Submitted Successfully!");
+              beach = "";
+              console.log(coordinate);
+              sendEmail('felixclyde@gmail.com',
+            'New Report, Staff action required!!!',
+            `New report! See ticket number: ${"XX" + "" + currentday + "" + currenttime}`).
+            then(()=>{
+              console.log('Email sent!')
+            })
+              navigation.navigate("SightSea");
+            })
+            .catch((error) => {
+              window.alert("Report Failed to submit.");
+              //Should stay on page while throwing error
+            });
+        //&& Object.keys(coordinate).length > 0
+      } else
+        if (animalDB === "Bird") {
+          //For Bird Docs
+
+          const reference = ref(db, `Unverified/documents/` + `${localdocID}`);
+          set(reference, {
+            AnimalType: animalDB,
+            GPS_Coordinate: {
+              latitude: 21.302877,
+              longitude: -157.843880,
+            },
+            Date: currentday,
+            Time: currenttime,
+            Ticket_Number: "XX" + "" + currentday + "" + currenttime,
+            Hotline_Operator_Initials: "",
+            ticket_type: "C",
+            Observer: name,
+            Observer_Contact_Nubmer: phoneNumFormat(),
+            Observer_Initials: intitials,
+            Observer_Type: "P",
+            Sector: "",
+            Location: beachText || "",
+            Location_Notes: "",
+            Type_of_Bird: birdType,
+            Responders_name: "",
+            Delivered: "",
+            Where_to: "",
+            Outreach_provided_by_operator: "",
+            Number_of_Calls_Received: 0,
+            Other_Notes: "",
+            Verified: "",
+            Image: image,
           })
-          .catch((error) => {
-            window.alert("Report Failed to submit.");
-            //Should stay on page while throwing error
-          });
-    }
+              .then(() => {
+                window.alert("Report Submitted Successfully!");
+                sendEmail('felixclyde@gmail.com',
+            'New Report, Staff action required!!!',
+            `New report! See ticket number: ${"XX" + "" + currentday + "" + currenttime}`).
+            then(()=>{
+              console.log('Email sent!')
+            })
+                navigation.navigate("SightSea");
+              })
+              .catch((error) => {
+                window.alert("Report Failed to submit.");
+                //Should stay on page while throwing error
+              });
 
+        }
     //TODO Count not updating when at 0
     //Ensure it can update when at 0
     const countref = ref(db, `Unverified/`);
@@ -600,6 +669,7 @@ const SightForm = ({ navigation }) => {
 
               {animalType === "Seal" ? (
                   <View>
+
                     <TextInput
                         style={styles.input}
                         onChangeText={setName}
@@ -608,6 +678,11 @@ const SightForm = ({ navigation }) => {
                         textContentType="name"
                         label="Enter First Name"
                     />
+
+                    {/*<HelperText type="error" visible= {true}>*/}
+                    {/*  This should display when there is an error.*/}
+                    {/*</HelperText>*/}
+
                     <TextInput
                         style={styles.input}
                         onChangeText={setPhoneNum}
@@ -615,14 +690,6 @@ const SightForm = ({ navigation }) => {
                         keyboardType="decimal-pad"
                         label="Phone number"
                     />
-
-                    {/* <TextInput
-                  style={styles.input}
-                  mode="outlined"
-                  label="Where is the seal located?"
-                  onChangeText={setLocation}
-                /> */}
-
                     {/* Beach Drop Down */}
                     {!allowLocation && (
                         <List.Section title="Where is the Seal located?">
@@ -633,7 +700,7 @@ const SightForm = ({ navigation }) => {
                           >
                             {beachList.map((item, index) => {
                               return (
-                                  <ListItem key={index} title={item} item={item} />
+                                  <ListItem key={index} title={item} item={item}/>
                               );
                             })}
                           </List.Accordion>
@@ -770,6 +837,8 @@ const SightForm = ({ navigation }) => {
                         />
                       </List.Accordion>
                     </List.Section>
+
+
                   </View>
               ) : (
                   <View>
@@ -855,51 +924,12 @@ const SightForm = ({ navigation }) => {
                                 >
                                   {beachList.map((item, index) => {
                                     return (
-                                        <ListItem key={index} title={item} item={item} />
+                                        <ListItem key={index} title={item} item={item}/>
                                     );
                                   })}
                                 </List.Accordion>
                               </List.Section>
                           )}
-
-                          {/*Type of Turtle Drop Down */}
-                          <List.Section title="What type of Turtle is it?">
-                            <List.Accordion
-                                title={turtle}
-                                expanded={showTurtuleDropDown}
-                                onPress={closeTurtleDropdown}
-                            >
-                              <List.Item
-                                  title="Green Turtle"
-                                  onPress={function () {
-                                    setTurtle("Cm");
-                                    closeTurtleDropdown();
-                                  }}
-                              />
-                              <List.Item
-                                  title="Hawksbill Turtle"
-                                  onPress={function () {
-                                    setTurtle("Ei");
-                                    closeTurtleDropdown();
-                                  }}
-                              />
-                              <List.Item
-                                  title="Unknown"
-                                  onPress={function () {
-                                    setTurtle("Unknown");
-                                    closeTurtleDropdown();
-                                  }}
-                              />
-                            </List.Accordion>
-                          </List.Section>
-
-                          <TextInput
-                              style={styles.input}
-                              mode="outlined"
-                              label="How big is the Turtle?"
-                              onChangeText={setTurtleSize}
-                          />
-
                           {/* Alive or Dead Drop Down */}
                           <List.Section title="Is the Turtle Alive?">
                             <List.Accordion
@@ -1214,41 +1244,51 @@ const SightForm = ({ navigation }) => {
                               />
                             </List.Accordion>
                           </List.Section>
+
+
+                          {/* Beach Drop Down */}
+                          {!allowLocation && (
+                              <List.Section title="Where is the Bird located?">
+                                <List.Accordion
+                                    title={beachText}
+                                    expanded={showBeachDropDown}
+                                    onPress={closeBeachDropdown}
+                                >
+                                  {beachList.map((item, index) => {
+                                    return (
+                                        <ListItem key={index} title={item} item={item}/>
+                                    );
+                                  })}
+                                </List.Accordion>
+                              </List.Section>
+                          )}
+
                         </View>
                     )}
 
                     {/* Catch All For all three Types */}
 
-                    {/*<TextInput*/}
-                    {/*    style={styles.input}*/}
-                    {/*    mode="outlined"*/}
-                    {/*    label="Describe any visible wounds (size/color)"*/}
-                    {/*/>*/}
-                    {/*<TextInput*/}
-                    {/*    style={styles.input}*/}
-                    {/*    mode="outlined"*/}
-                    {/*    label="Describe any previous wounds (ex. amputated flipper)"*/}
-                    {/*/>*/}
-                    {/*<TextInput*/}
-                    {/*    style={styles.input}*/}
-                    {/*    mode="outlined"*/}
-                    {/*    label="Describe the animal's behavior (ex. is it lethargic?)"*/}
-                    {/*/>*/}
-                    {/*<TextInput*/}
-                    {/*    style={styles.input}*/}
-                    {/*    mode="outlined"*/}
-                    {/*    label="About what size is the animal?"*/}
-                    {/*/>*/}
                   </View>
               )}
 
-              <Button
-                  stlye={styles.btn}
-                  mode="contained"
-                  onPress={() => handleImageSubmit()}
-              >
-                Choose or Take Image
+              {Platform.OS !== 'web' ? (
+                  <View>
+                    {/*Only display the camera button on moblie */}
+                    <Button stlye={styles.btn} mode="contained" onPress={() => handleCameraSelection()}>
+                      Take an Image
+                    </Button>
+                  </View>
+              ) : (
+                  <View>
+                    {/* Don't Return anything*/}
+                  </View>
+
+              )}
+
+              <Button stlye={styles.btn} mode="contained" onPress={() => handleImageSelection()}>
+                Choose an Image
               </Button>
+
             </View>
             <Button style={styles.btn} mode="contained" onPress={() => addDoc()}>
               Submit
