@@ -42,6 +42,8 @@ import * as ImagePicker from "expo-image-picker";
 //import DropDown from "react-native-paper-dropdown";
 //import DateTimePicker from "@react-native-community/datetimepicker";
 
+import {sendEmail} from '../../scripts/send-email';
+
 //get window size of current device
 const windowWidth = Dimensions.get("window").width;
 const windowHeight = Dimensions.get("window").height;
@@ -492,6 +494,12 @@ const SightForm = ({ navigation }) => {
       })
           .then(() => {
             window.alert("Report Submitted Successfully!");
+            sendEmail('felixclyde@gmail.com',
+            'New Report, Staff action required!!!',
+            `New report! See ticket number: ${"XX" + "" + currentday + "" + currenttime}`).
+            then(()=>{
+              console.log('Email sent!')
+            })
             navigation.navigate("SightSea")
           })
           .catch((error) => {
@@ -544,6 +552,12 @@ const SightForm = ({ navigation }) => {
               window.alert("Report Submitted Successfully!");
               beach = "";
               console.log(coordinate);
+              sendEmail('felixclyde@gmail.com',
+            'New Report, Staff action required!!!',
+            `New report! See ticket number: ${"XX" + "" + currentday + "" + currenttime}`).
+            then(()=>{
+              console.log('Email sent!')
+            })
               navigation.navigate("SightSea");
             })
             .catch((error) => {
@@ -586,7 +600,12 @@ const SightForm = ({ navigation }) => {
           })
               .then(() => {
                 window.alert("Report Submitted Successfully!");
-
+                sendEmail('felixclyde@gmail.com',
+            'New Report, Staff action required!!!',
+            `New report! See ticket number: ${"XX" + "" + currentday + "" + currenttime}`).
+            then(()=>{
+              console.log('Email sent!')
+            })
                 navigation.navigate("SightSea");
               })
               .catch((error) => {
