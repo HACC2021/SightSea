@@ -25,6 +25,7 @@ import {
   Paragraph,
   Subheading,
   Button,
+  List,
 } from "react-native-paper";
 import GoogleMapReact from "google-map-react";
 import {
@@ -166,12 +167,19 @@ const StaffPage = ({ navigation }) => {
   const [tableDataVerified, setTableDataVerified] = React.useState([]);
   const [tableDataNew, setTableDataNew] = React.useState([]);
   const [markerData, setMarkerData] = React.useState([]);
-  const [animalDisplayType, setAnimalDisplayType] = React.useState(null);
+  const [animalDisplayType, setAnimalDisplayType] = React.useState("Bird");
   const [backAnchorKeyVerified, setBackAnchorKeyVerified] =
     React.useState(null);
   const [backAnchorKeyNew, setBackAnchorKeyNew] = React.useState(null);
   const [search, setSearch] = React.useState(false);
-  const [newChecked, setNewChecked] = React.useState(new Array(optionsPerPage[0]).fill(false));
+  const [newChecked, setNewChecked] = React.useState(
+    new Array(optionsPerPage[0]).fill(false)
+  );
+  const [showItemNumDropdown, setShowItemNumDropdown] = React.useState(false);
+
+  const closeItemNumDropdown = () => {
+    setShowItemNumDropdown(!showItemNumDropdown);
+  };
 
   React.useEffect(() => {
     const auth = getAuth();
@@ -184,6 +192,7 @@ const StaffPage = ({ navigation }) => {
     //setPageNewTable(0);
     //setPageVerifiedTable(0);
     getNewDocs("switch");
+    getDocs(animalDisplayType, "switch");
   }, [itemsPerPage]);
 
   // ##########adding Firebase query ##########
@@ -336,6 +345,7 @@ const StaffPage = ({ navigation }) => {
       }
     });
     onValue(reference, (snapshot) => {
+      snapshot.val() === null ? null :
       setTableDataVerified(Object.entries(snapshot.val()));
     });
   };
@@ -348,25 +358,25 @@ const StaffPage = ({ navigation }) => {
     });
     var docCounter = 0;
     const reference =
-    direction === "switch"
-      ? query(
-          ref(db, `Unverified/documents`),
-          orderByKey(),
-          limitToFirst(itemsPerPage)
-        )
-      : direction === "forward"
-      ? query(
-          ref(db, `/Unverified/documents`),
-          orderByKey(),
-          startAfter(backAnchorKeyNew),
-          limitToFirst(itemsPerPage)
-        )
-      : query(
-          ref(db, `/Unverified/documents`),
-          orderByKey(),
-          startAt(frontAnchorKeysNew[pageNewTable - 1]),
-          limitToFirst(itemsPerPage)
-        );
+      direction === "switch"
+        ? query(
+            ref(db, `Unverified/documents`),
+            orderByKey(),
+            limitToFirst(itemsPerPage)
+          )
+        : direction === "forward"
+        ? query(
+            ref(db, `/Unverified/documents`),
+            orderByKey(),
+            startAfter(backAnchorKeyNew),
+            limitToFirst(itemsPerPage)
+          )
+        : query(
+            ref(db, `/Unverified/documents`),
+            orderByKey(),
+            startAt(frontAnchorKeysNew[pageNewTable - 1]),
+            limitToFirst(itemsPerPage)
+          );
     onChildAdded(reference, (snapshot) => {
       setBackAnchorKeyNew(snapshot.key);
       docCounter++;
@@ -381,12 +391,11 @@ const StaffPage = ({ navigation }) => {
       }
     });
     onValue(reference, (snapshot) => {
-      snapshot.val() === null ? setTableDataNew([]) :
-      setTableDataNew(Object.entries(snapshot.val()));
-
+      snapshot.val() === null
+        ? setTableDataNew([])
+        : setTableDataNew(Object.entries(snapshot.val()));
     });
-
-  }
+  };
 
   const handlePageChange = (page, callback) => {
     page > pageVerifiedTable
@@ -398,7 +407,7 @@ const StaffPage = ({ navigation }) => {
   const handlePageChangeNew = (page) => {
     page > pageNewTable ? getNewDocs("forward") : getNewDocs("back");
     setPageNewTable(page);
-  }
+  };
 
   const handleRadioChange = (animal) => {
     var markers = [];
@@ -426,10 +435,10 @@ const StaffPage = ({ navigation }) => {
     const newState = new Array(itemsPerPage);
     newChecked.map((x, index) => {
       console.log(x);
-      newState[index] = index === position ? !x : x
+      newState[index] = index === position ? !x : x;
     });
     setNewChecked(newState);
-  }
+  };
 
   const handleVerify = () => {
     newChecked.map((checked, index) => {
@@ -441,7 +450,7 @@ const StaffPage = ({ navigation }) => {
         const addCountRef = ref(db, `${item[1].AnimalType}/`);
         runTransaction(addCountRef, (post) => {
           if (post) {
-            if(post.count) {
+            if (post.count) {
               post.count++;
             }
           }
@@ -452,15 +461,15 @@ const StaffPage = ({ navigation }) => {
         const removeCountRef = ref(db, `Unverified/`);
         runTransaction(removeCountRef, (post) => {
           if (post) {
-            if(post.count) {
+            if (post.count) {
               post.count--;
             }
           }
           return post;
         });
       }
-    })
-  }
+    });
+  };
 
   //console.log(markerData);
   //convert location coordinate to address
@@ -487,7 +496,7 @@ const StaffPage = ({ navigation }) => {
       });
     });
   }
-console.log(newChecked);
+  console.log(newChecked);
   return (
     //Can only return 1 view object for Andriod
     <ScrollView>
@@ -512,11 +521,11 @@ console.log(newChecked);
               {tableDataNew.map((element, index) => (
                 <DataTable.Row key={index}>
                   <Checkbox
-                  status={newChecked[index] ? "checked" : "unchecked"}
-                  onPress={() => {
-                    handleNewCheckedChange(index);
-                  }}
-                ></Checkbox>
+                    status={newChecked[index] ? "checked" : "unchecked"}
+                    onPress={() => {
+                      handleNewCheckedChange(index);
+                    }}
+                  ></Checkbox>
                   <DataTable.Cell
                     style={styles.columns}
                     key={index}
@@ -542,9 +551,9 @@ console.log(newChecked);
 
               <DataTable.Pagination
                 page={pageNewTable}
-                numberOfPages={totalPages}
+                numberOfPages={totalPagesNew}
                 onPageChange={(page) => handlePageChangeNew(page)}
-                label={pageNewTable + 1 + "of " + totalPages}
+                label={pageNewTable + 1 + "of " + totalPagesNew}
                 // optionsPerPage={optionsPerPage}
                 // itemsPerPage={itemsPerPage}
                 // setItemsPerPage={setItemsPerPage}
@@ -553,13 +562,12 @@ console.log(newChecked);
               />
             </DataTable>
             <Button
-            mode="contained"
-            onPress={() => handleVerify()}
-            style={styles.Exportbtn}
-          >
-            Verify
-          </Button>
-
+              mode="contained"
+              onPress={() => handleVerify()}
+              style={styles.Exportbtn}
+            >
+              Verify
+            </Button>
           </Surface>
         ) : null}
         <View />
@@ -583,6 +591,31 @@ console.log(newChecked);
               ))
             )}
           </RadioButton.Group>
+          <View>
+            <List.Section title="Entries per Page">
+              <List.Accordion
+                title={itemsPerPage}
+                expanded={showItemNumDropdown}
+                onPress={closeItemNumDropdown}
+              >
+                {optionsPerPage.map((x, index) => (
+                  <List.Item
+                  key={index}
+                    title={x}
+                    onPress={() => {
+                      frontAnchorKeysNew = [];
+                      setItemsPerPage(x);
+                      closeItemNumDropdown();
+                      getDocs(animalDisplayType, "switch");
+                      getNewDocs("switch");
+                      setPageNewTable(0);
+                      setPageVerifiedTable(0);
+                    }}
+                  />
+                ))}
+              </List.Accordion>
+            </List.Section>
+          </View>
           {/* Display map with pins for ALL new reports */}
           <DataTable>
             <DataTable.Header>
