@@ -440,7 +440,7 @@ const SightForm = ({ navigation }) => {
     var intitials = name.slice(0, 1) + observer_type;
     //console.log(image);
     //check if the gps coordinate object is empty
-    window.alert(Object.keys(coordinate).length)
+    //window.alert(Object.keys(coordinate).length)
 
     //&& Object.keys(coordinate).length > 0
     if (animalDB === "Seal") {
