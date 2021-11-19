@@ -495,8 +495,8 @@ const SightForm = ({ navigation }) => {
           .then(() => {
             window.alert("Report Submitted Successfully!");
             sendEmail('felixclyde@gmail.com',
-            'New Report, Staff action required!!!',
-            `New report! See ticket number: ${"XX" + "" + currentday + "" + currenttime}`).
+                'New Report, Staff action required!!!',
+                `New report! See ticket number: ${"XX" + "" + currentday + "" + currenttime}`).
             then(()=>{
               console.log('Email sent!')
             })
@@ -553,11 +553,11 @@ const SightForm = ({ navigation }) => {
               beach = "";
               console.log(coordinate);
               sendEmail('felixclyde@gmail.com',
-            'New Report, Staff action required!!!',
-            `New report! See ticket number: ${"XX" + "" + currentday + "" + currenttime}`).
-            then(()=>{
-              console.log('Email sent!')
-            })
+                  'New Report, Staff action required!!!',
+                  `New report! See ticket number: ${"XX" + "" + currentday + "" + currenttime}`).
+              then(()=>{
+                console.log('Email sent!')
+              })
               navigation.navigate("SightSea");
             })
             .catch((error) => {
@@ -601,11 +601,11 @@ const SightForm = ({ navigation }) => {
               .then(() => {
                 window.alert("Report Submitted Successfully!");
                 sendEmail('felixclyde@gmail.com',
-            'New Report, Staff action required!!!',
-            `New report! See ticket number: ${"XX" + "" + currentday + "" + currenttime}`).
-            then(()=>{
-              console.log('Email sent!')
-            })
+                    'New Report, Staff action required!!!',
+                    `New report! See ticket number: ${"XX" + "" + currentday + "" + currenttime}`).
+                then(()=>{
+                  console.log('Email sent!')
+                })
                 navigation.navigate("SightSea");
               })
               .catch((error) => {
