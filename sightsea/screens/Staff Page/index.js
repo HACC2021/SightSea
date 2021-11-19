@@ -471,6 +471,37 @@ const StaffPage = ({ navigation }) => {
     });
   };
 
+  const handleRelated = () => {
+    newChecked.map((checked, index) => {
+      if (checked === true) {
+        const db = getDatabase();
+        const item = tableDataNew[index];
+        const addref = ref(db, `${item[1].AnimalType}/documents/${item[0]}`);
+        set(addref, item[1]);
+        const addCountRef = ref(db, `${item[1].AnimalType}/`);
+        runTransaction(addCountRef, (post) => {
+          if (post) {
+            if (post.count) {
+              post.count++;
+            }
+          }
+          return post;
+        });
+        const removeref = ref(db, `Unverified/documents/${item[0]}`);
+        remove(removeref);
+        const removeCountRef = ref(db, `Unverified/`);
+        runTransaction(removeCountRef, (post) => {
+          if (post) {
+            if (post.count) {
+              post.count--;
+            }
+          }
+          return post;
+        });
+      }
+    });
+  };
+
   //console.log(markerData);
   //convert location coordinate to address
   function convertToAddress(arrayOfMarker) {
@@ -639,13 +670,13 @@ const StaffPage = ({ navigation }) => {
                   <DataTable.Row key={index} onPress={ () => navigation.navigate(
                       'ViewReport', {table: element[1], animal: animalDisplayType, documentID: element[0], }
                   )}>
+                    <Checkbox
+                        status={newChecked[index] ? "checked" : "unchecked"}
+                        onPress={() => {
+                          handleNewCheckedChange(index);
+                        }}
+                    ></Checkbox>
                     <DataTable.Cell style={styles.columns} key={index}>
-                      {/* <Checkbox
-                  status={checked ? "checked" : "unchecked"}
-                  onPress={() => {
-                    setChecked(!checked);
-                  }}
-                ></Checkbox> */}
                     </DataTable.Cell>
                     <DataTable.Cell numeric style={styles.row}>
                       {element[0]}
@@ -681,6 +712,13 @@ const StaffPage = ({ navigation }) => {
                   optionsLabel={"Rows per page"}
               />
             </DataTable>
+            <Button
+                mode="contained"
+                onPress={() => handleRelated()}
+                style={styles.Exportbtn}
+            >
+              Related
+            </Button>
           </Surface>
           <View>
             <Button

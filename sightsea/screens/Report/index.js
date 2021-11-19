@@ -1,5 +1,9 @@
 import React from "react";
-import { getDatabase, ref, onValue, once, set, update } from "firebase/database";
+import { getDatabase, ref, onValue, once, set, update, query, orderByKey,
+  startAt, startAfter, endAt,
+  limitToFirst,
+  onChildAdded,
+} from "firebase/database";
 import {
   StyleSheet,
   Text,
@@ -20,9 +24,13 @@ import {
   List,
   Menu,
   Surface,
+  DataTable,
+  Checkbox,
 } from "react-native-paper";
 import MapView, { Marker } from "react-native-maps";
 import GoogleMapReact from "google-map-react";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+
 
 //get window size of current device
 const windowWidth = Dimensions.get("window").width;
@@ -67,7 +75,27 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
   },
+  table: {
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  columns: {
+    width: 100,
+    flex: 1,
+    justifyContent: "space-between",
+  },
+  row: {
+    width: 100,
+    flex: 1,
+    justifyContent: "space-between",
+  },
 });
+
+const optionsPerPage = [2, 3, 4];
+const animalTypes = ["Bird", "Seal", "Turtle"];
+var frontAnchorKeysVerified = [];
+var frontAnchorKeysNew = [];
+
 const ViewReport = ({route, navigation}) => {
   const { table, animal, documentID }  = route.params;
   // const [animalType, setAnimalType] = React.useState("Turtle");
@@ -77,6 +105,72 @@ const ViewReport = ({route, navigation}) => {
   const [time, setTime] = React.useState("");
   const [validPhone, setValidPhone] = React.useState(false);
   const [tableData, setTableData] = React.useState([]);
+
+  // for table
+  const [tableDataNew, setTableDataNew] = React.useState([]);
+  const [pageNewTable, setPageNewTable] = React.useState(0);
+  const [totalPagesNew, setTotalPagesNew] = React.useState(3);
+  const [backAnchorKeyVerified, setBackAnchorKeyVerified] =
+      React.useState(null);
+  const [backAnchorKeyNew, setBackAnchorKeyNew] = React.useState(null);
+  const [itemsPerPage, setItemsPerPage] = React.useState(optionsPerPage[0]);
+  const [newChecked, setNewChecked] = React.useState(
+      new Array(optionsPerPage[0]).fill(false)
+  );
+  const [animalDisplayType, setAnimalDisplayType] = React.useState("Bird");
+  const [totalPages, setTotalPages] = React.useState(3);
+  const [tableDataVerified, setTableDataVerified] = React.useState([]);
+
+
+
+  const [delivered, setDelivered] = React.useState("");
+  const [hoi, setHOI] = React.useState("");
+  const [Location_Notes, setLocation_Notes] = React.useState("");
+
+  const [Number_of_Calls_Received, setNumber_of_Calls_Received] = React.useState("");
+  const [Observer, setObserver] = React.useState("");
+  const [Observer_Contact_Number, setObserver_Contact_Number] = React.useState("");
+  const [Observer_Initials, setObserver_Initials] = React.useState("");
+  const [Observer_Type, setObserver_Type] = React.useState("");
+  const [Other_Notes, setOther_Notes] = React.useState("");
+  const [opbo, setOPBO] = React.useState("");
+  const [Responders_name, setResponders_name] = React.useState("");
+  const [Sector, setSector] = React.useState("");
+  const [Ticket_Number, setTicket_Number] = React.useState("");
+  const [Type_of_Bird, setType_of_Bird] = React.useState("");
+  const [Verified, setVerified] = React.useState("");
+  const [WhereTo, setWhereTo] = React.useState("");
+  const [TicketType, setTicketType] = React.useState("");
+
+
+
+  const [Additional_Notes_on_ID, setAdditional_Notes_on_ID] = React.useState("");
+  const [Beach_Position, setBeach_Position] = React.useState("");
+  const [How_Identified, setHow_Identified] = React.useState("");
+  const [ID_Perm, setID_Perm] = React.useState("");
+  const [ID_Verified_By, setID_Verified_By] = React.useState("");
+  const [ID_temp, setID_temp] = React.useState("");
+  const [Molt, setMolt] = React.useState("");
+  const [Mom_and_Pup_Pair, setMom_and_Pup_Pair] = React.useState("");
+  const [Number_Volunteers_Engaged, setNumber_Volunteers_Engaged] = React.useState("");
+  const [SRA_Set_By, setSRA_Set_By] = React.useState("");
+  const [SRA_Set_Up, setSRA_Set_Up] = React.useState("");
+  const [Seal_Depart_Info_Avial, setSeal_Depart_Info_Avial] = React.useState("");
+  const [Seal_Departed_Date, setSeal_Departed_Date] = React.useState("");
+  const [Seal_Departed_Time, setSeal_Departed_Time] = React.useState("");
+  const [Seal_Logging, setSeal_Logging] = React.useState("");
+  const [Seal_Present, setSeal_Present] = React.useState("");
+  const [Tag_Color, setTag_Color] = React.useState("");
+  const [Tag_Number, setTag_Number] = React.useState("");
+  const [Tag_Side, setTag_Side] = React.useState("");
+
+  const [Primary_issue_or_cause_of_death, setPrimary_issue_or_cause_of_death] = React.useState("");
+  const [FAST, setFAST] = React.useState("");
+  const [Responder, setResponder] = React.useState("");
+  const [Responder_arrival_time, setResponder_arrival_time] = React.useState("");
+  const [Stauts, setStauts] = React.useState("");
+  const [Time_Responder_left, setTime_Responder_left] = React.useState("");
+  const [Type_of_Turtle, setType_of_Turtle] = React.useState("");
 
   const [date, setDate] = React.useState(new Date());
   const [currentLocation, setCurrentLocation] = React.useState(null);
@@ -127,6 +221,26 @@ const ViewReport = ({route, navigation}) => {
   //   { label: "Seal", value: "Seal" },
   // ];
 
+
+  const [showItemNumDropdown, setShowItemNumDropdown] = React.useState(false);
+
+  const closeItemNumDropdown = () => {
+    setShowItemNumDropdown(!showItemNumDropdown);
+  };
+
+  React.useEffect(() => {
+    const auth = getAuth();
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        navigation.navigate("SightSea");
+      }
+    });
+    //setPageNewTable(0);
+    //setPageVerifiedTable(0);
+    getNewDocs("switch");
+    getDocs(animalDisplayType, "switch");
+  }, [itemsPerPage]);
+
   const closeAnimalDropdown = () => {
     setShowAnimalDropDown(!showAnimalDropDown);
   };
@@ -172,6 +286,152 @@ const ViewReport = ({route, navigation}) => {
     return num;
   };
 
+  //query database for certain animal
+  const getDocs = (animal, direction) => {
+    console.log(backAnchorKeyVerified);
+    const db = getDatabase();
+    const pageref = ref(db, `${animal}/count`);
+    onValue(pageref, (snapshot) => {
+      console.log(snapshot.val());
+      console.log(itemsPerPage);
+      console.log(Number(snapshot.val()) / itemsPerPage);
+      setTotalPages(Math.ceil(Number(snapshot.val()) / itemsPerPage));
+    });
+    var docCounter = 0;
+    //console.log(pageVerifiedTable);
+    //console.log(direction);
+    //console.log("front keys: " + frontAnchorKeysVerified);
+    const reference =
+        direction === "switch"
+            ? query(
+            ref(db, `/${animal}/documents`),
+            orderByKey(),
+            limitToFirst(itemsPerPage)
+            )
+            : direction === "forward"
+            ? query(
+                ref(db, `/${animal}/documents`),
+                orderByKey(),
+                startAfter(backAnchorKeyVerified),
+                limitToFirst(itemsPerPage)
+            )
+            : query(
+                ref(db, `/${animal}/documents`),
+                orderByKey(),
+                startAt(frontAnchorKeysVerified[pageVerifiedTable - 1]),
+                limitToFirst(itemsPerPage)
+            );
+    onChildAdded(reference, (snapshot) => {
+      setBackAnchorKeyVerified(snapshot.key);
+      docCounter++;
+      if (
+          docCounter === 1 &&
+          (direction === "forward" || direction === "switch")
+      ) {
+        frontAnchorKeysVerified.push(snapshot.key);
+        console.log(frontAnchorKeysVerified);
+      } else if (docCounter === 1 && direction === "back") {
+        frontAnchorKeysVerified.pop();
+      }
+    });
+    onValue(reference, (snapshot) => {
+      snapshot.val() === null ? null :
+          setTableDataVerified(Object.entries(snapshot.val()));
+    });
+  };
+
+  const getNewDocs = (direction) => {
+    const db = getDatabase();
+    const pageref = ref(db, `Unverified/count`);
+    onValue(pageref, (snapshot) => {
+      setTotalPagesNew(Math.ceil(Number(snapshot.val()) / itemsPerPage));
+    });
+    var docCounter = 0;
+    const reference =
+        direction === "switch"
+            ? query(
+            ref(db, `Unverified/documents`),
+            orderByKey(),
+            limitToFirst(itemsPerPage)
+            )
+            : direction === "forward"
+            ? query(
+                ref(db, `/Unverified/documents`),
+                orderByKey(),
+                startAfter(backAnchorKeyNew),
+                limitToFirst(itemsPerPage)
+            )
+            : query(
+                ref(db, `/Unverified/documents`),
+                orderByKey(),
+                startAt(frontAnchorKeysNew[pageNewTable - 1]),
+                limitToFirst(itemsPerPage)
+            );
+    onChildAdded(reference, (snapshot) => {
+      setBackAnchorKeyNew(snapshot.key);
+      docCounter++;
+      if (
+          docCounter === 1 &&
+          (direction === "forward" || direction === "switch")
+      ) {
+        frontAnchorKeysNew.push(snapshot.key);
+        console.log(frontAnchorKeysNew);
+      } else if (docCounter === 1 && direction === "back") {
+        frontAnchorKeysNew.pop();
+      }
+    });
+    onValue(reference, (snapshot) => {
+      snapshot.val() === null
+          ? setTableDataNew([])
+          : setTableDataNew(Object.entries(snapshot.val()));
+    });
+  };
+
+  const handlePageChange = (page, callback) => {
+    page > pageVerifiedTable
+        ? getDocs(animalDisplayType, "forward")
+        : getDocs(animalDisplayType, "back");
+    setPageVerifiedTable(page);
+  };
+
+  const handlePageChangeNew = (page) => {
+    page > pageNewTable ? getNewDocs("forward") : getNewDocs("back");
+    setPageNewTable(page);
+  };
+
+  const handleRadioChange = (animal) => {
+    var markers = [];
+    setAnimalDisplayType(animal);
+    setPageVerifiedTable(0);
+    setBackAnchorKeyVerified(null);
+    frontAnchorKeysVerified = [];
+    getDocs(animal, "switch");
+    // tableDataVerified.map((element) => {
+    //   markers.push({
+    //     ticketNum: element[1].GPS_Coordinate.Ticket_Number,
+    //     latitude: element[1].GPS_Coordinate.latitude,
+    //     longitude: element[1].GPS_Coordinate.longitude,
+    //   });
+    // });
+
+    // //convert GPS coordinate to postal address and update marker array
+    // convertToAddress(markers);
+    // //pass the GPS coordinate object to the MarkerData array
+    // setMarkerData(markers);
+  };
+
+  const handleNewCheckedChange = (position) => {
+    console.log(position);
+    const newState = new Array(itemsPerPage);
+    newChecked.map((x, index) => {
+      console.log(x);
+      newState[index] = index === position ? !x : x;
+    });
+    setNewChecked(newState);
+  };
+
+
+
   function addDoc() {
     //Get the db Reference
     const db = getDatabase();
@@ -184,42 +444,42 @@ const ViewReport = ({route, navigation}) => {
       //Seal Doc
       const reference = ref(db, `${animal}/documents/` + documentID);
       update(reference, {
-        // Additional_Notes_on_ID: sealNotes.value,
-        // Beach_Position: sealPositions.value,
-        // Date: sealDate.value,
-        // Hotline_Operator_Initials: sealInitials.value,
-        // How_Identified: sealIdentification.value,
-        // ID_Perm: sealIdPerm.value,
-        // ID_Verified_By: sealIdVerifiedBy.value,
-        // ID_temp: sealIdTemp.value,
-        // Location: sealLocation.value,
-        // Location_Notes: sealLocationNotes.value,
-        // Molt: sealMolt.value,
-        // Mom_and_Pup_Pair: sealPair.value,
-        // Number_Volunteers_Engaged: sealVolunteersEngaged.value,
-        // Number_of_Calls_Received: sealCallReceived.value,
-        // Observer: sealObserver.value,
-        // Observer_Contact_Nubmer: sealObserverContact.value,
-        // Observer_Initials: sealObserverInitials.value,
-        // Observer_Type: sealObserverType.value,
-        // Other_Notes: sealOtherNotes.value,
-        // SRA_Set_By: sealSraSetBy.value,
-        // SRA_Set_Up: sealSraSetUp.value,
-        // Seal_Depart_Info_Avial: sealDepartInfo.value,
-        // Seal_Departed_Date: sealDepartDate.value,
-        // Seal_Departed_Time: sealDepartTime.value,
-        // Seal_Logging: sealLogging.value,
-        // Seal_Present: sealPresent.value,
-        // Sector: sealSector.value,
-        // Sex: sealSex.value,
-        // Size: sealSize.value,
-        // Tag_Color: sealTagColor.value,
-        // Tag_Number: sealTagNumber.value,
-        // Tag_Side: sealTagSide.value,
-        // Ticket_Number: sealTicketNumber.value,
-        // Time: sealTime.value,
-        // Verified: sealVerified.value,
-        // ticket_type: sealTicketType.value,
+        Additional_Notes_on_ID: Additional_Notes_on_ID,
+        Beach_Position: Beach_Position,
+        Date: date,
+        Hotline_Operator_Initials: hoi,
+        How_Identified: How_Identified,
+        ID_Perm: ID_Perm,
+        ID_Verified_By: ID_Verified_By,
+        ID_temp: ID_temp,
+        Location: location,
+        Location_Notes: Location_Notes,
+        Molt: Molt,
+        Mom_and_Pup_Pair: Mom_and_Pup_Pair,
+        Number_Volunteers_Engaged: Number_Volunteers_Engaged,
+        Number_of_Calls_Received: Number_of_Calls_Received,
+        Observer: Observer,
+        Observer_Contact_Number: Observer_Contact_Number,
+        Observer_Initials: Observer_Initials,
+        Observer_Type: Observer_Type,
+        Other_Notes: Other_Notes,
+        SRA_Set_By: SRA_Set_By,
+        SRA_Set_Up: SRA_Set_Up,
+        Seal_Depart_Info_Avial: Seal_Depart_Info_Avial,
+        Seal_Departed_Date: Seal_Departed_Date,
+        Seal_Departed_Time: Seal_Departed_Time,
+        Seal_Logging: Seal_Logging,
+        Seal_Present: Seal_Present,
+        Sector: Sector,
+        Sex: sex,
+        Size: size,
+        Tag_Color: Tag_Color,
+        Tag_Number: Tag_Number,
+        Tag_Side: Tag_Side,
+        Ticket_Number: Ticket_Number,
+        Time: time,
+        Verified: Verified,
+        ticket_type: TicketType,
       })
           .then(() => {
             window.alert("Report Submitted Successfully!");
@@ -237,31 +497,31 @@ const ViewReport = ({route, navigation}) => {
       const reference = ref(db, `${animal}/documents/` + documentID);
       update(reference, {
         Date: date,
-        // FAST: turtleFast.value,
-        // Hotline_Operator_Initials: turtleInitials.value,
-        // Island: turtleIsland.value,
-        // Location: turtleLocation.value,
-        // Location_Notes: turtleLocationNotes.value,
-        // Number_of_Calls_Received: turtleNumberCalls.value,
-        // Observer: turtleObserver.value,
-        // Observer_Contact_Number: turtleObserverContact.value,
-        // Observer_Initials: turtleObserverInitials.value,
-        // Observer_Type: turtleObserverType.value,
-        // Other_Notes: turtleObserverNotes.value,
-        // Outreach_provided_by_operator: turtleOutreach.value,
-        // Primary_issue_or_cause_of_death: turtleCod.value,
-        // Responder: turtleResponder.value,
-        // Responder_arrival_time: turtleArrivalTime.value,
-        // // Sector: turtleSector.value,
-        // Size: turtleSize.value,
-        // Stauts: turtleStauts.value,
-        // // Ticket_Number: "XX" + "" + currentday + "" + currenttime,
-        // Ticket_Number: turtleTicketNumber.value,
-        // Time: turtleTime.value,
-        // Time_Responder_left: turtleResonderLeft.value,
-        // Type_of_Turtle: turtleType.value,
-        // Verified: turtleVerified.value,
-        // ticket_type: turtleTicketType.value,
+        FAST: FAST,
+        Hotline_Operator_Initials: hoi,
+        Island: island,
+        Location: location,
+        Location_Notes: Location_Notes,
+        Number_of_Calls_Received: Number_of_Calls_Received,
+        Observer: Observer,
+        Observer_Contact_Number: Observer_Contact_Number,
+        Observer_Initials: Observer_Initials,
+        Observer_Type: Observer_Type,
+        Other_Notes: Other_Notes,
+        Outreach_provided_by_operator: opbo,
+        Primary_issue_or_cause_of_death: Primary_issue_or_cause_of_death,
+        Responder: Responder,
+        Responder_arrival_time: Responder_arrival_time,
+        Sector: Sector,
+        Size: size,
+        Stauts: Stauts,
+        // Ticket_Number: "XX" + "" + currentday + "" + currenttime,
+        Ticket_Number: Ticket_Number,
+        Time: time,
+        Time_Responder_left: Time_Responder_left,
+        Type_of_Turtle: Type_of_Turtle,
+        Verified: Verified,
+        ticket_type: TicketType,
       })
           .then(() => {
             window.alert("Report Submitted Successfully!");
@@ -277,25 +537,25 @@ const ViewReport = ({route, navigation}) => {
       const reference = ref(db, `${animal}/documents/` + documentID);
       update(reference, {
         Date: date,
+        Delivered: delivered,
+        Hotline_Operator_Initials: hoi,
+        Location: location,
+        Location_Notes: Location_Notes,
+        Number_of_Calls_Received: Number_of_Calls_Received,
+        Observer: Observer,
+        Observer_Contact_Number: Observer_Contact_Number,
+        Observer_Initials: Observer_Initials,
+        Observer_Type: Observer_Type,
+        Other_Notes: Other_Notes,
+        Outreach_provided_by_operator: opbo,
+        Responders_name: Responders_name,
+        Sector: Sector,
+        Ticket_Number: Ticket_Number,
         Time: time,
-        // Ticket_Number: birdTicketNum.value,
-        // Hotline_Operator_Initials: birdHOI.value,
-        // ticket_type: birdTicketType.value,
-        // Observer: birdObserver.value,
-        // Observer_Contact_Number: table.Observer_Contact_Number,
-        // Observer_Type: birdObsType.value,
-        // Observer_Initials: birdObsInitials.value,
-        // Sector: birdSector.value,
-        // Location: birdLocation.value,
-        // Location_Notes: birdLocNotes.value,
-        // Type_of_Bird: birdType.value,
-        // Responders_name: birdRespName.value,
-        // Delivered: birdDelivered.value,
-        // Where_to: birdWhereTo.value,
-        // Outreach_provided_by_operator: birdOPBO.value,
-        // Number_of_Calls_Received: birdNOCR.value,
-        // Other_Notes: birdOtherNotes.value,
-        // Verified: birdVerified.value,
+        Type_of_Bird: Type_of_Bird,
+        Verified: Verified,
+        Where_to: WhereTo,
+        ticket_type: TicketType,
       })
           .then(() => {
             window.alert("Report Submitted Successfully!");
@@ -321,7 +581,6 @@ const ViewReport = ({route, navigation}) => {
                         id="birdDate"
                         style={styles.input}
                         onChangeText={setDate}
-                        // value={table.Date}
                         defaultValue={table.Date}
                         // onPress={() => this.setState({ disabled: false })}
                     >
@@ -329,135 +588,135 @@ const ViewReport = ({route, navigation}) => {
                     <Text style={styles.input}>Delivered: {table.Delivered}</Text>
                     <TextInput
                         id="birdDelivered"
-                        style={styles.input} onChangeText={setName}
-                        value={table.Delivered}
+                        style={styles.input} onChangeText={setDelivered}
+                        defaultValue={table.Delivered}
                     >
                     </TextInput>
                     <Text style={styles.input}>Hotline Operator Initals: {table.Hotline_Operator_Initals}</Text>
                     <TextInput
                         id="birdHOI"
-                        style={styles.input} onChangeText={setName}
-                        value={table.Hotline_Operator_Initals}
+                        style={styles.input} onChangeText={setHOI}
+                        defaultValue={table.Hotline_Operator_Initals}
                     >
                     </TextInput>
                     <Text style={styles.input}>Location: {table.Location}</Text>
                     <TextInput
                         id="birdLocation"
-                        style={styles.input} onChangeText={setName}
-                        value={table.Location}
+                        style={styles.input} onChangeText={setLocation}
+                        defaultValue={table.Location}
                     >
                     </TextInput>
                     <Text style={styles.input}>Location Notes: {table.Location_Notes}</Text>
                     <TextInput
                         id="birdLocNotes"
                         style={styles.input}
-                        onChangeText={setName}
-                        value={table.Location_Notes}
+                        onChangeText={setLocation_Notes}
+                        defaultValue={table.Location_Notes}
                     >
                     </TextInput>
                     <Text style={styles.input}>Number of Calls Received: {table.Number_of_Calls_Received}</Text>
                     <TextInput
                         id="birdNOCR"
-                        style={styles.input} onChangeText={setName}
-                        value={table.Number_of_Calls_Received}
+                        style={styles.input} onChangeText={setNumber_of_Calls_Received}
+                        defaultValue={table.Number_of_Calls_Received}
                     >
                     </TextInput>
                     <Text style={styles.input}>Observer: {table.Observer}</Text>
                     <TextInput
                         id="birdObserver"
-                        style={styles.input} onChangeText={setName}
-                        value={table.Observer}
+                        style={styles.input} onChangeText={setObserver}
+                        defaultValue={table.Observer}
                     >
                     </TextInput>
                     <Text style={styles.input}>Observer Number: {table.Observer_Contact_Number}</Text>
                     <TextInput
                         id="birdObsNum"
-                        style={styles.input} onChangeText={setPhoneNum}
-                        value={table.Observer_Contact_Number}
+                        style={styles.input} onChangeText={setObserver_Contact_Number}
+                        defaultValue={table.Observer_Contact_Number}
                     >
                     </TextInput>
                     <Text style={styles.input}>Observer Initials: {table.Observer_Initials}</Text>
                     <TextInput
                         id="birdObsInitials"
-                        style={styles.input} onChangeText={setName}
-                        value={table.Observer_Initials}
+                        style={styles.input} onChangeText={setObserver_Initials}
+                        defaultValue={table.Observer_Initials}
                     >
                     </TextInput>
                     <Text style={styles.input}>Observer Type: {table.Observer_Type}</Text>
                     <TextInput
                         id="birdObsType"
-                        style={styles.input} onChangeText={setName}
-                        value={table.Observer_Type}
+                        style={styles.input} onChangeText={setObserver_Type}
+                        defaultValue={table.Observer_Type}
                     >
                     </TextInput>
                     <Text style={styles.input}>Other Notes: {table.Other_Notes}</Text>
                     <TextInput
                         id="birdObsNotes"
-                        style={styles.input} onChangeText={setName}
-                        value={table.Other_Notes}
+                        style={styles.input} onChangeText={setOther_Notes}
+                        defaultValue={table.Other_Notes}
                     >
                     </TextInput>
-                    <Text style={styles.input}>Outreach Provided By Operator: {table.Outreach_Provided_By_Operator}</Text>
+                    <Text style={styles.input}>Outreach Provided By Operator: {table.Outreach_provided_by_operator}</Text>
                     <TextInput
                         id="birdOPBO"
-                        style={styles.input} onChangeText={setName}
-                        value={table.Outreach_Provided_By_Operator}
+                        style={styles.input} on ChangeText={setOPBO}
+                        defaultValue={table.Outreach_provided_by_operator}
                     >
                     </TextInput>
                     <Text style={styles.input}>Responders Name: {table.Responders_name}</Text>
                     <TextInput
                         id="birdRespName"
-                        style={styles.input} onChangeText={setName}
-                        value={table.Responders_name}
+                        style={styles.input} onChangeText={setResponders_name}
+                        defaultValue={table.Responders_name}
                     >
                     </TextInput>
                     <Text style={styles.input}>Sector: {table.Sector}</Text>
                     <TextInput
                         id="birdSector"
-                        style={styles.input} onChangeText={setName}
-                        value={table.Sector}
+                        style={styles.input} onChangeText={setSector}
+                        defaultValue={table.Sector}
                     >
                     </TextInput>
                     <Text style={styles.input}>Ticket Number: {table.Ticket_Number}</Text>
                     <TextInput
                         id="birdTicketNum"
-                        style={styles.input} onChangeText={setName}
-                        value={table.Ticket_Number}
+                        style={styles.input} onChangeText={setTicket_Number}
+                        defaultValue={table.Ticket_Number}
                     >
                     </TextInput>
                     <Text style={styles.input}>Time: {table.Time}</Text>
                     <TextInput
                         id="birdTime"
-                        style={styles.input} onChangeText={setName}
-                        value={table.Time}
+                        style={styles.input} onChangeText={setTime}
+                        defaultValue={table.Time}
                     >
                     </TextInput>
                     <Text style={styles.input}>Type of Bird: {table.Type_of_Bird}</Text>
                     <TextInput
                         id="birdType"
-                        style={styles.input} onChangeText={setName}
-                        value={table.Type_of_Bird}
+                        style={styles.input} onChangeText={setType_of_Bird}
+                        defaultValue={table.Type_of_Bird}
                     >
                     </TextInput>
                     <Text style={styles.input}>Verified: {table.Verified}</Text>
                     <TextInput
                         id="birdVerified"
-                        style={styles.input} onChangeText={setName}
-                        value={table.Verified}
+                        style={styles.input} onChangeText={setVerified}
+                        defaultValue={table.Verified}
                     >
                     </TextInput>
                     <Text style={styles.input}>Where To: {table.Where_To}</Text>
                     <TextInput
                         id="birdWhere"
-                        style={styles.input} onChangeText={setName}
-                        value={table.Where_To}
+                        style={styles.input} onChangeText={setWhereTo}
+                        defaultValue={table.Where_To}
                     >
                     </TextInput>
                     <Text style={styles.input}>Ticket Type: {table.Ticket_Type}</Text>
                     <TextInput
                         id="birdTicketType"
-                        style={styles.input} onChangeText={setName}
-                        value={table.Ticket_Type}
+                        style={styles.input} onChangeText={setTicketType}
+                        defaultValue={table.Ticket_Type}
                     >
                     </TextInput>
                   </Surface>
@@ -465,230 +724,229 @@ const ViewReport = ({route, navigation}) => {
                     <img id="image" src={table.Image}/>
                   </div>
                 </View>
-
-
-
-
-
-
             ) : animal === "Seal" ? (
                 <View>
                   <Surface>
                     <Text style={styles.input}>Additional Notes on ID: {table.Additional_Notes_on_ID}</Text>
                     <TextInput
                         id="sealNotes"
-                        style={styles.input} onChangeText={setName}
-                        value={table.Additional_Notes_on_ID}
+                        style={styles.input} onChangeText={setAdditional_Notes_on_ID}
+                        defaultValue={table.Additional_Notes_on_ID}
                     ></TextInput>
                     <Text style={styles.input}>Beach Position: {table.Beach_Position}</Text>
                       <TextInput
                           id="sealPosition"
-                          style={styles.input} onChangeText={setName}
-                          value={table.Beach_Position}
+                          style={styles.input} onChangeText={setBeach_Position}
+                          defaultValue={table.Beach_Position}
                       ></TextInput>
                     <Text style={styles.input}>Date: {table.Date}</Text>
                         <TextInput
                             id="sealDate"
                             style={styles.input}
-                            value={table.Date}
+                            onChangeText={setDate}
+                            defaultValue={table.Date}
                         ></TextInput>
                     <Text style={styles.input}>Hotline Operator Initals: {table.Hotline_Operator_Initals}</Text>
                           <TextInput
                               id="sealInitials"
                               style={styles.input}
-                              value={table.Hotline_Operator_Initals}
+                              onChangeText={setHOI}
+                              defaultValue={table.Hotline_Operator_Initals}
                           ></TextInput>
                     <Text style={styles.input}>How Identified: {table.How_Identified}</Text>
                             <TextInput
                                 id="sealIdentification"
                                 style={styles.input}
-                                value={table.How_Identified}
+                                onChangeText={setHow_Identified}
+                                defaultValue={table.How_Identified}
                             ></TextInput>
                     <Text style={styles.input}>ID Perm: {table.ID_Perm}</Text>
                               <TextInput
                                   id="sealIdPerm"
                                   style={styles.input}
-                                  value={table.ID_Perm}
+                                  onChangeText={setID_Perm}
+                                  defaultValue={table.ID_Perm}
                               ></TextInput>
                     <Text style={styles.input}>ID Verified By: {table.ID_Verified_By}</Text>
                                 <TextInput
                                     id="sealIdVerfiedBy"
                                     style={styles.input}
-                                    value={table.ID_Verified_By}
+                                    onChangeText={setID_Verified_By}
+                                    defaultValue={table.ID_Verified_By}
                                 ></TextInput>
                     <Text style={styles.input}>ID Temp: {table.ID_temp}</Text>
                                   <TextInput
                                       id="sealIdTemp"
-                                      style={styles.input}
-                                      value={table.ID_temp}
+                                      style={styles.input} onChangeText={setID_temp}
+                                      defaultValue={table.ID_temp}
                                   ></TextInput>
                     <Text style={styles.input}>Location: {table.Location}</Text>
                                     <TextInput
                                         id="sealLocation"
-                                        style={styles.input}
-                                        value={table.Location}
+                                        style={styles.input} onChangeText={setLocation}
+                                        defaultValue={table.Location}
                                     ></TextInput>
                     <Text style={styles.input}>Location Notes: {table.Location_Notes}</Text>
                                       <TextInput
                                           id="sealLocationNotes"
-                                          style={styles.input}
-                                          value={table.Location_Notes}
+                                          style={styles.input} onChangeText={setLocation_Notes}
+                                          defaultValue={table.Location_Notes}
                                       ></TextInput>
                     <Text style={styles.input}>Molt: {table.Molt}</Text>
                                         <TextInput
                                             id="sealMolt"
-                                            style={styles.input}
-                                            value={table.Molt}
+                                            style={styles.input} onChangeText={setMolt}
+                                            defaultValue={table.Molt}
                                         ></TextInput>
                     <Text style={styles.input}>Mom and PupPair: {table.Mom_and_Pup_Pair}</Text>
                                           <TextInput
                                               id="sealPair"
-                                              style={styles.input}
-                                              value={table.Mom_and_Pup_Pair}
+                                              style={styles.input} onChangeText={setMom_and_Pup_Pair}
+                                              defaultValue={table.Mom_and_Pup_Pair}
                                           ></TextInput>
                     <Text style={styles.input}>Number of Volunteers Engaged: {table.Number_Volunteers_Engaged}</Text>
                                             <TextInput
                                                 id="sealVolunteersEngaged"
-                                                style={styles.input}
-                                                value={table.Number_Volunteers_Engaged}
+                                                style={styles.input} onChangeText={setNumber_Volunteers_Engaged}
+                                                defaultValue={table.Number_Volunteers_Engaged}
                                             ></TextInput>
                     <Text style={styles.input}>Number of Calls Received: {table.Number_of_Calls_Received}</Text>
                                               <TextInput
                                                   id="sealCallReceived"
-                                                  style={styles.input}
-                                                  value={table.Number_of_Calls_Received}
+                                                  style={styles.input} onChangeText={setNumber_of_Calls_Received}
+                                                  defaultValue={table.Number_of_Calls_Received}
                                               ></TextInput>
                     <Text style={styles.input}>Observer: {table.Observer}</Text>
                                                 <TextInput
                                                     id="sealObserver"
-                                                    style={styles.input}
-                                                    value={table.Observer}
+                                                    style={styles.input} onChangeText={setObserver}
+                                                    defaultValue={table.Observer}
                                                 ></TextInput>
                     <Text style={styles.input}>Observer Number: {table.Observer_Contact_Number}</Text>
                                                   <TextInput
                                                       id="sealObserverContact"
-                                                      style={styles.input}
-                                                      value={table.Observer_Contact_Number}
+                                                      style={styles.input} onChangeText={setObserver_Contact_Number}
+                                                      defaultValue={table.Observer_Contact_Number}
                                                   ></TextInput>
                     <Text style={styles.input}>Observer Initials: {table.Observer_Initials}</Text>
                                                     <TextInput
                                                         id="sealObserverInitials"
-                                                        style={styles.input}
-                                                        value={table.Observer_Initials}
+                                                        style={styles.input} onChangeText={setObserver_Initials}
+                                                        defaultValue={table.Observer_Initials}
                                                     ></TextInput>
                     <Text style={styles.input}>Observer Type: {table.Observer_Type}</Text>
                                                       <TextInput
                                                           id="sealObserverType"
-                                                          style={styles.input}
-                                                          value={table.Observer_Type}
+                                                          style={styles.input} onChangeText={setObserver_Type}
+                                                          defaultValue={table.Observer_Type}
                                                       ></TextInput>
                     <Text style={styles.input}>ObserverO Notes: {table.Other_Notes}</Text>
                                                         <TextInput
                                                             id="sealOtherNotes"
-                                                            style={styles.input}
-                                                            value={table.Other_Notes}
+                                                            style={styles.input} onChangeText={setOther_Notes}
+                                                            defaultValue={table.Other_Notes}
                                                         ></TextInput>
                     <Text style={styles.input}>SRA Set By: {table.SRA_Set_By}</Text>
                                                           <TextInput
                                                               id="sealSraSetBy"
-                                                              style={styles.input}
-                                                              value={table.SRA_Set_By}
+                                                              style={styles.input} onChangeText={setSRA_Set_By}
+                                                              defaultValue={table.SRA_Set_By}
                                                           ></TextInput>
                     <Text style={styles.input}>SRA Set Up: {table.SRA_Set_Up}</Text>
                                                             <TextInput
                                                                 id="sealSraSetUp"
-                                                                style={styles.input}
-                                                                value={table.SRA_Set_Up}
+                                                                style={styles.input} onChangeText={setSRA_Set_Up}
+                                                                defaultValue={table.SRA_Set_Up}
                                                             ></TextInput>
                     <Text style={styles.input}>Seal Depart Info Avial: {table.Seal_Depart_Info_Avial}</Text>
                                                               <TextInput
                                                                   id="sealDepartInfo"
-                                                                  style={styles.input}
-                                                                  value={table.Seal_Depart_Info_Avial}
+                                                                  style={styles.input} onChangeText={setSeal_Depart_Info_Avial}
+                                                                  defaultValue={table.Seal_Depart_Info_Avial}
                                                               ></TextInput>
                     <Text style={styles.input}>Seal Departed Date: {table.Seal_Departed_Date}</Text>
                                                                 <TextInput
                                                                     id="sealDepartDate"
-                                                                    style={styles.input}
-                                                                    value={table.Seal_Departed_Date}
+                                                                    style={styles.input} onChangeText={setSeal_Departed_Date}
+                                                                    defaultValue={table.Seal_Departed_Date}
                                                                 ></TextInput>
                     <Text style={styles.input}>Seal Departed Time: {table.Seal_Departed_Time}</Text>
                                                                   <TextInput
                                                                       id="sealDepartTime"
-                                                                      style={styles.input}
-                                                                      value={table.Seal_Departed_Time}
+                                                                      style={styles.input} onChangeText={setSeal_Departed_Time}
+                                                                      defaultValue={table.Seal_Departed_Time}
                                                                   ></TextInput>
                     <Text style={styles.input}>Seal Logging: {table.Seal_Logging}</Text>
                                                                     <TextInput
                                                                         id="sealLogging"
-                                                                        style={styles.input}
-                                                                        value={table.Seal_Logging}
+                                                                        style={styles.input} onChangeText={setSeal_Logging}
+                                                                        defaultValue={table.Seal_Logging}
                                                                     ></TextInput>
                     <Text style={styles.input}>Seal Present: {table.Seal_Present}</Text>
                                                                       <TextInput
                                                                           id="sealPresent"
-                                                                          style={styles.input}
-                                                                          value={table.Seal_Present}
+                                                                          style={styles.input} onChangeText={setSeal_Present}
+                                                                          defaultValue={table.Seal_Present}
                                                                       ></TextInput>
                     <Text style={styles.input}>Sector: {table.Sector}</Text>
                                                                         <TextInput
                                                                             id="sealSector"
-                                                                            style={styles.input}
-                                                                            value={table.Sector}
+                                                                            style={styles.input} onChangeText={setSector}
+                                                                            defaultValue={table.Sector}
                                                                         ></TextInput>
                     <Text style={styles.input}>Sex: {table.Sex}</Text>
                                                                           <TextInput
                                                                               id="sealSex"
-                                                                              style={styles.input}
-                                                                              value={table.Sex}
+                                                                              style={styles.input} onChangeText={setSex}
+                                                                              defaultValue={table.Sex}
                                                                           ></TextInput>
                     <Text style={styles.input}>Size: {table.Size}</Text>
                                                                             <TextInput
                                                                                 id="sealSize"
-                                                                                style={styles.input}
-                                                                                value={table.Size}
+                                                                                style={styles.input} onChangeText={setSize}
+                                                                                defaultValue={table.Size}
                                                                             ></TextInput>
                     <Text style={styles.input}>Tag Color: {table.Tag_Color}</Text>
                                                                               <TextInput
                                                                                   id="sealTagColor"
-                                                                                  style={styles.input}
-                                                                                  value={table.Tag_Color}
+                                                                                  style={styles.input} onChangeText={setTag_Color}
+                                                                                  defaultValue={table.Tag_Color}
                                                                               ></TextInput>
                     <Text style={styles.input}>Tag Number: {table.Tag_Number}</Text>
                                                                                 <TextInput
                                                                                     id="sealTagNumber"
-                                                                                    style={styles.input}
-                                                                                    value={table.Tag_Number}
+                                                                                    style={styles.input} onChangeText={setTag_Number}
+                                                                                    defaultValue={table.Tag_Number}
                                                                                 ></TextInput>
                     <Text style={styles.input}>Tag Side: {table.Tag_Side}</Text>
                                                                                   <TextInput
                                                                                       id="sealTagSide"
-                                                                                      style={styles.input}
-                                                                                      value={table.Tag_Side}
+                                                                                      style={styles.input} onChangeText={setTag_Side}
+                                                                                      defaultValue={table.Tag_Side}
                                                                                   ></TextInput>
                     <Text style={styles.input}>Ticket Number: {table.Ticket_Number}</Text>
                                                                                     <TextInput
                                                                                         id="sealTicketNumber"
-                                                                                        style={styles.input}
-                                                                                        value={table.Ticket_Number}
+                                                                                        style={styles.input} onChangeText={setTicket_Number}
+                                                                                        defaultValue={table.Ticket_Number}
                                                                                     ></TextInput>
                     <Text style={styles.input}>Time: {table.Time}</Text>
                                                                                       <TextInput
                                                                                           id="sealTime"
-                                                                                          style={styles.input}
-                                                                                          value={table.Time}
+                                                                                          style={styles.input} onChangeText={setTime}
+                                                                                          defaultValue={table.Time}
                                                                                       ></TextInput>
                     <Text style={styles.input}>Verified: {table.Verified}</Text>
                                                                                         <TextInput
                                                                                             id="sealVerified"
-                                                                                            style={styles.input}
-                                                                                            value={table.Verified}
+                                                                                            style={styles.input} onChangeText={setVerified}
+                                                                                            defaultValue={table.Verified}
                                                                                         ></TextInput>
                     <Text style={styles.input}>Ticket Type: {table.Ticket_Type}</Text>
                                                                                           <TextInput
                                                                                               id="sealTicketType"
-                                                                                              style={styles.input}
-                                                                                              value={table.Ticket_Type}
+                                                                                              style={styles.input} onChangeText={setTicketType}
+                                                                                              defaultValue={table.Ticket_Type}
                                                                                           ></TextInput>
                     <div id="image">
                       <img id="image" src={table.Image}/>
@@ -701,143 +959,149 @@ const ViewReport = ({route, navigation}) => {
                     <Text style={styles.input}>Date: {table.Date}</Text>
                     <TextInput
                     id="turtleDate"
-                    style={styles.input} onChangeText={setName}
-                    value={table.Date}
+                    style={styles.input} onChangeText={setDate}
+                    defaultValue={table.Date}
                     ></TextInput>
                     <Text style={styles.input}>FAST: {table.FAST}</Text>
               <TextInput
               id="turtleFast"
-              style={styles.input} onChangeText={setName}
-              value={table.FAST}
+              style={styles.input} onChangeText={setFAST}
+              defaultValue={table.FAST}
               ></TextInput>
                     <Text style={styles.input}>Hotline Operator Initals: {table.Hotline_Operator_Initals}</Text>
               <TextInput
               id="turtleInitials"
-              style={styles.input} onChangeText={setName}
-              value={table.Hotline_Operator_Initals}></TextInput>
+              style={styles.input} onChangeText={setHOI}
+              defaultValue={table.Hotline_Operator_Initals}></TextInput>
                     <Text style={styles.input}>Island: {table.Island}</Text>
               <TextInput
               id="turtleIsland"
-              style={styles.input} onChangeText={setName}
-              value={table.Island}></TextInput>
+              style={styles.input} onChangeText={setIsland}
+              defaultValue={table.Island}></TextInput>
                     <Text style={styles.input}>Location: {table.Location}</Text>
               <TextInput
               id="turtleLocation"
-              style={styles.input} onChangeText={setName}
-              value={table.Location}></TextInput>
+              style={styles.input} onChangeText={setLocation}
+              defaultValue={table.Location}></TextInput>
                     <Text style={styles.input}>Location Notes: {table.Location_Notes}</Text>
               <TextInput
               id="turtleLocationNotes"
-              style={styles.input} onChangeText={setName}
-              value={table.Location_Notes}
+              style={styles.input} onChangeText={setLocation_Notes}
+              defaultValue={table.Location_Notes}
               ></TextInput>
                     <Text style={styles.input}>Number of Calls Received: {table.Number_of_Calls_Received}</Text>
               <TextInput
               id="turtleNumberCalls"
-              style={styles.input} onChangeText={setName}
-              value={table.Number_of_Calls_Received}
+              style={styles.input} onChangeText={setNumber_of_Calls_Received}
+              defaultValue={table.Number_of_Calls_Received}
               ></TextInput>
                     <Text style={styles.input}>Observer: {table.Observer}</Text>
               <TextInput
               id="turtleObserver"
-              style={styles.input} onChangeText={setName}
-              value={table.Observer}
+              style={styles.input} onChangeText={setObserver}
+              defaultValue={table.Observer}
               ></TextInput>
                     <Text style={styles.input}>Observer Number: {table.Observer_Contact_Number}</Text>
               <TextInput
               id="turtleObserverContact"
-              style={styles.input} onChangeText={setName}
-              value={table.Observer_Contact_Number}
+              style={styles.input} onChangeText={setObserver_Contact_Number}
+              defaultValue={table.Observer_Contact_Number}
               ></TextInput>
                     <Text style={styles.input}>Observer Initials: {table.Observer_Initials}</Text>
               <TextInput
               id="turtleObserverIntiials"
-              style={styles.input} onChangeText={setName}
-              value={table.Observer_Initials}
+              style={styles.input} onChangeText={setObserver_Initials}
+              defaultValue={table.Observer_Initials}
               ></TextInput>
                     <Text style={styles.input}>Observer Type: {table.Observer_Type}</Text>
               <TextInput
               id="turtleObserverType"
-              style={styles.input} onChangeText={setName}
-              value={table.Observer_Type}
+              style={styles.input} onChangeText={setObserver_Type}
+              defaultValue={table.Observer_Type}
               ></TextInput>
                     <Text style={styles.input}>Other Notes: {table.Other_Notes}</Text>
               <TextInput
               id="turtleOtherNotes"
-              style={styles.input} onChangeText={setName}
-              value={table.Other_Notes}
+              style={styles.input} onChangeText={setOther_Notes}
+              defaultValue={table.Other_Notes}
               ></TextInput>
                     <Text style={styles.input}>Outreach Provided By Operator: {table.Outreach_Provided_By_Operator}</Text>
               <TextInput
               id="turtleOutreach"
-              style={styles.input} onChangeText={setName}
-              value={table.Outreach_Provided_By_Operator}
+              style={styles.input} onChangeText={setOPBO}
+              defaultValue={table.Outreach_Provided_By_Operator}
               ></TextInput>
                     <Text style={styles.input}>Primary issue or cause of death: {table.Primary_issue_or_cause_of_death}</Text>
               <TextInput
               id="turtleCod"
-              style={styles.input} onChangeText={setName}
-              value={table.Primary_issue_or_cause_of_death}
+              style={styles.input} onChangeText={setPrimary_issue_or_cause_of_death}
+              defaultValue={table.Primary_issue_or_cause_of_death}
               ></TextInput>
                     <Text style={styles.input}>Responder: {table.Responder}</Text>
               <TextInput
               id="turtleResponder"
-              style={styles.input} onChangeText={setName}
-              value={table.Responder}
+              style={styles.input} onChangeText={setResponder}
+              defaultValue={table.Responder}
               ></TextInput>
                     <Text style={styles.input}>Responder Arrival Time: {table.Responder_arrival_time}</Text>
               <TextInput
               id="turtleArrivalTime"
-              style={styles.input} onChangeText={setName}
-              value={table.Responder_arrival_time}
+              style={styles.input} onChangeText={setResponder_arrival_time}
+              defaultValue={table.Responder_arrival_time}
               ></TextInput>
                     <Text style={styles.input}>Size: {table.Size}</Text>
               <TextInput
               id="turtleSize"
-              style={styles.input} onChangeText={setName}
-              value={table.Size}
+              style={styles.input} onChangeText={setSize}
+              defaultValue={table.Size}
               ></TextInput>
+                    <Text style={styles.input}>Sector: {table.Sector}</Text>
+                    <TextInput
+                        id="turtleSector"
+                        style={styles.input} onChangeText={setSector}
+                        defaultValue={table.Sector}
+                    ></TextInput>
                     <Text style={styles.input}>Status: {table.Stauts}</Text>
               <TextInput
               id="turtleStauts"
-              style={styles.input} onChangeText={setName}
-              value={table.Stauts}
+              style={styles.input} onChangeText={setStauts}
+              defaultValue={table.Stauts}
               ></TextInput>
                     <Text style={styles.input}>Ticket Number: {table.Ticket_Number}</Text>
               <TextInput
               id="turtleTicketNumber"
-              style={styles.input} onChangeText={setName}
-              value={table.Ticket_Number}
+              style={styles.input} onChangeText={setTicket_Number}
+              defaultValue={table.Ticket_Number}
               ></TextInput>
                     <Text style={styles.input}>Time: {table.Time}</Text>
               <TextInput
               id="turtleTime"
-              style={styles.input} onChangeText={setName}
-              value={table.Time}
+              style={styles.input} onChangeText={setTime}
+              defaultValue={table.Time}
               ></TextInput>
                     <Text style={styles.input}>Time Responder Left: {table.Time_Responder_left}</Text>
               <TextInput
               id="turtleResponderLeft"
-              style={styles.input} onChangeText={setName}
-              value={table.Time_Responder_left}
+              style={styles.input} onChangeText={setTime_Responder_left}
+              defaultValue={table.Time_Responder_left}
               ></TextInput>
                     <Text style={styles.input}>Type of Turtle: {table.Type_of_Turtle}</Text>
               <TextInput
               id="turtleType"
-              style={styles.input} onChangeText={setName}
-              value={table.Type_of_Turtle}
+              style={styles.input} onChangeText={setType_of_Turtle}
+              defaultValue={table.Type_of_Turtle}
               ></TextInput>
                     <Text style={styles.input}>Verified: {table.Verified}</Text>
               <TextInput
               id="turtleVerified"
-              style={styles.input} onChangeText={setName}
-              value={table.Verified}
+              style={styles.input} onChangeText={setVerified}
+              defaultValue={table.Verified}
               ></TextInput>
                     <Text style={styles.input}>Ticket Type: {table.Ticket_Type}</Text>
               <TextInput
               id="turtleTicketType"
-              style={styles.input} onChangeText={setName}
-              value={table.Ticket_Type}
+              style={styles.input} onChangeText={setTicketType}
+              defaultValue={table.Ticket_Type}
               ></TextInput>
                     <div id="image">
                       <img id="image" src={table.Image}/>
@@ -849,6 +1113,77 @@ const ViewReport = ({route, navigation}) => {
           <Button style={styles.btn} mode="contained" onPress={() => addDoc()}>
             Update
           </Button>
+
+
+          <Surface style={styles.surface}>
+            <Text style={styles.header}>New Reports</Text>
+            <DataTable>
+              <DataTable.Header>
+                <DataTable.Title></DataTable.Title>
+                <DataTable.Title>Ticket Number</DataTable.Title>
+                <DataTable.Title>Ticket Type</DataTable.Title>
+
+                <DataTable.Title style={styles.columns}>Date</DataTable.Title>
+                <DataTable.Title style={styles.columns}>Time</DataTable.Title>
+                <DataTable.Title style={styles.columns}>
+                  Location
+                </DataTable.Title>
+              </DataTable.Header>
+              {/* Loop over new reports to make rows */}
+
+              {tableDataNew.map((element, index) => (
+                  <DataTable.Row key={index}>
+                    <Checkbox
+                        status={newChecked[index] ? "checked" : "unchecked"}
+                        onPress={() => {
+                          handleNewCheckedChange(index);
+                        }}
+                    ></Checkbox>
+                    <DataTable.Cell
+                        style={styles.columns}
+                        key={index}
+                    ></DataTable.Cell>
+                    <DataTable.Cell numeric style={styles.row}>
+                      {element[0]}
+                    </DataTable.Cell>
+                    <DataTable.Cell style={styles.row}>
+                      {element[1].ticket_type}
+                    </DataTable.Cell>
+
+                    <DataTable.Cell numeric style={styles.row}>
+                      {element[1].Date}
+                    </DataTable.Cell>
+                    <DataTable.Cell numeric style={styles.row}>
+                      {element[1].Time}
+                    </DataTable.Cell>
+                    <DataTable.Cell style={styles.row}>
+                      {element[1].Location}
+                    </DataTable.Cell>
+                  </DataTable.Row>
+              ))}
+
+              <DataTable.Pagination
+                  page={pageNewTable}
+                  numberOfPages={totalPagesNew}
+                  onPageChange={(page) => handlePageChangeNew(page)}
+                  label={pageNewTable + 1 + "of " + totalPagesNew}
+                  // optionsPerPage={optionsPerPage}
+                  // itemsPerPage={itemsPerPage}
+                  // setItemsPerPage={setItemsPerPage}
+                  showFastPagination
+                  optionsLabel={"Rows per page"}
+              />
+            </DataTable>
+            {/*<Button*/}
+            {/*    mode="contained"*/}
+            {/*    onPress={() => handleVerify()}*/}
+            {/*    style={styles.Exportbtn}*/}
+            {/*>*/}
+            {/*  Verify*/}
+            {/*</Button>*/}
+          </Surface>
+
+
         </View>
       </ScrollView>
   );
