@@ -350,7 +350,7 @@ const StaffPage = ({ navigation }) => {
     getDocs(animal, "switch");
     // tableDataVerified.map((element) => {
     //   markers.push({
-    //     ticketNum: element[1].GPS_Coordinate.Ticket_Number,
+    //     ticketNum: element[1].Ticket_Number,
     //     latitude: element[1].GPS_Coordinate.latitude,
     //     longitude: element[1].GPS_Coordinate.longitude,
     //   });
