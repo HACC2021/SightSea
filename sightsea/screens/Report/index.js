@@ -130,7 +130,7 @@ const ViewReport = ({route, navigation}) => {
 
   const [Number_of_Calls_Received, setNumber_of_Calls_Received] = React.useState(table.Number_of_Calls_Received);
   const [Observer, setObserver] = React.useState(table.Observer);
-  const [Observer_Contact_Number, setObserver_Contact_Number] = React.useState(table.Observer_Contact_Number);
+  const [Observer_Contact_Nubmer, setObserver_Contact_Number] = React.useState(table.Observer_Contact_Nubmer);
   const [Observer_Initials, setObserver_Initials] = React.useState(table.Observer_Initials);
   const [Observer_Type, setObserver_Type] = React.useState(table.Observer_Type);
   const [Other_Notes, setOther_Notes] = React.useState(table.Other_Notes);
@@ -216,13 +216,6 @@ const ViewReport = ({route, navigation}) => {
   //Type of Bird Drop Down
   const [birdType, setBirdType] = React.useState("Albatross");
   const [showBirdType, setBirdTypeDropDown] = React.useState(false);
-
-  // const animalTypes = [
-  //   { label: "Turtle", value: "turtle" },
-  //   { label: "Bird", value: "bird" },
-  //   { label: "Seal", value: "Seal" },
-  // ];
-
 
   const [showItemNumDropdown, setShowItemNumDropdown] = React.useState(false);
 
@@ -461,7 +454,7 @@ const ViewReport = ({route, navigation}) => {
         Number_Volunteers_Engaged: Number_Volunteers_Engaged,
         Number_of_Calls_Received: Number_of_Calls_Received,
         Observer: Observer,
-        Observer_Contact_Number: Observer_Contact_Number,
+        Observer_Contact_Nubmer: Observer_Contact_Nubmer,
         Observer_Initials: Observer_Initials,
         Observer_Type: Observer_Type,
         Other_Notes: Other_Notes,
@@ -506,7 +499,7 @@ const ViewReport = ({route, navigation}) => {
         Location_Notes: Location_Notes,
         Number_of_Calls_Received: Number_of_Calls_Received,
         Observer: Observer,
-        Observer_Contact_Number: Observer_Contact_Number,
+        Observer_Contact_Nubmer: Observer_Contact_Nubmer,
         Observer_Initials: Observer_Initials,
         Observer_Type: Observer_Type,
         Other_Notes: Other_Notes,
@@ -545,10 +538,11 @@ const ViewReport = ({route, navigation}) => {
         Location_Notes: Location_Notes,
         Number_of_Calls_Received: Number_of_Calls_Received,
         Observer: Observer,
-        Observer_Contact_Number: Observer_Contact_Number,
+        Observer_Contact_Nubmer: Observer_Contact_Nubmer,
         Observer_Initials: Observer_Initials,
         Observer_Type: Observer_Type,
         Other_Notes: Other_Notes,
+        // Outreach_provided_by_operator: "3",
         Outreach_provided_by_operator: opbo,
         Responders_name: Responders_name,
         Sector: Sector,
@@ -633,11 +627,11 @@ const ViewReport = ({route, navigation}) => {
                         defaultValue={table.Observer}
                     >
                     </TextInput>
-                    <Text style={styles.input}>Observer Number: {table.Observer_Contact_Number}</Text>
+                    <Text style={styles.input}>Observer Number: {table.Observer_Contact_Nubmer}</Text>
                     <TextInput
                         id="birdObsNum"
                         style={styles.input} onChangeText={setObserver_Contact_Number}
-                        defaultValue={table.Observer_Contact_Number}
+                        defaultValue={table.Observer_Contact_Nubmer}
                     >
                     </TextInput>
                     <Text style={styles.input}>Observer Initials: {table.Observer_Initials}</Text>
@@ -663,11 +657,10 @@ const ViewReport = ({route, navigation}) => {
                     </TextInput>
                     <Text style={styles.input}>Outreach Provided By Operator: {table.Outreach_provided_by_operator}</Text>
                     <TextInput
-                        id="birdOPBO"
-                        style={styles.input} on ChangeText={setOPBO}
+                        id="birdOutreach"
+                        style={styles.input} onChangeText={setOPBO}
                         defaultValue={table.Outreach_provided_by_operator}
-                    >
-                    </TextInput>
+                    ></TextInput>
                     <Text style={styles.input}>Responders Name: {table.Responders_name}</Text>
                     <TextInput
                         id="birdRespName"
@@ -827,11 +820,11 @@ const ViewReport = ({route, navigation}) => {
                                                     style={styles.input} onChangeText={setObserver}
                                                     defaultValue={table.Observer}
                                                 ></TextInput>
-                    <Text style={styles.input}>Observer Number: {table.Observer_Contact_Number}</Text>
+                    <Text style={styles.input}>Observer Number: {table.Observer_Contact_Nubmer}</Text>
                                                   <TextInput
                                                       id="sealObserverContact"
                                                       style={styles.input} onChangeText={setObserver_Contact_Number}
-                                                      defaultValue={table.Observer_Contact_Number}
+                                                      defaultValue={table.Observer_Contact_Nubmer}
                                                   ></TextInput>
                     <Text style={styles.input}>Observer Initials: {table.Observer_Initials}</Text>
                                                     <TextInput
@@ -1006,11 +999,11 @@ const ViewReport = ({route, navigation}) => {
               style={styles.input} onChangeText={setObserver}
               defaultValue={table.Observer}
               ></TextInput>
-                    <Text style={styles.input}>Observer Number: {table.Observer_Contact_Number}</Text>
+                    <Text style={styles.input}>Observer Number: {table.Observer_Contact_Nubmer}</Text>
               <TextInput
               id="turtleObserverContact"
               style={styles.input} onChangeText={setObserver_Contact_Number}
-              defaultValue={table.Observer_Contact_Number}
+              defaultValue={table.Observer_Contact_Nubmer}
               ></TextInput>
                     <Text style={styles.input}>Observer Initials: {table.Observer_Initials}</Text>
               <TextInput
