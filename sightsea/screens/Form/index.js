@@ -324,9 +324,9 @@ const SightForm = ({ navigation }) => {
     //If an image was picked then store it
     if (!newImage.cancelled) {
       setImage(newImage.uri);
+      // console.log(newImage.uri);
     }
   }
-
   //Function to ask for permission to the camera roll
 //   const cameraRollPermissions = async () => {
 //     if (Platform.OS !== "web") {
@@ -367,6 +367,7 @@ const SightForm = ({ navigation }) => {
     //If an image was picked then store it
     if (!newImage.cancelled) {
       setImage(newImage.uri);
+      // console.log(newImage.uri);
     }
 
   };
