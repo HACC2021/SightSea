@@ -140,7 +140,8 @@ const styles = StyleSheet.create({
 
 const optionsPerPage = [3, 3, 3];
 const animalTypes = ["Bird", "Seal", "Turtle"];
-var frontAnchorKeys = [];
+var frontAnchorKeysVerified = [];
+var frontAnchorKeysNew = [];
 
 //searchable table of reports
 //should default to display most recent 5 only then
@@ -158,10 +159,13 @@ const StaffPage = ({ navigation }) => {
   const [itemsPerPage, setItemsPerPage] = React.useState(optionsPerPage[0]);
   const [totalPages, setTotalPages] = React.useState(3);
   const [pageVerifiedTable, setPageVerifiedTable] = React.useState(0);
-  const [tableData, setTableData] = React.useState([]);
+  const [tableDataVerified, setTableDataVerified] = React.useState([]);
+  const [tableDataNew, setTableDataNew] = React.useState([]);
   const [markerData, setMarkerData] = React.useState([]);
   const [animalDisplayType, setAnimalDisplayType] = React.useState(null);
-  const [backAnchorKey, setBackAnchorKey] = React.useState(null);
+  const [backAnchorKeyVerified, setBackAnchorKeyVerified] =
+      React.useState(null);
+  const [backAnchorKeyNew, setBackAnchorKeyNew] = React.useState(null);
   const [search, setSearch] = React.useState(false);
 
   React.useEffect(() => {
@@ -279,7 +283,7 @@ const StaffPage = ({ navigation }) => {
   }
   //query database for certain animal
   const getDocs = (animal, direction) => {
-    console.log(backAnchorKey);
+    console.log(backAnchorKeyVerified);
     const db = getDatabase();
     const pageref = ref(db, `${animal}/count`);
     onValue(pageref, (snapshot) => {
@@ -291,7 +295,7 @@ const StaffPage = ({ navigation }) => {
     var docCounter = 0;
     //console.log(pageVerifiedTable);
     //console.log(direction);
-    //console.log("front keys: " + frontAnchorKeys);
+    //console.log("front keys: " + frontAnchorKeysVerified);
     const reference =
         direction === "switch"
             ? query(
@@ -303,30 +307,30 @@ const StaffPage = ({ navigation }) => {
             ? query(
                 ref(db, `/${animal}/documents`),
                 orderByKey(),
-                startAfter(backAnchorKey),
+                startAfter(backAnchorKeyVerified),
                 limitToFirst(itemsPerPage)
             )
             : query(
                 ref(db, `/${animal}/documents`),
                 orderByKey(),
-                startAt(frontAnchorKeys[pageVerifiedTable - 1]),
+                startAt(frontAnchorKeysVerified[pageVerifiedTable - 1]),
                 limitToFirst(itemsPerPage)
             );
     onChildAdded(reference, (snapshot) => {
-      setBackAnchorKey(snapshot.key);
+      setBackAnchorKeyVerified(snapshot.key);
       docCounter++;
       if (
           docCounter === 1 &&
           (direction === "forward" || direction === "switch")
       ) {
-        frontAnchorKeys.push(snapshot.key);
-        console.log(frontAnchorKeys);
+        frontAnchorKeysVerified.push(snapshot.key);
+        console.log(frontAnchorKeysVerified);
       } else if (docCounter === 1 && direction === "back") {
-        frontAnchorKeys.pop();
+        frontAnchorKeysVerified.pop();
       }
     });
     onValue(reference, (snapshot) => {
-      setTableData(Object.entries(snapshot.val()));
+      setTableDataVerified(Object.entries(snapshot.val()));
     });
   };
 
@@ -341,10 +345,10 @@ const StaffPage = ({ navigation }) => {
     var markers = [];
     setAnimalDisplayType(animal);
     setPageVerifiedTable(0);
-    setBackAnchorKey(null);
-    frontAnchorKeys = [];
+    setBackAnchorKeyVerified(null);
+    frontAnchorKeysVerified = [];
     getDocs(animal, "switch");
-    // tableData.map((element) => {
+    // tableDataVerified.map((element) => {
     //       markers.push({
     //         ticketNum: element[1].Ticket_Number,
     //         latitude: element[1].GPS_Coordinate.latitude,
@@ -406,7 +410,7 @@ const StaffPage = ({ navigation }) => {
                       </DataTable.Header>
                       {/* Loop over new reports to make rows */}
 
-                      {tableData.map((element, index) => (
+                      {tableDataNew.map((element, index) => (
                           <DataTable.Row key={index}>
                             <DataTable.Cell
                                 style={styles.columns}
@@ -484,8 +488,8 @@ const StaffPage = ({ navigation }) => {
                 ) : null}
               </DataTable.Header>
               {/* Loop over new reports to make rows */}
-
-              {tableData.map((element, index) => (
+              {/*tabkDatanew?*/}
+              {tableDataVerified.map((element, index) => (
                   <DataTable.Row key={index} onPress={ () => navigation.navigate(
                       'ViewReport', {table: element[1], animal: animalDisplayType, documentID: element[0], }
                   )}>
@@ -520,10 +524,10 @@ const StaffPage = ({ navigation }) => {
               ))}
 
               <DataTable.Pagination
-                  page={pageVerifiedTable}
+                  page={pageNewTable}
                   numberOfPages={totalPages}
                   onPageChange={(page) => handlePageChange(page)}
-                  label={pageVerifiedTable + 1 + "of " + totalPages}
+                  label={pageNewTable + 1 + "of " + totalPages}
                   // optionsPerPage={optionsPerPage}
                   // itemsPerPage={itemsPerPage}
                   // setItemsPerPage={setItemsPerPage}
