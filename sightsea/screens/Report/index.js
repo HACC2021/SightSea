@@ -103,7 +103,7 @@ const ViewReport = ({route, navigation}) => {
   const [showAnimalDropDown, setShowAnimalDropDown] = React.useState(false);
   const [name, setName] = React.useState("");
   const [phoneNum, setPhoneNum] = React.useState("");
-  const [time, setTime] = React.useState("");
+  const [time, setTime] = React.useState(table.Time);
   const [validPhone, setValidPhone] = React.useState(false);
   const [tableData, setTableData] = React.useState([]);
 
@@ -597,11 +597,11 @@ const ViewReport = ({route, navigation}) => {
                         defaultValue={table.Delivered}
                     >
                     </TextInput>
-                    <Text style={styles.input}>Hotline Operator Initals: {table.Hotline_Operator_Initals}</Text>
+                    <Text style={styles.input}>Hotline Operator Initals: {table.Hotline_Operator_Initials}</Text>
                     <TextInput
                         id="birdHOI"
                         style={styles.input} onChangeText={setHOI}
-                        defaultValue={table.Hotline_Operator_Initals}
+                        defaultValue={table.Hotline_Operator_Initials}
                     >
                     </TextInput>
                     <Text style={styles.input}>Location: {table.Location}</Text>
@@ -710,18 +710,18 @@ const ViewReport = ({route, navigation}) => {
                         defaultValue={table.Verified}
                     >
                     </TextInput>
-                    <Text style={styles.input}>Where To: {table.Where_To}</Text>
+                    <Text style={styles.input}>Where To: {table.Where_to}</Text>
                     <TextInput
                         id="birdWhere"
                         style={styles.input} onChangeText={setWhereTo}
-                        defaultValue={table.Where_To}
+                        defaultValue={table.Where_to}
                     >
                     </TextInput>
-                    <Text style={styles.input}>Ticket Type: {table.Ticket_Type}</Text>
+                    <Text style={styles.input}>Ticket Type: {table.ticket_type}</Text>
                     <TextInput
                         id="birdTicketType"
                         style={styles.input} onChangeText={setTicketType}
-                        defaultValue={table.Ticket_Type}
+                        defaultValue={table.ticket_type}
                     >
                     </TextInput>
                   </Surface>
@@ -751,12 +751,12 @@ const ViewReport = ({route, navigation}) => {
                             onChangeText={setDate}
                             defaultValue={table.Date}
                         ></TextInput>
-                    <Text style={styles.input}>Hotline Operator Initals: {table.Hotline_Operator_Initals}</Text>
+                    <Text style={styles.input}>Hotline Operator Initals: {table.Hotline_Operator_Initials}</Text>
                           <TextInput
                               id="sealInitials"
                               style={styles.input}
                               onChangeText={setHOI}
-                              defaultValue={table.Hotline_Operator_Initals}
+                              defaultValue={table.Hotline_Operator_Initials}
                           ></TextInput>
                     <Text style={styles.input}>How Identified: {table.How_Identified}</Text>
                             <TextInput
@@ -947,11 +947,11 @@ const ViewReport = ({route, navigation}) => {
                                                                                             style={styles.input} onChangeText={setVerified}
                                                                                             defaultValue={table.Verified}
                                                                                         ></TextInput>
-                    <Text style={styles.input}>Ticket Type: {table.Ticket_Type}</Text>
+                    <Text style={styles.input}>Ticket Type: {table.ticket_type}</Text>
                                                                                           <TextInput
                                                                                               id="sealTicketType"
                                                                                               style={styles.input} onChangeText={setTicketType}
-                                                                                              defaultValue={table.Ticket_Type}
+                                                                                              defaultValue={table.ticket_type}
                                                                                           ></TextInput>
                     <div id="image">
                       <img id="image" src={table.Image}/>
@@ -973,11 +973,11 @@ const ViewReport = ({route, navigation}) => {
               style={styles.input} onChangeText={setFAST}
               defaultValue={table.FAST}
               ></TextInput>
-                    <Text style={styles.input}>Hotline Operator Initals: {table.Hotline_Operator_Initals}</Text>
+                    <Text style={styles.input}>Hotline Operator Initals: {table.Hotline_Operator_Initials}</Text>
               <TextInput
               id="turtleInitials"
               style={styles.input} onChangeText={setHOI}
-              defaultValue={table.Hotline_Operator_Initals}></TextInput>
+              defaultValue={table.Hotline_Operator_Initials}></TextInput>
                     <Text style={styles.input}>Island: {table.Island}</Text>
               <TextInput
               id="turtleIsland"
@@ -1030,11 +1030,11 @@ const ViewReport = ({route, navigation}) => {
               style={styles.input} onChangeText={setOther_Notes}
               defaultValue={table.Other_Notes}
               ></TextInput>
-                    <Text style={styles.input}>Outreach Provided By Operator: {table.Outreach_Provided_By_Operator}</Text>
+                    <Text style={styles.input}>Outreach Provided By Operator: {table.Outreach_provided_by_operator}</Text>
               <TextInput
               id="turtleOutreach"
               style={styles.input} onChangeText={setOPBO}
-              defaultValue={table.Outreach_Provided_By_Operator}
+              defaultValue={table.Outreach_provided_by_operator}
               ></TextInput>
                     <Text style={styles.input}>Primary issue or cause of death: {table.Primary_issue_or_cause_of_death}</Text>
               <TextInput
@@ -1102,11 +1102,11 @@ const ViewReport = ({route, navigation}) => {
               style={styles.input} onChangeText={setVerified}
               defaultValue={table.Verified}
               ></TextInput>
-                    <Text style={styles.input}>Ticket Type: {table.Ticket_Type}</Text>
+                    <Text style={styles.input}>Ticket Type: {table.ticket_type}</Text>
               <TextInput
               id="turtleTicketType"
               style={styles.input} onChangeText={setTicketType}
-              defaultValue={table.Ticket_Type}
+              defaultValue={table.ticket_type}
               ></TextInput>
                     <div id="image">
                       <img id="image" src={table.Image}/>
