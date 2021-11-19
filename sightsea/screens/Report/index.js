@@ -177,42 +177,42 @@ const ViewReport = ({route, navigation}) => {
       //Seal Doc
       const reference = ref(db, `${animal}/documents/` + documentID);
       update(reference, {
-        // Date: birdDate.value,
-        // Time: birdTime.value,
-        // Ticket_Number: birdTicketNum.value,
-        // Hotline_Operator_Initials: birdHOI.value,
-        // ticket_type: birdTicketType.value,
-        // Observer: birdObserver.value,
-        // Observer_Contact_Nubmer: birdOCN.value,
-        // Observer_Type: birdObsType.value,
-        // Observer_Initials: birdObsInitials.value,
-        // Sector: birdSector.value,
-        // Location: birdLocation.value,
-        // Location_Notes: birdLocNotes.value,
-        // Seal_Present: present,
-        // Size: size,
-        // Sex: sex,
-        // Beach_Position: beachLocation,
-        // How_Identified: "",
-        // ID_temp: "",
-        // Tag_Number: "",
-        // Tag_Side: "",
-        // Tag_Color: "",
-        // ID_Perm: "",
-        // Molt: "",
-        // Additional_Notes_on_ID: "",
-        // ID_Verified_By: "",
-        // Seal_Logging: "",
-        // Mom_and_Pup_Pair: "",
-        // SRA_Set_Up: "",
-        // SRA_Set_By: "",
-        // Number_Volunteers_Engaged: 0,
-        // Seal_Depart_Info_Avial: "",
-        // Seal_Departed_Date: "",
-        // Seal_Departed_Time: "",
-        // Number_of_Calls_Received: 0,
-        // Other_Notes: "",
-        // Verified: "",
+        Date: birdDate.value,
+        Time: birdTime.value,
+        Ticket_Number: birdTicketNum.value,
+        Hotline_Operator_Initials: birdHOI.value,
+        ticket_type: birdTicketType.value,
+        Observer: birdObserver.value,
+        Observer_Contact_Nubmer: birdOCN.value,
+        Observer_Type: birdObsType.value,
+        Observer_Initials: birdObsInitials.value,
+        Sector: birdSector.value,
+        Location: birdLocation.value,
+        Location_Notes: birdLocNotes.value,
+        Seal_Present: present,
+        Size: size,
+        Sex: sex,
+        Beach_Position: beachLocation,
+        How_Identified: "",
+        ID_temp: "",
+        Tag_Number: "",
+        Tag_Side: "",
+        Tag_Color: "",
+        ID_Perm: "",
+        Molt: "",
+        Additional_Notes_on_ID: "",
+        ID_Verified_By: "",
+        Seal_Logging: "",
+        Mom_and_Pup_Pair: "",
+        SRA_Set_Up: "",
+        SRA_Set_By: "",
+        Number_Volunteers_Engaged: 0,
+        Seal_Depart_Info_Avial: "",
+        Seal_Departed_Date: "",
+        Seal_Departed_Time: "",
+        Number_of_Calls_Received: 0,
+        Other_Notes: "",
+        Verified: "",
       })
           .then(() => {
             window.alert("Report Submitted Successfully!");
@@ -229,31 +229,31 @@ const ViewReport = ({route, navigation}) => {
 
       const reference = ref(db, `${animal}/documents/` + documentID);
       set(reference, {
-        // Date: currentday,
-        // Time: currenttime,
-        // Ticket_Number: "XX" + "" + currentday + "" + currenttime,
-        // Hotline_Operator_Initials: "",
-        // ticket_type: "R",
-        // Observer: name,
-        // Observer_Contact_Number: phoneNumFormat(),
-        // Observer_Initials: intitials,
-        // Observer_Type: "P",
-        // Island: island,
-        // Sector: "",
-        // Location: location,
-        // Location_Notes: "",
-        // Type_of_Turtle: turtle,
-        // Size: turtleSize,
-        // Stauts: turtleStatus,
-        // Primary_issue_or_cause_of_death: "",
-        // Responder: "",
-        // Time_Responder_left: "",
-        // Responder_arrival_time: "",
-        // Outreach_provided_by_operator: "",
-        // FAST: "",
-        // Number_of_Calls_Received: 0,
-        // Other_Notes: "",
-        // Verified: "",
+        Date: currentday,
+        Time: currenttime,
+        Ticket_Number: "XX" + "" + currentday + "" + currenttime,
+        Hotline_Operator_Initials: "",
+        ticket_type: "R",
+        Observer: name,
+        Observer_Contact_Number: phoneNumFormat(),
+        Observer_Initials: intitials,
+        Observer_Type: "P",
+        Island: island,
+        Sector: "",
+        Location: location,
+        Location_Notes: "",
+        Type_of_Turtle: turtle,
+        Size: turtleSize,
+        Stauts: turtleStatus,
+        Primary_issue_or_cause_of_death: "",
+        Responder: "",
+        Time_Responder_left: "",
+        Responder_arrival_time: "",
+        Outreach_provided_by_operator: "",
+        FAST: "",
+        Number_of_Calls_Received: 0,
+        Other_Notes: "",
+        Verified: "",
       })
           .then(() => {
             window.alert("Report Submitted Successfully!");
@@ -266,28 +266,29 @@ const ViewReport = ({route, navigation}) => {
     } else if (animal === "Bird") {
       //For Bird Docs
       // UGLY CODE WILL FIX LATER
+      console.log(this.birdDate);
       const reference = ref(db, `${animal}/documents/` + documentID);
       set(reference, {
-        // Date: birdDate.value,
-        // Time: birdTime.value,
-        // Ticket_Number: birdTicketNum.value,
-        // Hotline_Operator_Initials: birdHOI.value,
-        // ticket_type: birdTicketType.value,
-        // Observer: birdObserver.value,
+        Date: birdDate.value,
+        Time: birdTime.value,
+        Ticket_Number: birdTicketNum.value,
+        Hotline_Operator_Initials: birdHOI.value,
+        ticket_type: birdTicketType.value,
+        Observer: birdObserver.value,
         Observer_Contact_Number: table.Observer_Contact_Number,
-        // Observer_Type: birdObsType.value,
-        // Observer_Initials: birdObsInitials.value,
-        // Sector: birdSector.value,
-        // Location: birdLocation.value,
-        // Location_Notes: birdLocNotes.value,
-        // Type_of_Bird: birdType.value,
-        // Responders_name: birdRespName.value,
-        // Delivered: birdDelivered.value,
-        // Where_to: birdWhereTo.value,
-        // Outreach_provided_by_operator: birdOPBO.value,
-        // Number_of_Calls_Received: birdNOCR.value,
-        // Other_Notes: birdOtherNotes.value,
-        // Verified: birdVerified.value,
+        Observer_Type: birdObsType.value,
+        Observer_Initials: birdObsInitials.value,
+        Sector: birdSector.value,
+        Location: birdLocation.value,
+        Location_Notes: birdLocNotes.value,
+        Type_of_Bird: birdType.value,
+        Responders_name: birdRespName.value,
+        Delivered: birdDelivered.value,
+        Where_to: birdWhereTo.value,
+        Outreach_provided_by_operator: birdOPBO.value,
+        Number_of_Calls_Received: birdNOCR.value,
+        Other_Notes: birdOtherNotes.value,
+        Verified: birdVerified.value,
       })
           .then(() => {
             window.alert("Report Submitted Successfully!");
@@ -309,137 +310,173 @@ const ViewReport = ({route, navigation}) => {
                 <View>
                   <Surface>
                     <Text style={styles.input}>Date: {table.Date}</Text>
-                    {/*<TextInput*/}
-                    {/*    id="birdDate"*/}
-                    {/*    style={styles.input}*/}
-                    {/*    // value={table.Date}*/}
-                    {/*    // onPress={() => this.setState({ disabled: false })}*/}
-                    {/*>*/}
-                    {/*</TextInput>*/}
+                    <Text value={table.Image}></Text>
+                    <img src={table.Image}/>
+                    <TextInput
+                        id="birdDate"
+                        style={styles.input}
+                        value={table.Date}
+                        // defaultValue={table.Date}
+                        // onPress={() => this.setState({ disabled: false })}
+                    >
+                    </TextInput>
                     <Text style={styles.input}>Delivered: {table.Delivered}</Text>
-                    {/*<TextInput*/}
-                    {/*    id="birdDelivered"*/}
-                    {/*    style={styles.input} onChangeText={setName}*/}
-                    {/*    value={table.Delivered}*/}
-                    {/*>*/}
-                    {/*</TextInput>*/}
+                    <TextInput
+                        id="birdDelivered"
+                        style={styles.input} onChangeText={setName}
+                        defaultValue={table.Delivered}
+                    >
+                    </TextInput>
                     <Text style={styles.input}>Hotline Operator Initals: {table.Hotline_Operator_Initals}</Text>
-                    {/*<TextInput*/}
-                    {/*    id="birdHOI"*/}
-                    {/*    style={styles.input} onChangeText={setName}*/}
-                    {/*    value={table.Hotline_Operator_Initals}*/}
-                    {/*>*/}
-                    {/*</TextInput>*/}
+                    <TextInput
+                        id="birdHOI"
+                        style={styles.input} onChangeText={setName}
+                        defaultValue={table.Hotline_Operator_Initals}
+                    >
+                    </TextInput>
                     <Text style={styles.input}>Location: {table.Location}</Text>
-                    {/*<TextInput*/}
-                    {/*    id="birdLocation"*/}
-                    {/*    style={styles.input} onChangeText={setName}*/}
-                    {/*    value={table.Location}*/}
-                    {/*>*/}
-                    {/*</TextInput>*/}
+                    <TextInput
+                        id="birdLocation"
+                        style={styles.input} onChangeText={setName}
+                        defaultValue={table.Location}
+                    >
+                    </TextInput>
                     <Text style={styles.input}>Location Notes: {table.Location_Notes}</Text>
-                    {/*<TextInput*/}
-                    {/*    id="birdLocNotes"*/}
-                    {/*    style={styles.input} onChangeText={setName} value={table.Location_Notes}*/}
-                    {/*>*/}
-                    {/*</TextInput>*/}
+                    <TextInput
+                        id="birdLocNotes"
+                        style={styles.input}
+                        onChangeText={setName}
+                        defaultValue={table.Location_Notes}
+                    >
+                    </TextInput>
                     <Text style={styles.input}>Number of Calls Received: {table.Number_of_Calls_Received}</Text>
-                    {/*<TextInput*/}
-                    {/*    id="birdNOCR"*/}
-                    {/*    style={styles.input} onChangeText={setName} value={table.Number_of_Calls_Received}*/}
-                    {/*>*/}
-                    {/*</TextInput>*/}
-                    {/*good*/}
+                    <TextInput
+                        id="birdNOCR"
+                        style={styles.input} onChangeText={setName}
+                        defaultValue={table.Number_of_Calls_Received}
+                    >
+                    </TextInput>
                     <Text style={styles.input}>Observer: {table.Observer}</Text>
-                    {/*<TextInput*/}
-                    {/*    id="birdObserver"*/}
-                    {/*    style={styles.input} onChangeText={setName} value={table.Observer}*/}
-                    {/*>*/}
-                    {/*</TextInput>*/}
+                    <TextInput
+                        id="birdObserver"
+                        style={styles.input} onChangeText={setName}
+                        defaultValue={table.Observer}
+                    >
+                    </TextInput>
                     <Text style={styles.input}>Observer Number: {table.Observer_Contact_Number}</Text>
-                    {/*<TextInput*/}
-                    {/*    id="birdObsNum"*/}
-                    {/*    style={styles.input} onChangeText={setPhoneNum} value={table.Observer_Contact_Number}*/}
-                    {/*>*/}
-                    {/*</TextInput>*/}
+                    <TextInput
+                        id="birdObsNum"
+                        style={styles.input} onChangeText={setPhoneNum}
+                        defaultValue={table.Observer_Contact_Number}
+                    >
+                    </TextInput>
                     <Text style={styles.input}>Observer Initials: {table.Observer_Initials}</Text>
-                    {/*<TextInput*/}
-                    {/*    id="birdObsInitials"*/}
-                    {/*    style={styles.input} onChangeText={setName} value={table.Observer_Initials}*/}
-                    {/*>*/}
-                    {/*</TextInput>*/}
+                    <TextInput
+                        id="birdObsInitials"
+                        style={styles.input} onChangeText={setName}
+                        defaultValue={table.Observer_Initials}
+                    >
+                    </TextInput>
                     <Text style={styles.input}>Observer Type: {table.Observer_Type}</Text>
-                    {/*<TextInput*/}
-                    {/*    id="birdObsType"*/}
-                    {/*    style={styles.input} onChangeText={setName} value={table.Observer_Type}*/}
-                    {/*>*/}
-                    {/*</TextInput>*/}
+                    <TextInput
+                        id="birdObsType"
+                        style={styles.input} onChangeText={setName}
+                        defaultValue={table.Observer_Type}
+                    >
+                    </TextInput>
                     <Text style={styles.input}>Other Notes: {table.Other_Notes}</Text>
-                    {/*<TextInput*/}
-                    {/*    id="birdObsNotes"*/}
-                    {/*    style={styles.input} onChangeText={setName} value={table.Other_Notes}*/}
-                    {/*>*/}
-                    {/*</TextInput>*/}
+                    <TextInput
+                        id="birdObsNotes"
+                        style={styles.input} onChangeText={setName}
+                        defaultValue={table.Other_Notes}
+                    >
+                    </TextInput>
                     <Text style={styles.input}>Outreach Provided By Operator: {table.Outreach_Provided_By_Operator}</Text>
-                    {/*<TextInput*/}
-                    {/*    id="birdOPBO"*/}
-                    {/*    style={styles.input} onChangeText={setName} value={table.Outreach_Provided_By_Operator}*/}
-                    {/*>*/}
-                    {/*</TextInput>*/}
+                    <TextInput
+                        id="birdOPBO"
+                        style={styles.input} onChangeText={setName}
+                        defaultValue={table.Outreach_Provided_By_Operator}
+                    >
+                    </TextInput>
                     <Text style={styles.input}>Responders Name: {table.Responders_name}</Text>
-                    {/*<TextInput*/}
-                    {/*    id="birdRespName"*/}
-                    {/*    style={styles.input} onChangeText={setName} value={table.Responders_name}*/}
-                    {/*>*/}
-                    {/*</TextInput>*/}
+                    <TextInput
+                        id="birdRespName"
+                        style={styles.input} onChangeText={setName}
+                        defaultValue={table.Responders_name}
+                    >
+                    </TextInput>
                     <Text style={styles.input}>Sector: {table.Sector}</Text>
-                    {/*<TextInput*/}
-                    {/*    id="birdSector"*/}
-                    {/*    style={styles.input} onChangeText={setName} value={table.Sector}*/}
-                    {/*>*/}
-                    {/*</TextInput>*/}
+                    <TextInput
+                        id="birdSector"
+                        style={styles.input} onChangeText={setName}
+                        defaultValue={table.Sector}
+                    >
+                    </TextInput>
                     <Text style={styles.input}>Ticket Number: {table.Ticket_Number}</Text>
-                    {/*<TextInput*/}
-                    {/*    id="birdTicketNum"*/}
-                    {/*    style={styles.input} onChangeText={setName} value={table.Ticket_Number}*/}
-                    {/*>*/}
-                    {/*</TextInput>*/}
+                    <TextInput
+                        id="birdTicketNum"
+                        style={styles.input} onChangeText={setName}
+                        defaultValue={table.Ticket_Number}
+                    >
+                    </TextInput>
                     <Text style={styles.input}>Time: {table.Time}</Text>
-                    {/*<TextInput*/}
-                    {/*    id="birdTime"*/}
-                    {/*    style={styles.input} onChangeText={setName} value={table.Time}*/}
-                    {/*>*/}
-                    {/*</TextInput>*/}
+                    <TextInput
+                        id="birdTime"
+                        style={styles.input} onChangeText={setName}
+                        defaultValue={table.Time}
+                    >
+                    </TextInput>
                     <Text style={styles.input}>Type of Bird: {table.Type_of_Bird}</Text>
-                    {/*<TextInput*/}
-                    {/*    id="birdType"*/}
-                    {/*    style={styles.input} onChangeText={setName} value={table.Type_of_Bird}*/}
-                    {/*>*/}
-                    {/*</TextInput>*/}
+                    <TextInput
+                        id="birdType"
+                        style={styles.input} onChangeText={setName}
+                        defaultValue={table.Type_of_Bird}
+                    >
+                    </TextInput>
                     <Text style={styles.input}>Verified: {table.Verified}</Text>
-                    {/*<TextInput*/}
-                    {/*    id="birdVerified"*/}
-                    {/*    style={styles.input} onChangeText={setName} value={table.Verified}*/}
-                    {/*>*/}
-                    {/*</TextInput>*/}
+                    <TextInput
+                        id="birdVerified"
+                        style={styles.input} onChangeText={setName}
+                        defaultValue={table.Verified}
+                    >
+                    </TextInput>
                     <Text style={styles.input}>Where To: {table.Where_To}</Text>
-                    {/*<TextInput*/}
-                    {/*    id="birdWhere"*/}
-                    {/*    style={styles.input} onChangeText={setName} value={table.Where_To}*/}
-                    {/*>*/}
-                    {/*</TextInput>*/}
+                    <TextInput
+                        id="birdWhere"
+                        style={styles.input} onChangeText={setName}
+                        defaultValue={table.Where_To}
+                    >
+                    </TextInput>
                     <Text style={styles.input}>Ticket Type: {table.Ticket_Type}</Text>
-                    {/*<TextInput*/}
-                    {/*    id="birdTicketType"*/}
-                    {/*    style={styles.input} onChangeText={setName} value={table.Ticket_Type}*/}
-                    {/*>*/}
-                    {/*</TextInput>*/}
+                    <TextInput
+                        id="birdTicketType"
+                        style={styles.input} onChangeText={setName}
+                        defaultValue={table.Ticket_Type}
+                    >
+                    </TextInput>
                   </Surface>
                 </View>
             ) : animal === "Seal" ? (
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 <View>
                   <Surface>
                     <Text style={styles.input}>Additional Notes on ID: {table.Additional_Notes_on_ID}</Text>
+
                     <Text style={styles.input}>Beach Position: {table.Beach_Position}</Text>
                     <Text style={styles.input}>Date: {table.Date}</Text>
                     <Text style={styles.input}>Hotline Operator Initals: {table.Hotline_Operator_Initals}</Text>
