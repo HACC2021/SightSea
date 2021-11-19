@@ -254,6 +254,7 @@ const SightForm = ({ navigation }) => {
         }
       }
     })();
+
   }, []);
 
   //get location coordinate from currentLocation (location object)
@@ -305,7 +306,6 @@ const SightForm = ({ navigation }) => {
     var num = first_three + "-" + middle_three + "-" + last_four;
     return num;
   };
-
 
   //Grab the Image from the UI of the Device
   //Works for Web and Andriod
@@ -426,6 +426,7 @@ const SightForm = ({ navigation }) => {
   function addDoc() {
     //get GPS location if location service is enabled
     getUserLocation();
+
     //filter to correct DB based on animal type
     var animalDB = animalType;
     //generate the random doc ID
@@ -450,8 +451,8 @@ const SightForm = ({ navigation }) => {
       set(reference, {
         AnimalType: animalDB,
         GPS_Coordinate: {
-          latitude: coordinate["latitude"],
-          longitude: coordinate["longitude"],
+          latitude: 21.302877,
+          longitude: -157.843880,
         },
         Date: currentday,
         Time: currenttime,
@@ -494,8 +495,8 @@ const SightForm = ({ navigation }) => {
           .then(() => {
             window.alert("Report Submitted Successfully!");
             sendEmail('felixclyde@gmail.com',
-            'New Report, Staff action required!!!',
-            `New report! See ticket number: ${"XX" + "" + currentday + "" + currenttime}`).
+                'New Report, Staff action required!!!',
+                `New report! See ticket number: ${"XX" + "" + currentday + "" + currenttime}`).
             then(()=>{
               console.log('Email sent!')
             })
@@ -505,6 +506,7 @@ const SightForm = ({ navigation }) => {
             window.alert("Report Failed to submit.");
             //Should stay on page while throwing error
           });
+
       //&& Object.keys(coordinate).length > 0
     } else
       if (animalDB === "Turtle") {
@@ -551,11 +553,11 @@ const SightForm = ({ navigation }) => {
               beach = "";
               console.log(coordinate);
               sendEmail('felixclyde@gmail.com',
-            'New Report, Staff action required!!!',
-            `New report! See ticket number: ${"XX" + "" + currentday + "" + currenttime}`).
-            then(()=>{
-              console.log('Email sent!')
-            })
+                  'New Report, Staff action required!!!',
+                  `New report! See ticket number: ${"XX" + "" + currentday + "" + currenttime}`).
+              then(()=>{
+                console.log('Email sent!')
+              })
               navigation.navigate("SightSea");
             })
             .catch((error) => {
@@ -599,11 +601,11 @@ const SightForm = ({ navigation }) => {
               .then(() => {
                 window.alert("Report Submitted Successfully!");
                 sendEmail('felixclyde@gmail.com',
-            'New Report, Staff action required!!!',
-            `New report! See ticket number: ${"XX" + "" + currentday + "" + currenttime}`).
-            then(()=>{
-              console.log('Email sent!')
-            })
+                    'New Report, Staff action required!!!',
+                    `New report! See ticket number: ${"XX" + "" + currentday + "" + currenttime}`).
+                then(()=>{
+                  console.log('Email sent!')
+                })
                 navigation.navigate("SightSea");
               })
               .catch((error) => {
@@ -612,6 +614,7 @@ const SightForm = ({ navigation }) => {
               });
 
         }
+
     //TODO Count not updating when at 0
     //Ensure it can update when at 0
     const countref = ref(db, `Unverified/`);
@@ -690,6 +693,7 @@ const SightForm = ({ navigation }) => {
                         keyboardType="decimal-pad"
                         label="Phone number"
                     />
+
                     {/* Beach Drop Down */}
                     {!allowLocation && (
                         <List.Section title="Where is the Seal located?">
@@ -807,7 +811,7 @@ const SightForm = ({ navigation }) => {
                       </List.Accordion>
                     </List.Section>
 
-                    {/* Make a drop down with male,female or unknown */}
+                    {/*Make a drop down with male,female or unknown*/}
                     <List.Section title="Is the Seal Male or Female?">
                       <List.Accordion
                           title={sex}
@@ -930,36 +934,6 @@ const SightForm = ({ navigation }) => {
                                 </List.Accordion>
                               </List.Section>
                           )}
-                          {/* Alive or Dead Drop Down */}
-                          <List.Section title="Is the Turtle Alive?">
-                            <List.Accordion
-                                title={turtleStatus}
-                                expanded={showTurtleStatus}
-                                onPress={closeTurtleStatusDropdown}
-                            >
-                              <List.Item
-                                  title="Alive"
-                                  onPress={function () {
-                                    setTurtleStatus("Alive");
-                                    closeTurtleStatusDropdown();
-                                  }}
-                              />
-                              <List.Item
-                                  title="Deceased"
-                                  onPress={function () {
-                                    setTurtleStatus("Deceased");
-                                    closeTurtleStatusDropdown();
-                                  }}
-                              />
-                              <List.Item
-                                  title="Unknown"
-                                  onPress={function () {
-                                    setTurtleStatus("Unknown");
-                                    closeTurtleStatusDropdown();
-                                  }}
-                              />
-                            </List.Accordion>
-                          </List.Section>
 
                           {/*Type of Turtle Drop Down */}
                           <List.Section title="What type of Turtle is it?">
@@ -1034,22 +1008,12 @@ const SightForm = ({ navigation }) => {
                         <View>
                           {/* Bird Specific Questions*/}
 
-                          {/* Beach Drop Down */}
-                          {!allowLocation && (
-                              <List.Section title="Where is the Bird located?">
-                                <List.Accordion
-                                    title={beachText}
-                                    expanded={showBeachDropDown}
-                                    onPress={closeBeachDropdown}
-                                >
-                                  {beachList.map((item, index) => {
-                                    return (
-                                        <ListItem key={index} title={item} item={item} />
-                                    );
-                                  })}
-                                </List.Accordion>
-                              </List.Section>
-                          )}
+                          <TextInput
+                              style={styles.input}
+                              mode="outlined"
+                              label="Where is the Bird located?"
+                              onChangeText={setLocation}
+                          />
 
                           {/* Drop Down for Bird Type */}
                           {/* TODO Break out the Same types after they select the generic Type into seperate drop downs */}
