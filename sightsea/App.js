@@ -8,6 +8,7 @@ import HomeScreen from "./screens/Home";
 import StaffPage from "./screens/Staff Page";
 import StaffLogin from "./screens/StaffLogin";
 import ViewReport from "./screens/Report";
+import ViewNewReport from "./screens/ViewNewReport";
 import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
 import { getAuth, signOut } from "firebase/auth";
 // Import the functions you need from the SDKs you need
@@ -123,6 +124,11 @@ export default function App() {
           <Stack.Screen
               name="ViewReport"
               component={ViewReport}
+              options={{ headerLeft: null }}
+          />
+          <Stack.Screen
+              name="ViewNewReport"
+              component={ViewNewReport}
               options={{ headerLeft: null }}
           />
           <Stack.Screen
