@@ -31,6 +31,7 @@ import {
   Paragraph,
   Subheading,
   Button,
+  List,
 } from "react-native-paper";
 import GoogleMapReact from "google-map-react";
 import {
@@ -183,6 +184,12 @@ const StaffPage = ({ navigation }) => {
 
   var markerOldData = [];
   var markerData = [];
+
+  const [showItemNumDropdown, setShowItemNumDropdown] = React.useState(false);
+
+  const closeItemNumDropdown = () => {
+    setShowItemNumDropdown(!showItemNumDropdown);
+  };
 
   React.useEffect(() => {
     const auth = getAuth();
@@ -388,7 +395,9 @@ const StaffPage = ({ navigation }) => {
     onValue(reference, (snapshot) => {
       var data = [];
       data = Object.entries(snapshot.val());
-      setTableDataVerified(Object.entries(snapshot.val()));
+      snapshot.val() === null
+        ? null
+        : setTableDataVerified(Object.entries(snapshot.val()));
       handleMapChange(data);
     });
   };
@@ -517,6 +526,39 @@ const StaffPage = ({ navigation }) => {
       }
     });
   };
+
+  const handleRelated = () => {
+    newChecked.map((checked, index) => {
+      if (checked === true) {
+        const db = getDatabase();
+        const item = tableDataNew[index];
+        const addref = ref(db, `${item[1].AnimalType}/documents/${item[0]}`);
+        set(addref, item[1]);
+        const addCountRef = ref(db, `${item[1].AnimalType}/`);
+        runTransaction(addCountRef, (post) => {
+          if (post) {
+            if (post.count) {
+              post.count++;
+            }
+          }
+          return post;
+        });
+        const removeref = ref(db, `Unverified/documents/${item[0]}`);
+        remove(removeref);
+        const removeCountRef = ref(db, `Unverified/`);
+        runTransaction(removeCountRef, (post) => {
+          if (post) {
+            if (post.count) {
+              post.count--;
+            }
+          }
+          return post;
+        });
+      }
+    });
+  };
+
+  //console.log(markerData);
   //convert location coordinate to address
   function convertToAddress(arrayOfMarker) {
     /*************************Enable api key when using reverseGeocodeAsync function ************************/
@@ -541,7 +583,7 @@ const StaffPage = ({ navigation }) => {
       });
     });
   }
-  //console.log(newChecked);
+  console.log(newChecked);
   return (
     //Can only return 1 view object for Andriod
     <ScrollView>
@@ -596,9 +638,9 @@ const StaffPage = ({ navigation }) => {
 
               <DataTable.Pagination
                 page={pageNewTable}
-                numberOfPages={totalPages}
+                numberOfPages={totalPagesNew}
                 onPageChange={(page) => handlePageChangeNew(page)}
-                label={pageNewTable + 1 + "of " + totalPages}
+                label={pageNewTable + 1 + "of " + totalPagesNew}
                 // optionsPerPage={optionsPerPage}
                 // itemsPerPage={itemsPerPage}
                 // setItemsPerPage={setItemsPerPage}
@@ -619,9 +661,7 @@ const StaffPage = ({ navigation }) => {
         <Surface style={styles.surface}>
           <Text style={styles.secondaryheader}>Verified Reports</Text>
           <RadioButton.Group
-            onValueChange={(value) => {
-              handleRadioChange(value);
-            }}
+            onValueChange={(value) => handleRadioChange(value)}
             value={animalDisplayType}
           >
             {Platform.OS === "web" ? (
@@ -638,6 +678,31 @@ const StaffPage = ({ navigation }) => {
               ))
             )}
           </RadioButton.Group>
+          <View>
+            <List.Section title="Entries per Page">
+              <List.Accordion
+                title={itemsPerPage}
+                expanded={showItemNumDropdown}
+                onPress={closeItemNumDropdown}
+              >
+                {optionsPerPage.map((x, index) => (
+                  <List.Item
+                    key={index}
+                    title={x}
+                    onPress={() => {
+                      frontAnchorKeysNew = [];
+                      setItemsPerPage(x);
+                      closeItemNumDropdown();
+                      getDocs(animalDisplayType, "switch");
+                      getNewDocs("switch");
+                      setPageNewTable(0);
+                      setPageVerifiedTable(0);
+                    }}
+                  />
+                ))}
+              </List.Accordion>
+            </List.Section>
+          </View>
           {/* Display map with pins for ALL new reports */}
           <DataTable>
             <DataTable.Header>
@@ -658,15 +723,26 @@ const StaffPage = ({ navigation }) => {
             {/* Loop over new reports to make rows */}
 
             {tableDataVerified.map((element, index) => (
-              <DataTable.Row key={index}>
-                <DataTable.Cell style={styles.columns} key={index}>
-                  {/* <Checkbox
-                  status={checked ? "checked" : "unchecked"}
+              <DataTable.Row
+                key={index}
+                onPress={() =>
+                  navigation.navigate("ViewReport", {
+                    table: element[1],
+                    animal: animalDisplayType,
+                    documentID: element[0],
+                  })
+                }
+              >
+                <Checkbox
+                  status={newChecked[index] ? "checked" : "unchecked"}
                   onPress={() => {
-                    setChecked(!checked);
+                    handleNewCheckedChange(index);
                   }}
-                ></Checkbox> */}
-                </DataTable.Cell>
+                ></Checkbox>
+                <DataTable.Cell
+                  style={styles.columns}
+                  key={index}
+                ></DataTable.Cell>
                 <DataTable.Cell numeric style={styles.row}>
                   {element[0]}
                 </DataTable.Cell>
@@ -692,9 +768,7 @@ const StaffPage = ({ navigation }) => {
             <DataTable.Pagination
               page={pageVerifiedTable}
               numberOfPages={totalPages}
-              onPageChange={(page) => {
-                handlePageChange(page);
-              }}
+              onPageChange={(page) => handlePageChange(page)}
               label={pageVerifiedTable + 1 + "of " + totalPages}
               // optionsPerPage={optionsPerPage}
               // itemsPerPage={itemsPerPage}
@@ -703,6 +777,13 @@ const StaffPage = ({ navigation }) => {
               optionsLabel={"Rows per page"}
             />
           </DataTable>
+          <Button
+            mode="contained"
+            onPress={() => handleRelated()}
+            style={styles.Exportbtn}
+          >
+            Related
+          </Button>
         </Surface>
         <View>
           <Button
@@ -719,8 +800,7 @@ const StaffPage = ({ navigation }) => {
             <GoogleMap
               center={mapProps.center}
               zoom={mapProps.zoom}
-              //data={markerDataState}
-              update={shouldComponentUpdate(markerOldData, markerDataState)}
+              data={markers}
             />
           ) : null}
         </View>

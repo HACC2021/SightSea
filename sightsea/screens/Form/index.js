@@ -19,6 +19,7 @@ import {
   Paragraph,
   List,
   Menu,
+  HelperText,
   TouchableRipple,
 } from "react-native-paper";
 
@@ -35,11 +36,9 @@ import {
 } from "firebase/database";
 import * as Location from "expo-location";
 import { NavigationContainer, useTheme } from "@react-navigation/native";
-
 import * as ImagePicker from "expo-image-picker";
-//import Marker from "react-native-maps";
-//import DropDown from "react-native-paper-dropdown";
-//import DateTimePicker from "@react-native-community/datetimepicker";
+
+import { sendEmail } from "../../scripts/send-email";
 
 //get window size of current device
 const windowWidth = Dimensions.get("window").width;
@@ -70,6 +69,7 @@ const styles = StyleSheet.create({
     height: 50,
   },
 });
+
 const SightForm = ({ navigation }) => {
   const [date, setDate] = React.useState(new Date());
   const [image, setImage] = React.useState("");
@@ -259,15 +259,17 @@ const SightForm = ({ navigation }) => {
       console.log(value);
       close();
     }
+
     return (
-      <div onClick={onItemClick}>
-        <List.Item title={title}></List.Item>
-      </div>
+      <View onClick={onItemClick}>
+        <List.Item title={title} onPress={() => onItemClick()}></List.Item>
+      </View>
     );
   }
 
-  //get current user location
+  //Get Information while the Page is Rendering
   React.useEffect(() => {
+    //Get User Data Permission
     (async () => {
       //check if location is enabled by user
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -282,14 +284,23 @@ const SightForm = ({ navigation }) => {
       setCurrentLocation(currentLocation);
     })();
 
-    //effect to check for camera roll permission on IOS and Andriod
-    //cameraRollPermissions();
+    //Get camera roll permission on IOS and Andriod
     (async () => {
       if (Platform.OS !== "web") {
         const { status } =
           await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== "granted") {
           alert("Sorry, we need camera roll permissions to make this work!");
+        }
+      }
+    })();
+
+    //Get camera permissions on IOS and Andriod
+    (async () => {
+      if (Platform.OS !== "web") {
+        const { status } = await ImagePicker.requestCameraPermissionsAsync();
+        if (status !== "granted") {
+          alert("Sorry, we need camera permissions to make this work!");
         }
       }
     })();
@@ -304,6 +315,7 @@ const SightForm = ({ navigation }) => {
     if (errorMsg) {
       console.log(errorText);
       console.log("beachText = " + beachText);
+
       if (beachText == "") {
         locationCoordinate = { latitude: 21.302877, longitude: -157.84388 };
       } else {
@@ -344,25 +356,10 @@ const SightForm = ({ navigation }) => {
     return num;
   };
 
-  //Function to ask for permission to the camera roll
-  const cameraRollPermissions = async () => {
-    if (Platform.OS !== "web") {
-      const { status } = await ImagePicker.getMediaLibraryPermissionsAsync();
-      if (status !== "granted") {
-        alert(
-          "Please grant camera roll permissions inside your system's settings"
-        );
-      } else {
-        console.log("Media Permissions are granted");
-      }
-    }
-    //No need to premission check on Web
-  };
-
   //Grab the Image from the UI of the Device
   //Works for Web and Andriod
   //TODO test for IOS
-  const handleImageSubmit = async () => {
+  const handleImageSelection = async () => {
     var newImage = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: false,
@@ -376,6 +373,26 @@ const SightForm = ({ navigation }) => {
     //If an image was picked then store it
     if (!newImage.cancelled) {
       setImage(newImage.uri);
+      // console.log(newImage.uri);
+    }
+  };
+
+  const handleCameraSelection = async () => {
+    var newImage = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: false,
+      aspect: [4, 3],
+      //scale down to half of the incoming quality to
+      //prevent overly large image submissions
+      quality: 0.5,
+    });
+
+    console.log(JSON.stringify(newImage));
+
+    //If an image was picked then store it
+    if (!newImage.cancelled) {
+      setImage(newImage.uri);
+      // console.log(newImage.uri);
     }
   };
 
@@ -440,6 +457,7 @@ const SightForm = ({ navigation }) => {
         " Sex: " +
         sexText
     );
+
     //get GPS location if location service is enabled
     getUserLocation();
     //filter to correct DB based on animal type
@@ -449,15 +467,17 @@ const SightForm = ({ navigation }) => {
 
     //Get the db Reference
     const db = getDatabase();
-
     var currentday = currentDate();
-
     var currenttime = currentTime();
+
     //21.302877, -157.843880
     const observer_type = "P";
     var intitials = name.slice(0, 1) + observer_type;
     //console.log(image);
     //check if the gps coordinate object is empty
+    //window.alert(Object.keys(coordinate).length)
+
+    //&& Object.keys(coordinate).length > 0
     if (animalDB === "Seal" && Object.keys(coordinate).length > 0) {
       //Seal Doc
       const reference = ref(db, `Unverified/documents/` + `${localdocID}`);
@@ -506,14 +526,24 @@ const SightForm = ({ navigation }) => {
         Image: image,
       })
         .then(() => {
-          console.log("Report Submitted Successfully!");
-          //Navigate back the home page
+          window.alert("Report Submitted Successfully!");
+          sendEmail(
+            "felixclyde@gmail.com",
+            "New Report, Staff action required!!!",
+            `New report! See ticket number: ${
+              "XX" + "" + currentday + "" + currenttime
+            }`
+          ).then(() => {
+            console.log("Email sent!");
+          });
           navigation.navigate("SightSea");
         })
         .catch((error) => {
           window.alert("Report Failed to submit.");
           //Should stay on page while throwing error
         });
+
+      //&& Object.keys(coordinate).length > 0
     } else if (animalDB === "Turtle" && Object.keys(coordinate).length > 0) {
       //Turtle Doc
       const observer_type = "P";
@@ -541,7 +571,7 @@ const SightForm = ({ navigation }) => {
         Location_Notes: "",
         Type_of_Turtle: turtleText,
         Size: turtleSize,
-        Stauts: turtleStatusText,
+        Stauts: turtleStatus,
         Primary_issue_or_cause_of_death: "",
         Responder: "",
         Time_Responder_left: "",
@@ -557,14 +587,25 @@ const SightForm = ({ navigation }) => {
           window.alert("Report Submitted Successfully!");
           beach = "";
           console.log(coordinate);
+          sendEmail(
+            "felixclyde@gmail.com",
+            "New Report, Staff action required!!!",
+            `New report! See ticket number: ${
+              "XX" + "" + currentday + "" + currenttime
+            }`
+          ).then(() => {
+            console.log("Email sent!");
+          });
           navigation.navigate("SightSea");
         })
         .catch((error) => {
           window.alert("Report Failed to submit.");
           //Should stay on page while throwing error
         });
+      //&& Object.keys(coordinate).length > 0
     } else if (animalDB === "Bird" && Object.keys(coordinate).length > 0) {
       //For Bird Docs
+
       const reference = ref(db, `Unverified/documents/` + `${localdocID}`);
       set(reference, {
         AnimalType: animalDB,
@@ -596,7 +637,15 @@ const SightForm = ({ navigation }) => {
       })
         .then(() => {
           window.alert("Report Submitted Successfully!");
-
+          sendEmail(
+            "felixclyde@gmail.com",
+            "New Report, Staff action required!!!",
+            `New report! See ticket number: ${
+              "XX" + "" + currentday + "" + currenttime
+            }`
+          ).then(() => {
+            console.log("Email sent!");
+          });
           navigation.navigate("SightSea");
         })
         .catch((error) => {
@@ -670,6 +719,11 @@ const SightForm = ({ navigation }) => {
                   textContentType="name"
                   label="Enter First Name"
                 />
+
+                {/*<HelperText type="error" visible= {true}>*/}
+                {/*  This should display when there is an error.*/}
+                {/*</HelperText>*/}
+
                 <TextInput
                   style={styles.input}
                   onChangeText={setPhoneNum}
@@ -768,7 +822,7 @@ const SightForm = ({ navigation }) => {
                   </List.Accordion>
                 </List.Section>
 
-                {/* Make a drop down with male,female or unknown */}
+                {/*Make a drop down with male,female or unknown*/}
                 <List.Section title="Is the Seal Male or Female?">
                   <List.Accordion
                     title={sexText}
@@ -963,36 +1017,30 @@ const SightForm = ({ navigation }) => {
                 )}
 
                 {/* Catch All For all three Types */}
-
-                {/*<TextInput*/}
-                {/*    style={styles.input}*/}
-                {/*    mode="outlined"*/}
-                {/*    label="Describe any visible wounds (size/color)"*/}
-                {/*/>*/}
-                {/*<TextInput*/}
-                {/*    style={styles.input}*/}
-                {/*    mode="outlined"*/}
-                {/*    label="Describe any previous wounds (ex. amputated flipper)"*/}
-                {/*/>*/}
-                {/*<TextInput*/}
-                {/*    style={styles.input}*/}
-                {/*    mode="outlined"*/}
-                {/*    label="Describe the animal's behavior (ex. is it lethargic?)"*/}
-                {/*/>*/}
-                {/*<TextInput*/}
-                {/*    style={styles.input}*/}
-                {/*    mode="outlined"*/}
-                {/*    label="About what size is the animal?"*/}
-                {/*/>*/}
               </View>
+            )}
+
+            {Platform.OS !== "web" ? (
+              <View>
+                {/*Only display the camera button on moblie */}
+                <Button
+                  stlye={styles.btn}
+                  mode="contained"
+                  onPress={() => handleCameraSelection()}
+                >
+                  Take an Image
+                </Button>
+              </View>
+            ) : (
+              <View>{/* Don't Return anything*/}</View>
             )}
 
             <Button
               stlye={styles.btn}
               mode="contained"
-              onPress={() => handleImageSubmit()}
+              onPress={() => handleImageSelection()}
             >
-              Choose or Take Image
+              Choose an Image
             </Button>
           </View>
           <Button style={styles.btn} mode="contained" onPress={() => addDoc()}>
