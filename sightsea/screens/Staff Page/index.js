@@ -723,7 +723,7 @@ const StaffPage = ({ navigation }) => {
           <View>
             <Button
                 mode="contained"
-                onPress={ExportDatabase}
+                onPress={() => ExportDatabase(animalDisplayType)}
                 style={styles.Exportbtn}
             >
               Export Database
