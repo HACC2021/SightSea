@@ -337,20 +337,26 @@ const ViewReport = ({route, navigation}) => {
   };
 
   const getNewDocs = (direction) => {
-    console.log("Test" + table.Related);
     const db = getDatabase();
     const pageref = ref(db, `${animal}/count`);
     onValue(pageref, (snapshot) => {
       setTotalPagesNew(Math.ceil(Number(snapshot.val()) / itemsPerPage));
     });
     var docCounter = 0;
-    const reference =
-            query(
-            ref(db, `${animal}/documents`),
-            orderByChild('Related'),
-            equalTo(table.Related),
-            )
-
+    console.log("Test" + table.Related);
+    if (table.Related != "") {
+      const reference =
+          query(
+              ref(db, `${animal}/documents`),
+              orderByChild('Related'),
+              equalTo(table.Related),
+          )
+          onValue(reference, (snapshot) => {
+            snapshot.val() === null
+                ? setTableDataNew([])
+                : setTableDataNew(Object.entries(snapshot.val()));
+          });
+    }
     //     direction === "switch"
     //         ? query(
     //         ref(db, `${animal}/documents`),
@@ -386,11 +392,6 @@ const ViewReport = ({route, navigation}) => {
     //     frontAnchorKeysNew.pop();
     //   }
     // });
-      onValue(reference, (snapshot) => {
-        snapshot.val() === null
-            ? setTableDataNew([])
-            : setTableDataNew(Object.entries(snapshot.val()));
-      });
   };
 
   const handlePageChange = (page, callback) => {

@@ -597,7 +597,7 @@ const ViewNewReport = ({route, navigation}) => {
           }
           return post;
         });
-
+    navigation.navigate("SightSea");
   };
 
   return (
