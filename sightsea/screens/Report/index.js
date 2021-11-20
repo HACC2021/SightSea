@@ -63,12 +63,12 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
     paddingLeft: 20,
   },
-  image: {
-    width: "100%",
-    maxWidth: "20px",
-    height: "100$",
-    maxHeight: "30px",
-  },
+  // image: {
+  //   width: "100%",
+  //   maxWidth: "20px",
+  //   height: "100$",
+  //   maxHeight: "30px",
+  // },
   map: {
     width: windowWidth * 0.8,
     height: windowHeight * 0.5,
@@ -581,6 +581,7 @@ const ViewReport = ({route, navigation}) => {
           });
     }
   }
+  console.log("TEST" + table.Image);
 
   return (
       <ScrollView>
@@ -588,9 +589,12 @@ const ViewReport = ({route, navigation}) => {
           <View style={styles.form}>
             <Headline>Report a Sighting</Headline>
             { animal === "Bird" ? (
+
                 <View>
+
                   <Surface>
                     <Text style={styles.input}>Date: {table.Date}</Text>
+                    <img id="image" src={table.Image}/>
                     <TextInput
                         id="birdDate"
                         style={styles.input}
@@ -736,11 +740,6 @@ const ViewReport = ({route, navigation}) => {
                     >
                     </TextInput>
                   </Surface>
-                    <Image
-                        id="image"
-                        source={table.Image
-                        }
-                    />
                 </View>
               ) : animal === "Seal" ? (
                 <View>
