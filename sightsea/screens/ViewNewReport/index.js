@@ -609,150 +609,25 @@ const ViewNewReport = ({route, navigation}) => {
                 <View>
                   <Surface>
                     <Text style={styles.input}>Date: {table.Date}</Text>
-                    {/*<TextInput
-                        id="birdDate"
-                        style={styles.input}
-                        onChangeText={setDate}
-                        // onChange={ e => setDate(e.target.value)}
-                        defaultValue={table.Date}
-                        // onPress={() => this.setState({ disabled: false })}
-                    >
-                    </TextInput>*/}
                     <Text style={styles.input}>Delivered: {table.Delivered}</Text>
-                    {/*<TextInput
-                        id="birdDelivered"
-                        style={styles.input}
-                        onChangeText={setDelivered}
-                        // onChange={ e => setDelivered(e.target.value)}
-                        defaultValue={table.Delivered}
-                    >
-                    </TextInput>*/}
                     <Text style={styles.input}>Hotline Operator Initals: {table.Hotline_Operator_Initials}</Text>
-                    {/*<TextInput
-                        id="birdHOI"
-                        style={styles.input} onChangeText={setHOI}
-                        defaultValue={table.Hotline_Operator_Initials}
-                    >
-                    </TextInput>*/}
                     <Text style={styles.input}>Location: {table.Location}</Text>
-                    {/*<TextInput
-                        id="birdLocation"
-                        style={styles.input} onChangeText={setLocation}
-                        defaultValue={table.Location}
-                    >
-                    </TextInput>*/}
                     <Text style={styles.input}>Location Notes: {table.Location_Notes}</Text>
-                    {/*<TextInput
-                        id="birdLocNotes"
-                        style={styles.input}
-                        onChangeText={setLocation_Notes}
-                        defaultValue={table.Location_Notes}
-                    >
-                    </TextInput>*/}
                     <Text style={styles.input}>Number of Calls Received: {table.Number_of_Calls_Received}</Text>
-                    {/*<TextInput
-                        id="birdNOCR"
-                        style={styles.input} onChangeText={setNumber_of_Calls_Received}
-                        defaultValue={table.Number_of_Calls_Received}
-                    >
-                    </TextInput>*/}
                     <Text style={styles.input}>Observer: {table.Observer}</Text>
-                    {/*<TextInput
-                        id="birdObserver"
-                        style={styles.input} onChangeText={setObserver}
-                        defaultValue={table.Observer}
-                    >
-                    </TextInput>*/}
                     <Text style={styles.input}>Observer Number: {table.Observer_Contact_Nubmer}</Text>
-                    {/*<TextInput
-                        id="birdObsNum"
-                        style={styles.input} onChangeText={setObserver_Contact_Number}
-                        defaultValue={table.Observer_Contact_Nubmer}
-                    >
-                    </TextInput>*/}
                     <Text style={styles.input}>Observer Initials: {table.Observer_Initials}</Text>
-                    {/*<TextInput
-                        id="birdObsInitials"
-                        style={styles.input} onChangeText={setObserver_Initials}
-                        defaultValue={table.Observer_Initials}
-                    >
-                    </TextInput>*/}
                     <Text style={styles.input}>Observer Type: {table.Observer_Type}</Text>
-                    {/*<TextInput
-                        id="birdObsType"
-                        style={styles.input} onChangeText={setObserver_Type}
-                        defaultValue={table.Observer_Type}
-                    >
-                    </TextInput>*/}
                     <Text style={styles.input}>Other Notes: {table.Other_Notes}</Text>
-                    {/*<TextInput
-                        id="birdObsNotes"
-                        style={styles.input} onChangeText={setOther_Notes}
-                        defaultValue={table.Other_Notes}
-                    >
-                    </TextInput>*/}
                     <Text style={styles.input}>Outreach Provided By Operator: {table.Outreach_provided_by_operator}</Text>
-                    {/*<TextInput
-                        id="birdOutreach"
-                        style={styles.input} onChangeText={setOPBO}
-                        defaultValue={table.Outreach_provided_by_operator}
-                    ></TextInput>*/}
                     <Text style={styles.input}>Responders Name: {table.Responders_name}</Text>
-                    {/*<TextInput
-                        id="birdRespName"
-                        style={styles.input} onChangeText={setResponders_name}
-                        defaultValue={table.Responders_name}
-                    >
-                    </TextInput>*/}
                     <Text style={styles.input}>Sector: {table.Sector}</Text>
-                    {/*<TextInput
-                        id="birdSector"
-                        style={styles.input} onChangeText={setSector}
-                        defaultValue={table.Sector}
-                    >
-                    </TextInput>*/}
                     <Text style={styles.input}>Ticket Number: {table.Ticket_Number}</Text>
-                    {/*<TextInput
-                        id="birdTicketNum"
-                        style={styles.input} onChangeText={setTicket_Number}
-                        defaultValue={table.Ticket_Number}
-                    >
-                    </TextInput>*/}
                     <Text style={styles.input}>Time: {table.Time}</Text>
-                    {/*<TextInput
-                        id="birdTime"
-                        style={styles.input} onChangeText={setTime}
-                        defaultValue={table.Time}
-                    >
-                    </TextInput>*/}
                     <Text style={styles.input}>Type of Bird: {table.Type_of_Bird}</Text>
-                    {/*<TextInput
-                        id="birdType"
-                        style={styles.input} onChangeText={setType_of_Bird}
-                        defaultValue={table.Type_of_Bird}
-                    >
-                    </TextInput>*/}
                     <Text style={styles.input}>Verified: {table.Verified}</Text>
-                    {/*<TextInput
-                        id="birdVerified"
-                        style={styles.input} onChangeText={setVerified}
-                        defaultValue={table.Verified}
-                    >
-                    </TextInput>*/}
                     <Text style={styles.input}>Where To: {table.Where_to}</Text>
-                    {/*<TextInput
-                        id="birdWhere"
-                        style={styles.input} onChangeText={setWhereTo}
-                        defaultValue={table.Where_to}
-                    >
-                    </TextInput>*/}
                     <Text style={styles.input}>Ticket Type: {table.ticket_type}</Text>
-                    {/*<TextInput
-                        id="birdTicketType"
-                        style={styles.input} onChangeText={setTicketType}
-                        defaultValue={table.ticket_type}
-                    >
-                    </TextInput>*/}
                   </Surface>
                   <Image
                       id="image"
@@ -1086,59 +961,14 @@ const ViewNewReport = ({route, navigation}) => {
                         defaultValue={table.Responder_arrival_time}
                     ></TextInput>*/}
                     <Text style={styles.input}>Size: {table.Size}</Text>
-                    {/*<TextInput
-                        id="turtleSize"
-                        style={styles.input} onChangeText={setSize}
-                        defaultValue={table.Size}
-                    ></TextInput>*/}
                     <Text style={styles.input}>Sector: {table.Sector}</Text>
-                    {/*<TextInput
-                        id="turtleSector"
-                        style={styles.input} onChangeText={setSector}
-                        defaultValue={table.Sector}
-                    ></TextInput>*/}
                     <Text style={styles.input}>Status: {table.Stauts}</Text>
-                    {/*<TextInput
-                        id="turtleStauts"
-                        style={styles.input} onChangeText={setStauts}
-                        defaultValue={table.Stauts}
-                    ></TextInput>*/}
                     <Text style={styles.input}>Ticket Number: {table.Ticket_Number}</Text>
-                    {/*<TextInput
-                        id="turtleTicketNumber"
-                        style={styles.input} onChangeText={setTicket_Number}
-                        defaultValue={table.Ticket_Number}
-                    ></TextInput>*/}
                     <Text style={styles.input}>Time: {table.Time}</Text>
-                    {/*<TextInput
-                        id="turtleTime"
-                        style={styles.input} onChangeText={setTime}
-                        defaultValue={table.Time}
-                    ></TextInput>*/}
                     <Text style={styles.input}>Time Responder Left: {table.Time_Responder_left}</Text>
-                    {/*<TextInput
-                        id="turtleResponderLeft"
-                        style={styles.input} onChangeText={setTime_Responder_left}
-                        defaultValue={table.Time_Responder_left}
-                    ></TextInput>*/}
                     <Text style={styles.input}>Type of Turtle: {table.Type_of_Turtle}</Text>
-                    {/*<TextInput
-                        id="turtleType"
-                        style={styles.input} onChangeText={setType_of_Turtle}
-                        defaultValue={table.Type_of_Turtle}
-                    ></TextInput>*/}
                     <Text style={styles.input}>Verified: {table.Verified}</Text>
-                    {/*<TextInput
-                        id="turtleVerified"
-                        style={styles.input} onChangeText={setVerified}
-                        defaultValue={table.Verified}
-                    ></TextInput>*/}
                     <Text style={styles.input}>Ticket Type: {table.ticket_type}</Text>
-                    {/*<TextInput
-                        id="turtleTicketType"
-                        style={styles.input} onChangeText={setTicketType}
-                        defaultValue={table.ticket_type}
-                    ></TextInput>*/}
                     <div id="image">
                       <img id="image" src={table.Image}/>
                     </div>

@@ -651,7 +651,7 @@ const StaffPage = ({ navigation }) => {
 
                   {tableDataNew.map((element, index) => (
                       <DataTable.Row key={index} onPress={ () => navigation.navigate(
-                          'ViewNewReport', {table: element[1], animal: animalDisplayType, documentID: element[0], }
+                          'ViewNewReport', {table: element[1], animal: element[1].AnimalType, documentID: element[0], }
                       )}>
                         <DataTable.Cell style={styles.row}>
                         <Checkbox
