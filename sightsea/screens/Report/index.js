@@ -457,6 +457,7 @@ const ViewReport = ({route, navigation}) => {
         Hotline_Operator_Initials: hoi,
         How_Identified: How_Identified,
         ID_Perm: ID_Perm,
+        GPS_Coordinate: table.GPS_Coordinate,
         ID_Verified_By: ID_Verified_By,
         ID_temp: ID_temp,
         Location: location,
@@ -487,6 +488,7 @@ const ViewReport = ({route, navigation}) => {
         Time: time,
         Verified: Verified,
         ticket_type: TicketType,
+        Related: table.Related,
       })
           .then(() => {
             window.alert("Report Submitted Successfully!");
@@ -509,6 +511,7 @@ const ViewReport = ({route, navigation}) => {
         Island: island,
         Location: location,
         Location_Notes: Location_Notes,
+        GPS_Coordinate: table.GPS_Coordinate,
         Number_of_Calls_Received: Number_of_Calls_Received,
         Observer: Observer,
         Observer_Contact_Nubmer: Observer_Contact_Nubmer,
@@ -529,6 +532,7 @@ const ViewReport = ({route, navigation}) => {
         Type_of_Turtle: Type_of_Turtle,
         Verified: Verified,
         ticket_type: TicketType,
+        Related: table.Related,
       })
           .then(() => {
             window.alert("Report Submitted Successfully!");
@@ -554,6 +558,7 @@ const ViewReport = ({route, navigation}) => {
         Observer_Initials: Observer_Initials,
         Observer_Type: Observer_Type,
         Other_Notes: Other_Notes,
+        GPS_Coordinate: table.GPS_Coordinate,
         // Outreach_provided_by_operator: "3",
         Outreach_provided_by_operator: opbo,
         Responders_name: Responders_name,
@@ -564,6 +569,7 @@ const ViewReport = ({route, navigation}) => {
         Verified: Verified,
         Where_to: WhereTo,
         ticket_type: TicketType,
+        Related: table.Related,
       })
           .then(() => {
             window.alert("Report Submitted Successfully!");
