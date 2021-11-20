@@ -337,20 +337,21 @@ const ViewReport = ({route, navigation}) => {
   };
 
   const getNewDocs = (direction) => {
-    console.log("Test" + table.Related);
     const db = getDatabase();
     const pageref = ref(db, `${animal}/count`);
     onValue(pageref, (snapshot) => {
       setTotalPagesNew(Math.ceil(Number(snapshot.val()) / itemsPerPage));
     });
     var docCounter = 0;
+    if (table.Related != "") {
+
+    }
     const reference =
-            query(
+        query(
             ref(db, `${animal}/documents`),
             orderByChild('Related'),
             equalTo(table.Related),
-            )
-
+        )
     //     direction === "switch"
     //         ? query(
     //         ref(db, `${animal}/documents`),
