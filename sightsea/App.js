@@ -123,7 +123,7 @@ export default function App() {
           <Stack.Screen
               name="ViewReport"
               component={ViewReport}
-              options={{ headerLeft: null }}
+              
           />
           <Stack.Screen
             name="StaffLogin"
