@@ -1,8 +1,12 @@
 import React from "react";
 import { getDatabase, ref, onValue, once, set, update, query, orderByKey,
-  startAt, startAfter, endAt,
+  startAt,
+  startAfter,
+  endAt,
   limitToFirst,
   onChildAdded,
+  runTransaction,
+    remove,
 } from "firebase/database";
 import {
   StyleSheet,
@@ -88,6 +92,12 @@ const styles = StyleSheet.create({
     width: 100,
     flex: 1,
     justifyContent: "space-between",
+  },
+  verifyButton: {
+    borderRadius: 6,
+    // marginRight: 15,
+    padding: 4,
+    // padding: 7,
   },
 });
 
@@ -562,6 +572,36 @@ const ViewNewReport = ({route, navigation}) => {
           });
     }
   }
+
+  const handleVerify = () => {
+    newChecked.map((checked, index) => {
+        const db = getDatabase();
+        const item = tableDataNew[index];
+        const addref = ref(db, `${item[1].AnimalType}/documents/${item[0]}`);
+        set(addref, item[1]);
+        const addCountRef = ref(db, `${item[1].AnimalType}/`);
+        runTransaction(addCountRef, (post) => {
+          if (post) {
+            if (post.count) {
+              post.count++;
+            }
+          }
+          return post;
+        });
+        const removeref = ref(db, `Unverified/documents/${item[0]}`);
+        remove(removeref);
+        const removeCountRef = ref(db, `Unverified/`);
+        runTransaction(removeCountRef, (post) => {
+          if (post) {
+            if (post.count) {
+              post.count--;
+            }
+          }
+          return post;
+        });
+    });
+
+  };
 
   return (
       <ScrollView>
@@ -1109,6 +1149,13 @@ const ViewNewReport = ({route, navigation}) => {
                 </View>
             )}
           </View>
+          <Button
+              mode="contained"
+              onPress={() => handleVerify()}
+              style={styles.Exportbtn}
+          >
+            Verify
+          </Button>
         </View>
       </ScrollView>
   );
