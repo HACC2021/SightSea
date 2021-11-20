@@ -195,6 +195,7 @@ const ExportDatabase = (animalType) => {
       delete item[1].GPS_Coordinate;
       delete item[1].Image;
       delete item[1].Verified;
+      delete item[1].Related;
     })
     console.log(docArray);
     var fields = Object.keys(docArray[0][1]);
