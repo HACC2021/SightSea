@@ -43,6 +43,7 @@ import {
   set,
   runTransaction,
   remove,
+    update,
 } from "firebase/database";
 import ExportDatabase from "../../scripts/ExportDatabase";
 
@@ -462,16 +463,20 @@ const StaffPage = ({ navigation }) => {
   };
 
   const handleRelated = () => {
+    var localID = null;
     relatedChecked.map((checked, index) => {
+      // tableDataVerified.map((element, index) => {
+
       if (checked === true) {
-        console.log("test");
-        var localRelatedID = generateRelatedID();
-        console.log(localRelatedID);
+        if (localID === null) {
+          localID = tableDataVerified[index][0];
+        }
+        // const localRelatedID = generateRelatedID();
         const db = getDatabase();
-        if (animal === "Seal") {
-          const reference = ref(db, `${animal}/documents/` + documentID);
+        if (animalDisplayType === "Seal") {
+          const reference = ref(db, `${animalDisplayType}/documents/` + tableDataVerified[index][0]);
           update(reference, {
-            Related: localRelatedID,
+            Related: localID,
           })
               .then(() => {
                 window.alert("Connect Related Successfully");
@@ -481,10 +486,10 @@ const StaffPage = ({ navigation }) => {
                 window.alert("Failed to relate.");
                 //TODO Stay on page and flag errors
               });
-        } else if (animal === "Turtle") {
-          const reference = ref(db, `${animal}/documents/` + documentID);
+        } else if (animalDisplayType === "Turtle") {
+          const reference = ref(db, `${animalDisplayType}/documents/` + tableDataVerified[index][0]);
           update(reference, {
-            Related: localRelatedID,
+            Related: localID,
           })
               .then(() => {
                 window.alert("Connect Related Successfully");
@@ -494,14 +499,14 @@ const StaffPage = ({ navigation }) => {
                 window.alert("Failed to relate.");
                 //TODO Stay on page and flag errors
               });
-        } else if (animal === "Bird") {
-          const reference = ref(db, `${animal}/documents/` + documentID);
+        } else if (animalDisplayType === "Bird") {
+          const reference = ref(db, `${animalDisplayType}/documents/` + tableDataVerified[index][0]);
+          console.log(localRelated);
           update(reference, {
-            Related: localRelatedID,
+            Related: localID,
           })
               .then(() => {
                 window.alert("Connect Related Successfully");
-                //TODO back to main page
               })
               .catch((error) => {
                 window.alert("Failed to relate.");
@@ -509,13 +514,13 @@ const StaffPage = ({ navigation }) => {
               });
         }
       }
+    // });
     });
   }
 
   const handleVerify = () => {
     newChecked.map((checked, index) => {
       if (checked === true) {
-        console.log("test");
         const db = getDatabase();
         const item = tableDataNew[index];
         const addref = ref(db, `${item[1].AnimalType}/documents/${item[0]}`);
