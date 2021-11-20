@@ -228,7 +228,7 @@ const ViewReport = ({route, navigation}) => {
     const auth = getAuth();
     onAuthStateChanged(auth, (user) => {
       if (!user) {
-        navigation.navigate("SightSea");
+        navigation.navigate("StaffPage");
       }
     });
     //setPageNewTable(0);
