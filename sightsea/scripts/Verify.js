@@ -7,7 +7,7 @@ const removeDoc = (dbName, docID) => {
   remove(reference);
   countref = ref(dn, `${dbName}/`);
   runTransaction(countref, (post) => {
-    if (post) {
+    if (post && post.documents) {
       if (post.count) {
         post.count--;
       }
