@@ -43,6 +43,7 @@ import {
   set,
   runTransaction,
   remove,
+    update,
 } from "firebase/database";
 import ExportDatabase from "../../scripts/ExportDatabase";
 
@@ -176,6 +177,9 @@ const StaffPage = ({ navigation }) => {
   const [newChecked, setNewChecked] = React.useState(
     new Array(optionsPerPage[0]).fill(false)
   );
+  const [relatedChecked, setRelatedChecked] = React.useState(
+      new Array(optionsPerPage[0]).fill(false)
+  );
   const [showItemNumDropdown, setShowItemNumDropdown] = React.useState(false);
 
   const closeItemNumDropdown = () => {
@@ -287,7 +291,7 @@ const StaffPage = ({ navigation }) => {
         style={{ height: "100vh", width: "100%" }}
         defaultZoom={zoom}
         defaultCenter={center}
-        //   bootstrapURLKeys={{ key: "AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0" }}
+        bootstrapURLKeys={{ key: "AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0" }}
       >
         {markerOldData.map((item, index) => {
           return (
@@ -450,7 +454,7 @@ const StaffPage = ({ navigation }) => {
     });
 
     //convert GPS coordinate to postal address and update marker array
-    //convertToAddress(markers);
+    convertToAddress(markers);
     //pass the GPS coordinate object to the MarkerData array
     markerData = markers;
     setMarkerDataState(markerData);
@@ -487,6 +491,71 @@ const StaffPage = ({ navigation }) => {
     setNewChecked(newState);
   };
 
+  // copy for related
+  const handleRelatedCheckedChange = (position) => {
+    console.log(position);
+    const newState = new Array(itemsPerPage);
+    relatedChecked.map((x, index) => {
+      console.log(x);
+      newState[index] = index === position ? !x : x;
+    });
+    setRelatedChecked(newState);
+  };
+
+  const handleRelated = () => {
+    var localID = null;
+    relatedChecked.map((checked, index) => {
+      // tableDataVerified.map((element, index) => {
+
+      if (checked === true) {
+        if (localID === null) {
+          localID = tableDataVerified[index][0];
+        }
+        const db = getDatabase();
+        if (animalDisplayType === "Seal") {
+          const reference = ref(db, `${animalDisplayType}/documents/` + tableDataVerified[index][0]);
+          update(reference, {
+            Related: localID,
+          })
+              .then(() => {
+                window.alert("Connect Related Successfully");
+                //TODO back to main page
+              })
+              .catch((error) => {
+                window.alert("Failed to relate.");
+                //TODO Stay on page and flag errors
+              });
+        } else if (animalDisplayType === "Turtle") {
+          const reference = ref(db, `${animalDisplayType}/documents/` + tableDataVerified[index][0]);
+          update(reference, {
+            Related: localID,
+          })
+              .then(() => {
+                window.alert("Connect Related Successfully");
+                //TODO back to main page
+              })
+              .catch((error) => {
+                window.alert("Failed to relate.");
+                //TODO Stay on page and flag errors
+              });
+        } else if (animalDisplayType === "Bird") {
+          const reference = ref(db, `${animalDisplayType}/documents/` + tableDataVerified[index][0]);
+          update(reference, {
+            Related: localID,
+          })
+              .then(() => {
+                window.alert("Connect Related Successfully");
+              })
+              .catch((error) => {
+                window.alert("Failed to relate.");
+                //TODO Stay on page and flag errors
+              });
+        }
+      }
+    // });
+    });
+  }
+
   const handleVerify = () => {
     newChecked.map((checked, index) => {
       if (checked === true) {
@@ -516,37 +585,7 @@ const StaffPage = ({ navigation }) => {
         });
       }
     });
-  };
 
-  const handleRelated = () => {
-    newChecked.map((checked, index) => {
-      if (checked === true) {
-        const db = getDatabase();
-        const item = tableDataNew[index];
-        const addref = ref(db, `${item[1].AnimalType}/documents/${item[0]}`);
-        set(addref, item[1]);
-        const addCountRef = ref(db, `${item[1].AnimalType}/`);
-        runTransaction(addCountRef, (post) => {
-          if (post) {
-            if (post.count) {
-              post.count++;
-            }
-          }
-          return post;
-        });
-        const removeref = ref(db, `Unverified/documents/${item[0]}`);
-        remove(removeref);
-        const removeCountRef = ref(db, `Unverified/`);
-        runTransaction(removeCountRef, (post) => {
-          if (post) {
-            if (post.count) {
-              post.count--;
-            }
-          }
-          return post;
-        });
-      }
-    });
   };
 
   //console.log(markerData);
@@ -575,78 +614,94 @@ const StaffPage = ({ navigation }) => {
     });
   }
   console.log(newChecked);
+  console.log("related");
+  console.log(relatedChecked);
+
   return (
-    //Can only return 1 view object for Andriod
-    <ScrollView>
-      <View style={styles.container}>
-        {Platform.OS === "web" ? (
-          <Surface style={styles.surface}>
-            <Text style={styles.header}>New Reports</Text>
-            <DataTable>
-              <DataTable.Header>
-                <DataTable.Title></DataTable.Title>
-                <DataTable.Title>Ticket Number</DataTable.Title>
-                <DataTable.Title>Ticket Type</DataTable.Title>
+      //Can only return 1 view object for Andriod
+      <ScrollView>
+        <View style={styles.container}>
+          {Platform.OS === "web" ? (
+              <Surface style={styles.surface}>
+                <Text style={styles.header}>New Reports</Text>
+                <DataTable>
+                  <DataTable.Header>
+                    <DataTable.Title></DataTable.Title>
+                    <DataTable.Title>Ticket Number</DataTable.Title>
+                    <DataTable.Title>Ticket Type</DataTable.Title>
+                    <DataTable.Title style={styles.columns}>Date</DataTable.Title>
+                    <DataTable.Title style={styles.columns}>Time</DataTable.Title>
+                    <DataTable.Title style={styles.columns}>
+                      Location
+                    </DataTable.Title>
+                  </DataTable.Header>
+                  {/* Loop over new reports to make rows */}
 
-                <DataTable.Title style={styles.columns}>Date</DataTable.Title>
-                <DataTable.Title style={styles.columns}>Time</DataTable.Title>
-                <DataTable.Title style={styles.columns}>
-                  Location
-                </DataTable.Title>
-              </DataTable.Header>
-              {/* Loop over new reports to make rows */}
 
-              {tableDataNew.map((element, index) => (
-                <DataTable.Row key={index}>
-                  <DataTable.Cell style={styles.columns} key={index}>
-                    <Checkbox
-                      status={newChecked[index] ? "checked" : "unchecked"}
-                      onPress={() => {
-                        handleNewCheckedChange(index);
-                      }}
-                    ></Checkbox>
-                  </DataTable.Cell>
-                  <DataTable.Cell numeric style={styles.row}>
-                    {element[1].Ticket_Number}
-                  </DataTable.Cell>
-                  <DataTable.Cell style={styles.row}>
-                    {element[1].ticket_type}
-                  </DataTable.Cell>
 
-                  <DataTable.Cell numeric style={styles.row}>
-                    {element[1].Date}
-                  </DataTable.Cell>
-                  <DataTable.Cell numeric style={styles.row}>
-                    {element[1].Time}
-                  </DataTable.Cell>
-                  <DataTable.Cell style={styles.row}>
-                    {element[1].Location}
-                  </DataTable.Cell>
-                </DataTable.Row>
-              ))}
 
-              <DataTable.Pagination
-                page={pageNewTable}
-                numberOfPages={totalPagesNew}
-                onPageChange={(page) => handlePageChangeNew(page)}
-                label={pageNewTable + 1 + "of " + totalPagesNew}
-                // optionsPerPage={optionsPerPage}
-                // itemsPerPage={itemsPerPage}
-                // setItemsPerPage={setItemsPerPage}
-                showFastPagination
-                optionsLabel={"Rows per page"}
-              />
-            </DataTable>
-            <Button
-              mode="contained"
-              onPress={() => handleVerify()}
-              style={styles.Exportbtn}
-            >
-              Verify
-            </Button>
-          </Surface>
-        ) : null}
-        <View />
+
+
+
+
+
+
+
+
+
+                  {tableDataNew.map((element, index) => (
+                      <DataTable.Row key={index} onPress={ () => navigation.navigate(
+                          'ViewNewReport', {table: element[1], animal: animalDisplayType, documentID: element[0], }
+                      )}>
+                        <DataTable.Cell style={styles.row}>
+                        <Checkbox
+                            status={newChecked[index] ? "checked" : "unchecked"}
+                            onPress={() => {
+                              handleNewCheckedChange(index);
+                            }}
+                        ></Checkbox>
+                        </DataTable.Cell>
+                        <DataTable.Cell numeric style={styles.row}>
+                          {element[1].Ticket_Number}
+                        </DataTable.Cell>
+                        <DataTable.Cell style={styles.row}>
+                          {element[1].ticket_type}
+                        </DataTable.Cell>
+
+                        <DataTable.Cell numeric style={styles.row}>
+                          {element[1].Date}
+                        </DataTable.Cell>
+                        <DataTable.Cell numeric style={styles.row}>
+                          {element[1].Time}
+                        </DataTable.Cell>
+                        <DataTable.Cell style={styles.row}>
+                          {element[1].Location}
+                        </DataTable.Cell>
+                      </DataTable.Row>
+                  ))}
+
+                  <DataTable.Pagination
+                      page={pageNewTable}
+                      numberOfPages={totalPagesNew}
+                      onPageChange={(page) => handlePageChangeNew(page)}
+                      label={pageNewTable + 1 + "of " + totalPagesNew}
+                      // optionsPerPage={optionsPerPage}
+                      // itemsPerPage={itemsPerPage}
+                      // setItemsPerPage={setItemsPerPage}
+                      showFastPagination
+                      optionsLabel={"Rows per page"}
+                  />
+                </DataTable>
+                <Button
+                    mode="contained"
+                    onPress={() => handleVerify()}
+                    style={styles.Exportbtn}
+                >
+                  Verify
+                </Button>
+              </Surface>
+          ) : null}
+        <View/>
         <Surface style={styles.surface}>
           <Text style={styles.secondaryheader}>Verified Reports</Text>
           <RadioButton.Group
@@ -679,6 +734,8 @@ const StaffPage = ({ navigation }) => {
                     key={index}
                     title={x}
                     onPress={() => {
+                      setNewChecked(new Array(x).fill(false));
+                      setRelatedChecked(new Array(x).fill(false))
                       frontAnchorKeysNew = [];
                       setItemsPerPage(x);
                       closeItemNumDropdown();
@@ -712,23 +769,16 @@ const StaffPage = ({ navigation }) => {
             {/* Loop over new reports to make rows */}
 
             {tableDataVerified.map((element, index) => (
-              <DataTable.Row
-                key={index}
-                onPress={() =>
-                  navigation.navigate("ViewReport", {
-                    table: element[1],
-                    animal: animalDisplayType,
-                    documentID: element[0],
-                  })
-                }
-              >
-                <DataTable.Cell style={styles.row}>
-                  <Checkbox
-                    status={newChecked[index] ? "checked" : "unchecked"}
-                    onPress={() => {
-                      handleNewCheckedChange(index);
-                    }}
-                  ></Checkbox>
+                <DataTable.Row key={index} onPress={ () => navigation.navigate(
+                    'ViewReport', {table: element[1], animal: animalDisplayType, documentID: element[0], }
+                )}>
+                  <DataTable.Cell style={styles.row}>
+                    <Checkbox
+                        status={relatedChecked[index] ? "checked" : "unchecked"}
+                        onPress={() => {
+                          handleRelatedCheckedChange(index);
+                        }}
+                    ></Checkbox>
                 </DataTable.Cell>
                 <DataTable.Cell numeric style={styles.row}>
                   {element[1].Ticket_Number}

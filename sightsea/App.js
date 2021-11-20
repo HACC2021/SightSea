@@ -8,6 +8,7 @@ import HomeScreen from "./screens/Home";
 import StaffPage from "./screens/Staff Page";
 import StaffLogin from "./screens/StaffLogin";
 import ViewReport from "./screens/Report";
+import ViewNewReport from "./screens/ViewNewReport";
 import { DefaultTheme, Provider as PaperProvider } from "react-native-paper";
 import { getAuth, signOut } from "firebase/auth";
 // Import the functions you need from the SDKs you need
@@ -63,7 +64,7 @@ const theme = {
 const styles = StyleSheet.create({
   button: {
     color: "#3478F6",
-    fontSize: 18,    
+    fontSize: 18,
     borderRadius: 6,
     marginRight: 15,
     padding: 8,
@@ -75,7 +76,7 @@ export default function App() {
     const auth = getAuth();
     signOut(auth)
       .then(() => {
-        console.log("Logged Out")
+        console.log("Logged Out");
         // navigation.navigate("SightSea")
         // Sign-out successful.
       })
@@ -89,72 +90,86 @@ export default function App() {
     <PaperProvider theme={theme}>
       <NavigationContainer>
         {/* set Home as the landing page */}
-        <Stack.Navigator 
-        // screenOptions={{
-        // headerShown: false}} 
-        initialRouteName="SightSea">
-          <Stack.Screen 
-          name="SightSea" 
-          component={HomeScreen}
-          options={({navigation})=>({
-            headerRight:() => (
-              <Text
-                style={styles.button}
-                title="Home"
-                onPress={()=> navigation.navigate("SightSea")}>
-                  Home
-                </Text>
-            )
-            })} />
+        <Stack.Navigator
+          // screenOptions={{
+          // headerShown: false}}
+          initialRouteName="SightSea"
+        >
           <Stack.Screen
-            name="Form"
-            component={SightForm}
-            options={({navigation})=>({
-              headerRight:() => (
+            name="SightSea"
+            component={HomeScreen}
+            options={({ navigation }) => ({
+              headerRight: () => (
                 <Text
                   style={styles.button}
                   title="Home"
-                  onPress={()=> navigation.navigate("SightSea")}>
-                    Home
-                  </Text>
-              )
-              })}
+                  onPress={() => navigation.navigate("SightSea")}
+                >
+                  Home
+                </Text>
+              ),
+            })}
           />
           <Stack.Screen
-              name="ViewReport"
-              component={ViewReport}
+            name="Form"
+            component={SightForm}
+            options={({ navigation }) => ({
+              headerRight: () => (
+                <Text
+                  style={styles.button}
+                  title="Home"
+                  onPress={() => navigation.navigate("SightSea")}
+                >
+                  Home
+                </Text>
+              ),
+            })}
+          />
+          <Stack.Screen name="ViewReport" component={ViewReport} />
+          <Stack.Screen
+              name="ViewNewReport"
+              component={ViewNewReport}
               options={{ headerLeft: null }}
           />
           <Stack.Screen
             name="StaffLogin"
             component={StaffLogin}
-            options={({navigation})=>({
-              headerRight:() => (
+            options={({ navigation }) => ({
+              headerRight: () => (
                 <Text
                   style={styles.button}
                   title="Home"
-                  onPress={()=> navigation.navigate("SightSea")}>
-                    Home
-                  </Text>
-              )
-              })}
+                  onPress={() => navigation.navigate("SightSea")}
+                >
+                  Home
+                </Text>
+              ),
+            })}
           />
           <Stack.Screen
             name="StaffPage"
             component={StaffPage}
-            options={{
+            options={({ navigation }) => ({
               headerLeft: null,
               headerRight: () => (
-                <Text
-                  style={styles.button}
-                  title="Logout"
-                  onPress={handleLogout}
-                >
-                  Logout
-                </Text>
-                
+                <View style={{ flexDirection: "row" }}>
+                  <Text
+                    style={styles.button}
+                    title="Home"
+                    onPress={() => navigation.navigate("SightSea")}
+                  >
+                    Home
+                  </Text>
+                  <Text
+                    style={styles.button}
+                    title="Logout"
+                    onPress={handleLogout}
+                  >
+                    Logout
+                  </Text>
+                </View>
               ),
-            }}
+            })}
           />
         </Stack.Navigator>
       </NavigationContainer>
