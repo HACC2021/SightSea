@@ -574,12 +574,10 @@ const ViewNewReport = ({route, navigation}) => {
   }
 
   const handleVerify = () => {
-    newChecked.map((checked, index) => {
         const db = getDatabase();
-        const item = tableDataNew[index];
-        const addref = ref(db, `${item[1].AnimalType}/documents/${item[0]}`);
-        set(addref, item[1]);
-        const addCountRef = ref(db, `${item[1].AnimalType}/`);
+        const addref = ref(db, `${animal}/documents/${documentID}`);
+        set(addref, table);
+        const addCountRef = ref(db, `${animal}/`);
         runTransaction(addCountRef, (post) => {
           if (post) {
             if (post.count) {
@@ -588,7 +586,7 @@ const ViewNewReport = ({route, navigation}) => {
           }
           return post;
         });
-        const removeref = ref(db, `Unverified/documents/${item[0]}`);
+        const removeref = ref(db, `Unverified/documents/${documentID}`);
         remove(removeref);
         const removeCountRef = ref(db, `Unverified/`);
         runTransaction(removeCountRef, (post) => {
@@ -599,7 +597,6 @@ const ViewNewReport = ({route, navigation}) => {
           }
           return post;
         });
-    });
 
   };
 
