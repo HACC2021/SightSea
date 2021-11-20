@@ -343,15 +343,20 @@ const ViewReport = ({route, navigation}) => {
       setTotalPagesNew(Math.ceil(Number(snapshot.val()) / itemsPerPage));
     });
     var docCounter = 0;
+    console.log("Test" + table.Related);
     if (table.Related != "") {
-
+      const reference =
+          query(
+              ref(db, `${animal}/documents`),
+              orderByChild('Related'),
+              equalTo(table.Related),
+          )
+          onValue(reference, (snapshot) => {
+            snapshot.val() === null
+                ? setTableDataNew([])
+                : setTableDataNew(Object.entries(snapshot.val()));
+          });
     }
-    const reference =
-        query(
-            ref(db, `${animal}/documents`),
-            orderByChild('Related'),
-            equalTo(table.Related),
-        )
     //     direction === "switch"
     //         ? query(
     //         ref(db, `${animal}/documents`),
@@ -387,11 +392,6 @@ const ViewReport = ({route, navigation}) => {
     //     frontAnchorKeysNew.pop();
     //   }
     // });
-      onValue(reference, (snapshot) => {
-        snapshot.val() === null
-            ? setTableDataNew([])
-            : setTableDataNew(Object.entries(snapshot.val()));
-      });
   };
 
   const handlePageChange = (page, callback) => {
