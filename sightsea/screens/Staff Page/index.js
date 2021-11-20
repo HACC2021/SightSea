@@ -287,7 +287,7 @@ const StaffPage = ({ navigation }) => {
         style={{ height: "100vh", width: "100%" }}
         defaultZoom={zoom}
         defaultCenter={center}
-        //   bootstrapURLKeys={{ key: "AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0" }}
+        bootstrapURLKeys={{ key: "AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0" }}
       >
         {markerOldData.map((item, index) => {
           return (
@@ -450,7 +450,7 @@ const StaffPage = ({ navigation }) => {
     });
 
     //convert GPS coordinate to postal address and update marker array
-    //convertToAddress(markers);
+    convertToAddress(markers);
     //pass the GPS coordinate object to the MarkerData array
     markerData = markers;
     setMarkerDataState(markerData);
