@@ -91,7 +91,7 @@ const SightForm = ({ navigation }) => {
   // In or out of water dropdown
   const beachLocationList = ["Water", "Land"];
   const [beachLocationText, setBeachLocationText] = React.useState(
-    beachLocationList[0]
+      beachLocationList[0]
   );
   const [showLocationDropDown, setLocationDropDown] = React.useState(false);
   var beachLocation = "Water";
@@ -136,7 +136,7 @@ const SightForm = ({ navigation }) => {
   //Turtle Alive Drop Down
   const turtleStatusList = ["Alive", "Deceased", "Unknown"];
   const [turtleStatusText, setTurtleStatusText] = React.useState(
-    turtleStatusList[0]
+      turtleStatusList[0]
   );
   const [showTurtleStatus, setTurtleStatusDropDown] = React.useState(false);
   var turtleStatus = "Alive";
@@ -261,9 +261,9 @@ const SightForm = ({ navigation }) => {
     }
 
     return (
-      <View onClick={onItemClick}>
-        <List.Item title={title} onPress={() => onItemClick()}></List.Item>
-      </View>
+        <View onClick={onItemClick}>
+          <List.Item title={title} onPress={() => onItemClick()}></List.Item>
+        </View>
     );
   }
 
@@ -288,7 +288,7 @@ const SightForm = ({ navigation }) => {
     (async () => {
       if (Platform.OS !== "web") {
         const { status } =
-          await ImagePicker.requestMediaLibraryPermissionsAsync();
+            await ImagePicker.requestMediaLibraryPermissionsAsync();
         if (status !== "granted") {
           alert("Sorry, we need camera roll permissions to make this work!");
         }
@@ -450,7 +450,7 @@ const SightForm = ({ navigation }) => {
 
   function addDoc() {
     console.log(
-      "Seal_Present: " +
+        "Seal_Present: " +
         presentText +
         " Size:  " +
         sizeText +
@@ -525,23 +525,23 @@ const SightForm = ({ navigation }) => {
         Verified: "",
         Image: image,
       })
-        .then(() => {
-          window.alert("Report Submitted Successfully!");
-          sendEmail(
-            "felixclyde@gmail.com",
-            "New Report, Staff action required!!!",
-            `New report! See ticket number: ${
-              "XX" + "" + currentday + "" + currenttime
-            }`
-          ).then(() => {
-            console.log("Email sent!");
+          .then(() => {
+            window.alert("Report Submitted Successfully!");
+            sendEmail(
+                "felixclyde@gmail.com",
+                "New Report, Staff action required!!!",
+                `New report! See ticket number: ${
+                    "XX" + "" + currentday + "" + currenttime
+                }`
+            ).then(() => {
+              console.log("Email sent!");
+            });
+            navigation.navigate("SightSea");
+          })
+          .catch((error) => {
+            window.alert("Report Failed to submit.");
+            //Should stay on page while throwing error
           });
-          navigation.navigate("SightSea");
-        })
-        .catch((error) => {
-          window.alert("Report Failed to submit.");
-          //Should stay on page while throwing error
-        });
 
       //&& Object.keys(coordinate).length > 0
     } else if (animalDB === "Turtle" && Object.keys(coordinate).length > 0) {
@@ -583,25 +583,25 @@ const SightForm = ({ navigation }) => {
         Verified: "",
         Image: image,
       })
-        .then(() => {
-          window.alert("Report Submitted Successfully!");
-          beach = "";
-          console.log(coordinate);
-          sendEmail(
-            "felixclyde@gmail.com",
-            "New Report, Staff action required!!!",
-            `New report! See ticket number: ${
-              "XX" + "" + currentday + "" + currenttime
-            }`
-          ).then(() => {
-            console.log("Email sent!");
+          .then(() => {
+            window.alert("Report Submitted Successfully!");
+            beach = "";
+            console.log(coordinate);
+            sendEmail(
+                "felixclyde@gmail.com",
+                "New Report, Staff action required!!!",
+                `New report! See ticket number: ${
+                    "XX" + "" + currentday + "" + currenttime
+                }`
+            ).then(() => {
+              console.log("Email sent!");
+            });
+            navigation.navigate("SightSea");
+          })
+          .catch((error) => {
+            window.alert("Report Failed to submit.");
+            //Should stay on page while throwing error
           });
-          navigation.navigate("SightSea");
-        })
-        .catch((error) => {
-          window.alert("Report Failed to submit.");
-          //Should stay on page while throwing error
-        });
       //&& Object.keys(coordinate).length > 0
     } else if (animalDB === "Bird" && Object.keys(coordinate).length > 0) {
       //For Bird Docs
@@ -635,23 +635,23 @@ const SightForm = ({ navigation }) => {
         Verified: "",
         Image: image,
       })
-        .then(() => {
-          window.alert("Report Submitted Successfully!");
-          sendEmail(
-            "felixclyde@gmail.com",
-            "New Report, Staff action required!!!",
-            `New report! See ticket number: ${
-              "XX" + "" + currentday + "" + currenttime
-            }`
-          ).then(() => {
-            console.log("Email sent!");
+          .then(() => {
+            window.alert("Report Submitted Successfully!");
+            sendEmail(
+                "felixclyde@gmail.com",
+                "New Report, Staff action required!!!",
+                `New report! See ticket number: ${
+                    "XX" + "" + currentday + "" + currenttime
+                }`
+            ).then(() => {
+              console.log("Email sent!");
+            });
+            navigation.navigate("SightSea");
+          })
+          .catch((error) => {
+            window.alert("Report Failed to submit.");
+            //Should stay on page while throwing error
           });
-          navigation.navigate("SightSea");
-        })
-        .catch((error) => {
-          window.alert("Report Failed to submit.");
-          //Should stay on page while throwing error
-        });
     }
 
     //TODO Count not updating when at 0
@@ -668,387 +668,387 @@ const SightForm = ({ navigation }) => {
   }
 
   return (
-    <View style={styles.container}>
-      <ScrollView>
-        <View style={styles.form}>
-          <Headline>Report a Sighting</Headline>
-          <Subheading style={{ textAlign: "center", padding: 3 }}>
-            Fill out the form below to submit a sighting and our staffs will
-            review the submitted form shortly.
-          </Subheading>
-          <View>
-            <List.Section title="Animal Type">
-              <List.Accordion
-                title={animalType}
-                expanded={showAnimalDropDown}
-                onPress={closeAnimalDropdown}
-              >
-                <List.Item
-                  title="Turtle"
-                  onPress={function () {
-                    setAnimalType("Turtle");
-                    closeAnimalDropdown();
-                  }}
-                />
-                <List.Item
-                  title="Seal"
-                  onPress={function () {
-                    setAnimalType("Seal");
-                    closeAnimalDropdown();
-                  }}
-                />
-                <List.Item
-                  title="Bird"
-                  onPress={function () {
-                    setAnimalType("Bird");
-                    closeAnimalDropdown();
-                  }}
-                />
-              </List.Accordion>
-            </List.Section>
+      <View style={styles.container}>
+        <ScrollView>
+          <View style={styles.form}>
+            <Headline>Report a Sighting</Headline>
+            <Subheading style={{ textAlign: "center", padding: 3 }}>
+              Fill out the form below to submit a sighting and our staffs will
+              review the submitted form shortly.
+            </Subheading>
+            <View>
+              <List.Section title="Animal Type">
+                <List.Accordion
+                    title={animalType}
+                    expanded={showAnimalDropDown}
+                    onPress={closeAnimalDropdown}
+                >
+                  <List.Item
+                      title="Turtle"
+                      onPress={function () {
+                        setAnimalType("Turtle");
+                        closeAnimalDropdown();
+                      }}
+                  />
+                  <List.Item
+                      title="Seal"
+                      onPress={function () {
+                        setAnimalType("Seal");
+                        closeAnimalDropdown();
+                      }}
+                  />
+                  <List.Item
+                      title="Bird"
+                      onPress={function () {
+                        setAnimalType("Bird");
+                        closeAnimalDropdown();
+                      }}
+                  />
+                </List.Accordion>
+              </List.Section>
 
-            {/* Using as the list of Seal questions */}
+              {/* Using as the list of Seal questions */}
 
-            {animalType === "Seal" ? (
-              <View>
-                <TextInput
-                  style={styles.input}
-                  onChangeText={setName}
-                  value={name}
-                  mode="outlined"
-                  textContentType="name"
-                  label="Enter First Name"
-                />
-
-                {/*<HelperText type="error" visible= {true}>*/}
-                {/*  This should display when there is an error.*/}
-                {/*</HelperText>*/}
-
-                <TextInput
-                  style={styles.input}
-                  onChangeText={setPhoneNum}
-                  mode="outlined"
-                  keyboardType="decimal-pad"
-                  label="Phone number"
-                />
-
-                {/* Beach Drop Down */}
-                {!allowLocation && (
-                  <List.Section title="Where is the Seal located?">
-                    <List.Accordion
-                      title={beachText}
-                      expanded={showBeachDropDown}
-                      onPress={closeBeachDropdown}
-                    >
-                      {beachList.map((item, index) => {
-                        return (
-                          <ListItem
-                            key={index}
-                            title={item}
-                            item={item}
-                            value={beach}
-                            onChange={setBeachText}
-                            close={closeBeachDropdown}
-                          />
-                        );
-                      })}
-                    </List.Accordion>
-                  </List.Section>
-                )}
-
-                {/*Values of 1 for land and 0 for water */}
-                <List.Section title="Is the seal in the water or on land?">
-                  <List.Accordion
-                    title={beachLocationText}
-                    expanded={showLocationDropDown}
-                    onPress={closeLocationDropdown}
-                  >
-                    {beachLocationList.map((item, index) => {
-                      return (
-                        <ListItem
-                          key={index}
-                          title={item}
-                          item={item}
-                          value={beachLocation}
-                          onChange={setBeachLocationText}
-                          close={closeLocationDropdown}
-                        />
-                      );
-                    })}
-                  </List.Accordion>
-                </List.Section>
-
-                {/* Drop down for if the seal is still present or not*/}
-                <List.Section title="Is the Seal still present?">
-                  <List.Accordion
-                    title={presentText}
-                    expanded={showPresentDropDown}
-                    onPress={closePresentDropdown}
-                  >
-                    {presentList.map((item, index) => {
-                      return (
-                        <ListItem
-                          key={index}
-                          title={item}
-                          item={item}
-                          value={present}
-                          onChange={setPresentText}
-                          close={closePresentDropdown}
-                        />
-                      );
-                    })}
-                  </List.Accordion>
-                </List.Section>
-
-                {/*Make a drop down with Pup, Weaner, Juvenile, subAudult, Adult, Uknown*/}
-                <List.Section title="How big is the Seal?">
-                  <List.Accordion
-                    title={sizeText}
-                    expanded={showSizeDropDown}
-                    onPress={closeSizeDropdown}
-                  >
-                    {sizeList.map((item, index) => {
-                      return (
-                        <ListItem
-                          key={index}
-                          title={item}
-                          item={item}
-                          value={size}
-                          onChange={setSizeText}
-                          close={closeSizeDropdown}
-                        />
-                      );
-                    })}
-                  </List.Accordion>
-                </List.Section>
-
-                {/*Make a drop down with male,female or unknown*/}
-                <List.Section title="Is the Seal Male or Female?">
-                  <List.Accordion
-                    title={sexText}
-                    expanded={showSexDropDown}
-                    onPress={closeSexDropdown}
-                  >
-                    {sexList.map((item, index) => {
-                      return (
-                        <ListItem
-                          key={index}
-                          title={item}
-                          item={item}
-                          value={sex}
-                          onChange={setSexText}
-                          close={closeSexDropdown}
-                        />
-                      );
-                    })}
-                  </List.Accordion>
-                </List.Section>
-              </View>
-            ) : (
-              <View>
-                {/* Questions for turtles and Birds*/}
-                <TextInput
-                  style={styles.input}
-                  onChangeText={setName}
-                  value={name}
-                  mode="outlined"
-                  textContentType="name"
-                  label="Enter First Name"
-                />
-                <TextInput
-                  style={styles.input}
-                  onChangeText={setPhoneNum}
-                  mode="outlined"
-                  keyboardType="decimal-pad"
-                  label="Phone number"
-                />
-
-                {/*Turtle Specific Questions */}
-                {animalType === "Turtle" ? (
+              {animalType === "Seal" ? (
                   <View>
-                    {/*Island Drop Down */}
-                    <List.Section title="Which Island are you Located on?">
-                      <List.Accordion
-                        title={islandText}
-                        expanded={showIslandDropDown}
-                        onPress={closeIslandDropdown}
-                      >
-                        {islandList.map((item, index) => {
-                          return (
-                            <ListItem
-                              key={index}
-                              title={item}
-                              item={item}
-                              value={island}
-                              onChange={setIslandText}
-                              close={closeIslandDropdown}
-                            />
-                          );
-                        })}
-                      </List.Accordion>
-                    </List.Section>
-
-                    {/* Beach Drop Down */}
-                    {!allowLocation && (
-                      <List.Section title="Where is the Turtle located?">
-                        <List.Accordion
-                          title={beachText}
-                          expanded={showBeachDropDown}
-                          onPress={closeBeachDropdown}
-                        >
-                          {beachList.map((item, index) => {
-                            return (
-                              <ListItem
-                                key={index}
-                                title={item}
-                                item={item}
-                                value={beach}
-                                onChange={setBeachText}
-                                close={closeBeachDropdown}
-                              />
-                            );
-                          })}
-                        </List.Accordion>
-                      </List.Section>
-                    )}
-
-                    {/*Type of Turtle Drop Down */}
-                    <List.Section title="What type of Turtle is it?">
-                      <List.Accordion
-                        title={turtleText}
-                        expanded={showTurtuleDropDown}
-                        onPress={closeTurtleDropdown}
-                      >
-                        {turtleList.map((item, index) => {
-                          return (
-                            <ListItem
-                              key={index}
-                              title={item}
-                              item={item}
-                              value={turtle}
-                              onChange={setTurtleText}
-                              close={closeTurtleDropdown}
-                            />
-                          );
-                        })}
-                      </List.Accordion>
-                    </List.Section>
-
                     <TextInput
-                      style={styles.input}
-                      mode="outlined"
-                      label="How big is the Turtle?"
-                      onChangeText={setTurtleSize}
+                        style={styles.input}
+                        onChangeText={setName}
+                        value={name}
+                        mode="outlined"
+                        textContentType="name"
+                        label="Enter First Name"
                     />
 
-                    {/* Alive or Dead Drop Down */}
-                    <List.Section title="Is the Turtle Alive?">
-                      <List.Accordion
-                        title={turtleStatusText}
-                        expanded={showTurtleStatus}
-                        onPress={closeTurtleStatusDropdown}
-                      >
-                        {turtleStatusList.map((item, index) => {
-                          return (
-                            <ListItem
-                              key={index}
-                              title={item}
-                              item={item}
-                              value={turtleStatus}
-                              onChange={setTurtleStatusText}
-                              close={closeTurtleStatusDropdown}
-                            />
-                          );
-                        })}
-                      </List.Accordion>
-                    </List.Section>
-                  </View>
-                ) : (
-                  <View>
-                    {/* Bird Specific Questions*/}
+                    {/*<HelperText type="error" visible= {true}>*/}
+                    {/*  This should display when there is an error.*/}
+                    {/*</HelperText>*/}
+
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={setPhoneNum}
+                        mode="outlined"
+                        keyboardType="decimal-pad"
+                        label="Phone number"
+                    />
 
                     {/* Beach Drop Down */}
                     {!allowLocation && (
-                      <List.Section title="Where is the Bird located?">
-                        <List.Accordion
-                          title={beachText}
-                          expanded={showBeachDropDown}
-                          onPress={closeBeachDropdown}
-                        >
-                          {beachList.map((item, index) => {
-                            return (
-                              <ListItem
-                                key={index}
-                                title={item}
-                                item={item}
-                                value={beach}
-                                onChange={setBeachText}
-                                close={closeBeachDropdown}
-                              />
-                            );
-                          })}
-                        </List.Accordion>
-                      </List.Section>
+                        <List.Section title="Where is the Seal located?">
+                          <List.Accordion
+                              title={beachText}
+                              expanded={showBeachDropDown}
+                              onPress={closeBeachDropdown}
+                          >
+                            {beachList.map((item, index) => {
+                              return (
+                                  <ListItem
+                                      key={index}
+                                      title={item}
+                                      item={item}
+                                      value={beach}
+                                      onChange={setBeachText}
+                                      close={closeBeachDropdown}
+                                  />
+                              );
+                            })}
+                          </List.Accordion>
+                        </List.Section>
                     )}
 
-                    {/* Drop Down for Bird Type */}
-                    {/* TODO Break out the Same types after they select the generic Type into seperate drop downs */}
-                    <List.Section title="What type of Bird is it?">
+                    {/*Values of 1 for land and 0 for water */}
+                    <List.Section title="Is the seal in the water or on land?">
                       <List.Accordion
-                        title={birdTypeText}
-                        expanded={showBirdType}
-                        onPress={closeBirdTypeDropdown}
+                          title={beachLocationText}
+                          expanded={showLocationDropDown}
+                          onPress={closeLocationDropdown}
                       >
-                        {birdTypeList.map((item, index) => {
+                        {beachLocationList.map((item, index) => {
                           return (
-                            <ListItem
-                              key={index}
-                              title={item.name} //full name
-                              item={item.initial} //letter symbols
-                              value={birdType}
-                              onChange={setBirdTypeText}
-                              close={closeBirdTypeDropdown}
-                            />
+                              <ListItem
+                                  key={index}
+                                  title={item}
+                                  item={item}
+                                  value={beachLocation}
+                                  onChange={setBeachLocationText}
+                                  close={closeLocationDropdown}
+                              />
+                          );
+                        })}
+                      </List.Accordion>
+                    </List.Section>
+
+                    {/* Drop down for if the seal is still present or not*/}
+                    <List.Section title="Is the Seal still present?">
+                      <List.Accordion
+                          title={presentText}
+                          expanded={showPresentDropDown}
+                          onPress={closePresentDropdown}
+                      >
+                        {presentList.map((item, index) => {
+                          return (
+                              <ListItem
+                                  key={index}
+                                  title={item}
+                                  item={item}
+                                  value={present}
+                                  onChange={setPresentText}
+                                  close={closePresentDropdown}
+                              />
+                          );
+                        })}
+                      </List.Accordion>
+                    </List.Section>
+
+                    {/*Make a drop down with Pup, Weaner, Juvenile, subAudult, Adult, Uknown*/}
+                    <List.Section title="How big is the Seal?">
+                      <List.Accordion
+                          title={sizeText}
+                          expanded={showSizeDropDown}
+                          onPress={closeSizeDropdown}
+                      >
+                        {sizeList.map((item, index) => {
+                          return (
+                              <ListItem
+                                  key={index}
+                                  title={item}
+                                  item={item}
+                                  value={size}
+                                  onChange={setSizeText}
+                                  close={closeSizeDropdown}
+                              />
+                          );
+                        })}
+                      </List.Accordion>
+                    </List.Section>
+
+                    {/*Make a drop down with male,female or unknown*/}
+                    <List.Section title="Is the Seal Male or Female?">
+                      <List.Accordion
+                          title={sexText}
+                          expanded={showSexDropDown}
+                          onPress={closeSexDropdown}
+                      >
+                        {sexList.map((item, index) => {
+                          return (
+                              <ListItem
+                                  key={index}
+                                  title={item}
+                                  item={item}
+                                  value={sex}
+                                  onChange={setSexText}
+                                  close={closeSexDropdown}
+                              />
                           );
                         })}
                       </List.Accordion>
                     </List.Section>
                   </View>
-                )}
+              ) : (
+                  <View>
+                    {/* Questions for turtles and Birds*/}
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={setName}
+                        value={name}
+                        mode="outlined"
+                        textContentType="name"
+                        label="Enter First Name"
+                    />
+                    <TextInput
+                        style={styles.input}
+                        onChangeText={setPhoneNum}
+                        mode="outlined"
+                        keyboardType="decimal-pad"
+                        label="Phone number"
+                    />
 
-                {/* Catch All For all three Types */}
-              </View>
-            )}
+                    {/*Turtle Specific Questions */}
+                    {animalType === "Turtle" ? (
+                        <View>
+                          {/*Island Drop Down */}
+                          <List.Section title="Which Island are you Located on?">
+                            <List.Accordion
+                                title={islandText}
+                                expanded={showIslandDropDown}
+                                onPress={closeIslandDropdown}
+                            >
+                              {islandList.map((item, index) => {
+                                return (
+                                    <ListItem
+                                        key={index}
+                                        title={item}
+                                        item={item}
+                                        value={island}
+                                        onChange={setIslandText}
+                                        close={closeIslandDropdown}
+                                    />
+                                );
+                              })}
+                            </List.Accordion>
+                          </List.Section>
 
-            {Platform.OS !== "web" ? (
-              <View>
-                {/*Only display the camera button on moblie */}
-                <Button
+                          {/* Beach Drop Down */}
+                          {!allowLocation && (
+                              <List.Section title="Where is the Turtle located?">
+                                <List.Accordion
+                                    title={beachText}
+                                    expanded={showBeachDropDown}
+                                    onPress={closeBeachDropdown}
+                                >
+                                  {beachList.map((item, index) => {
+                                    return (
+                                        <ListItem
+                                            key={index}
+                                            title={item}
+                                            item={item}
+                                            value={beach}
+                                            onChange={setBeachText}
+                                            close={closeBeachDropdown}
+                                        />
+                                    );
+                                  })}
+                                </List.Accordion>
+                              </List.Section>
+                          )}
+
+                          {/*Type of Turtle Drop Down */}
+                          <List.Section title="What type of Turtle is it?">
+                            <List.Accordion
+                                title={turtleText}
+                                expanded={showTurtuleDropDown}
+                                onPress={closeTurtleDropdown}
+                            >
+                              {turtleList.map((item, index) => {
+                                return (
+                                    <ListItem
+                                        key={index}
+                                        title={item}
+                                        item={item}
+                                        value={turtle}
+                                        onChange={setTurtleText}
+                                        close={closeTurtleDropdown}
+                                    />
+                                );
+                              })}
+                            </List.Accordion>
+                          </List.Section>
+
+                          <TextInput
+                              style={styles.input}
+                              mode="outlined"
+                              label="How big is the Turtle?"
+                              onChangeText={setTurtleSize}
+                          />
+
+                          {/* Alive or Dead Drop Down */}
+                          <List.Section title="Is the Turtle Alive?">
+                            <List.Accordion
+                                title={turtleStatusText}
+                                expanded={showTurtleStatus}
+                                onPress={closeTurtleStatusDropdown}
+                            >
+                              {turtleStatusList.map((item, index) => {
+                                return (
+                                    <ListItem
+                                        key={index}
+                                        title={item}
+                                        item={item}
+                                        value={turtleStatus}
+                                        onChange={setTurtleStatusText}
+                                        close={closeTurtleStatusDropdown}
+                                    />
+                                );
+                              })}
+                            </List.Accordion>
+                          </List.Section>
+                        </View>
+                    ) : (
+                        <View>
+                          {/* Bird Specific Questions*/}
+
+                          {/* Beach Drop Down */}
+                          {!allowLocation && (
+                              <List.Section title="Where is the Bird located?">
+                                <List.Accordion
+                                    title={beachText}
+                                    expanded={showBeachDropDown}
+                                    onPress={closeBeachDropdown}
+                                >
+                                  {beachList.map((item, index) => {
+                                    return (
+                                        <ListItem
+                                            key={index}
+                                            title={item}
+                                            item={item}
+                                            value={beach}
+                                            onChange={setBeachText}
+                                            close={closeBeachDropdown}
+                                        />
+                                    );
+                                  })}
+                                </List.Accordion>
+                              </List.Section>
+                          )}
+
+                          {/* Drop Down for Bird Type */}
+                          {/* TODO Break out the Same types after they select the generic Type into seperate drop downs */}
+                          <List.Section title="What type of Bird is it?">
+                            <List.Accordion
+                                title={birdTypeText}
+                                expanded={showBirdType}
+                                onPress={closeBirdTypeDropdown}
+                            >
+                              {birdTypeList.map((item, index) => {
+                                return (
+                                    <ListItem
+                                        key={index}
+                                        title={item.name} //full name
+                                        item={item.initial} //letter symbols
+                                        value={birdType}
+                                        onChange={setBirdTypeText}
+                                        close={closeBirdTypeDropdown}
+                                    />
+                                );
+                              })}
+                            </List.Accordion>
+                          </List.Section>
+                        </View>
+                    )}
+
+                    {/* Catch All For all three Types */}
+                  </View>
+              )}
+
+              {Platform.OS !== "web" ? (
+                  <View>
+                    {/*Only display the camera button on moblie */}
+                    <Button
+                        stlye={styles.btn}
+                        mode="contained"
+                        onPress={() => handleCameraSelection()}
+                    >
+                      Take an Image
+                    </Button>
+                  </View>
+              ) : (
+                  <View>{/* Don't Return anything*/}</View>
+              )}
+
+              <Button
                   stlye={styles.btn}
                   mode="contained"
-                  onPress={() => handleCameraSelection()}
-                >
-                  Take an Image
-                </Button>
-              </View>
-            ) : (
-              <View>{/* Don't Return anything*/}</View>
-            )}
-
-            <Button
-              stlye={styles.btn}
-              mode="contained"
-              onPress={() => handleImageSelection()}
-            >
-              Choose an Image
+                  onPress={() => handleImageSelection()}
+              >
+                Choose an Image
+              </Button>
+            </View>
+            <Button style={styles.btn} mode="contained" onPress={() => addDoc()}>
+              Submit
             </Button>
           </View>
-          <Button style={styles.btn} mode="contained" onPress={() => addDoc()}>
-            Submit
-          </Button>
-        </View>
-      </ScrollView>
-    </View>
+        </ScrollView>
+      </View>
   );
 };
 
