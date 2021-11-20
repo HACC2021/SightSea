@@ -488,6 +488,7 @@ const ViewReport = ({route, navigation}) => {
         Time: time,
         Verified: Verified,
         ticket_type: TicketType,
+        Related: table.Related,
       })
           .then(() => {
             window.alert("Report Submitted Successfully!");
@@ -531,6 +532,7 @@ const ViewReport = ({route, navigation}) => {
         Type_of_Turtle: Type_of_Turtle,
         Verified: Verified,
         ticket_type: TicketType,
+        Related: table.Related,
       })
           .then(() => {
             window.alert("Report Submitted Successfully!");
@@ -567,6 +569,7 @@ const ViewReport = ({route, navigation}) => {
         Verified: Verified,
         Where_to: WhereTo,
         ticket_type: TicketType,
+        Related: table.Related,
       })
           .then(() => {
             window.alert("Report Submitted Successfully!");
