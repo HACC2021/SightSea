@@ -175,6 +175,9 @@ const StaffPage = ({ navigation }) => {
   const [newChecked, setNewChecked] = React.useState(
       new Array(optionsPerPage[0]).fill(false)
   );
+  const [relatedChecked, setRelatedChecked] = React.useState(
+      new Array(optionsPerPage[0]).fill(false)
+  );
   const [showItemNumDropdown, setShowItemNumDropdown] = React.useState(false);
 
   const closeItemNumDropdown = () => {
@@ -440,40 +443,79 @@ const StaffPage = ({ navigation }) => {
     setNewChecked(newState);
   };
 
-  const handleVerify = () => {
-    newChecked.map((checked, index) => {
-      if (checked === true) {
-        const db = getDatabase();
-        const item = tableDataNew[index];
-        const addref = ref(db, `${item[1].AnimalType}/documents/${item[0]}`);
-        set(addref, item[1]);
-        const addCountRef = ref(db, `${item[1].AnimalType}/`);
-        runTransaction(addCountRef, (post) => {
-          if (post) {
-            if (post.count) {
-              post.count++;
-            }
-          }
-          return post;
-        });
-        const removeref = ref(db, `Unverified/documents/${item[0]}`);
-        remove(removeref);
-        const removeCountRef = ref(db, `Unverified/`);
-        runTransaction(removeCountRef, (post) => {
-          if (post) {
-            if (post.count) {
-              post.count--;
-            }
-          }
-          return post;
-        });
-      }
+  // copy for related
+  const handleRelatedCheckedChange = (position) => {
+    console.log(position);
+    const newState = new Array(itemsPerPage);
+    relatedChecked.map((x, index) => {
+      console.log(x);
+      newState[index] = index === position ? !x : x;
     });
+    setRelatedChecked(newState);
+  };
+
+  //Generate random ID for related values
+  const generateRelatedID = () => {
+    const relatedID = Math.floor(Math.random() * 100000).toString();
+    //TODO need to pull the database to see if the random id exists before return
+    return relatedID;
   };
 
   const handleRelated = () => {
+    relatedChecked.map((checked, index) => {
+      if (checked === true) {
+        console.log("test");
+        var localRelatedID = generateRelatedID();
+        console.log(localRelatedID);
+        const db = getDatabase();
+        if (animal === "Seal") {
+          const reference = ref(db, `${animal}/documents/` + documentID);
+          update(reference, {
+            Related: localRelatedID,
+          })
+              .then(() => {
+                window.alert("Connect Related Successfully");
+                //TODO back to main page
+              })
+              .catch((error) => {
+                window.alert("Failed to relate.");
+                //TODO Stay on page and flag errors
+              });
+        } else if (animal === "Turtle") {
+          const reference = ref(db, `${animal}/documents/` + documentID);
+          update(reference, {
+            Related: localRelatedID,
+          })
+              .then(() => {
+                window.alert("Connect Related Successfully");
+                //TODO back to main page
+              })
+              .catch((error) => {
+                window.alert("Failed to relate.");
+                //TODO Stay on page and flag errors
+              });
+        } else if (animal === "Bird") {
+          const reference = ref(db, `${animal}/documents/` + documentID);
+          update(reference, {
+            Related: localRelatedID,
+          })
+              .then(() => {
+                window.alert("Connect Related Successfully");
+                //TODO back to main page
+              })
+              .catch((error) => {
+                window.alert("Failed to relate.");
+                //TODO Stay on page and flag errors
+              });
+        }
+      }
+    });
+  }
+
+  const handleVerify = () => {
     newChecked.map((checked, index) => {
       if (checked === true) {
+        console.log("test");
         const db = getDatabase();
         const item = tableDataNew[index];
         const addref = ref(db, `${item[1].AnimalType}/documents/${item[0]}`);
@@ -500,6 +542,7 @@ const StaffPage = ({ navigation }) => {
         });
       }
     });
+
   };
 
   //console.log(markerData);
@@ -528,6 +571,9 @@ const StaffPage = ({ navigation }) => {
     });
   }
   console.log(newChecked);
+  console.log("related");
+  console.log(relatedChecked);
+
   return (
       //Can only return 1 view object for Andriod
       <ScrollView>
@@ -671,9 +717,9 @@ const StaffPage = ({ navigation }) => {
                       'ViewReport', {table: element[1], animal: animalDisplayType, documentID: element[0], }
                   )}>
                     <Checkbox
-                        status={newChecked[index] ? "checked" : "unchecked"}
+                        status={relatedChecked[index] ? "checked" : "unchecked"}
                         onPress={() => {
-                          handleNewCheckedChange(index);
+                          handleRelatedCheckedChange(index);
                         }}
                     ></Checkbox>
                     <DataTable.Cell style={styles.columns} key={index}>

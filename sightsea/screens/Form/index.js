@@ -492,6 +492,7 @@ const SightForm = ({ navigation }) => {
         Other_Notes: "",
         Verified: "",
         Image: image,
+        Related: "",
       })
           .then(() => {
             window.alert("Report Submitted Successfully!");
@@ -548,6 +549,7 @@ const SightForm = ({ navigation }) => {
           Other_Notes: "",
           Verified: "",
           Image: image,
+          Related: "",
         })
             .then(() => {
               window.alert("Report Submitted Successfully!");
@@ -598,6 +600,7 @@ const SightForm = ({ navigation }) => {
             Other_Notes: "",
             Verified: "",
             Image: image,
+            Related: "",
           })
               .then(() => {
                 window.alert("Report Submitted Successfully!");
