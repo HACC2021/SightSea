@@ -167,20 +167,23 @@ const StaffPage = ({ navigation }) => {
   const [pageVerifiedTable, setPageVerifiedTable] = React.useState(0);
   const [tableDataVerified, setTableDataVerified] = React.useState([]);
   const [tableDataNew, setTableDataNew] = React.useState([]);
-  const [markerData, setMarkerData] = React.useState([]);
+  const [markerDataState, setMarkerDataState] = React.useState([]);
   const [animalDisplayType, setAnimalDisplayType] = React.useState("Bird");
   const [backAnchorKeyVerified, setBackAnchorKeyVerified] =
-      React.useState(null);
+    React.useState(null);
   const [backAnchorKeyNew, setBackAnchorKeyNew] = React.useState(null);
   const [search, setSearch] = React.useState(false);
   const [newChecked, setNewChecked] = React.useState(
-      new Array(optionsPerPage[0]).fill(false)
+    new Array(optionsPerPage[0]).fill(false)
   );
   const [showItemNumDropdown, setShowItemNumDropdown] = React.useState(false);
 
   const closeItemNumDropdown = () => {
     setShowItemNumDropdown(!showItemNumDropdown);
   };
+
+  var markerOldData = [];
+  var markerData = [];
 
   React.useEffect(() => {
     const auth = getAuth();
@@ -194,7 +197,7 @@ const StaffPage = ({ navigation }) => {
     //setPageVerifiedTable(0);
     getNewDocs("switch");
     getDocs(animalDisplayType, "switch");
-  }, [itemsPerPage]);
+  }, [itemsPerPage, shouldComponentUpdate(markerOldData, markerDataState)]);
 
   // ##########adding Firebase query ##########
   // Firebase data query
@@ -223,7 +226,7 @@ const StaffPage = ({ navigation }) => {
   ];
 
   const markerURL =
-      "http://icons.iconarchive.com/icons/paomedia/small-n-flat/256/map-marker-icon.png";
+    "http://icons.iconarchive.com/icons/paomedia/small-n-flat/256/map-marker-icon.png";
   const [checked, setChecked] = React.useState(false);
 
   const mapProps = {
@@ -241,19 +244,19 @@ const StaffPage = ({ navigation }) => {
       show = false;
     }
     return (
-        <div>
-          {show && (
-              <Card style={styles.Box}>
-                <Paragraph onPress={setShow(show)} style={styles.cancel}>
-                  X
-                </Paragraph>
-                <Card.Content>
-                  <Paragraph> Ticket Number: {marker["ticketNum"]}</Paragraph>
-                  <Paragraph>{marker["info"]}</Paragraph>
-                </Card.Content>
-              </Card>
-          )}
-        </div>
+      <div>
+        {show && (
+          <Card style={styles.Box}>
+            <Paragraph onPress={setShow(show)} style={styles.cancel}>
+              X
+            </Paragraph>
+            <Card.Content>
+              <Paragraph> Ticket Number: {marker["ticketNum"]}</Paragraph>
+              <Paragraph>{marker["info"]}</Paragraph>
+            </Card.Content>
+          </Card>
+        )}
+      </div>
     );
   };
 
@@ -267,36 +270,58 @@ const StaffPage = ({ navigation }) => {
     }
 
     return (
-        <div onClick={onMarkerClick}>
-          {show && <InfoWindow marker={marker} index={index} show={show} />}
-          <Image source={markerURL} style={styles.img} lat={lat} lng={lng} />
-        </div>
+      <div onClick={onMarkerClick}>
+        {show && <InfoWindow marker={marker} index={index} show={show} />}
+        <Image source={markerURL} style={styles.img} lat={lat} lng={lng} />
+      </div>
     );
   }
 
   //initialize map
-  function GoogleMap({ center, zoom, data }) {
+  function GoogleMap({ center, zoom, update }) {
+    markerOldData = markerDataState;
+    console.log("renders");
+
     return (
-        <GoogleMapReact
-            style={{ height: "100vh", width: "100%" }}
-            defaultZoom={zoom}
-            defaultCenter={center}
-            //   bootstrapURLKeys={{ key: "AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0" }}
-        >
-          {data.map((item, index) => {
-            return (
-                <CustomMarker
-                    key={index}
-                    lat={item.latitude}
-                    lng={item.longitude}
-                    marker={item}
-                    index={index}
-                />
-            );
-          })}
-        </GoogleMapReact>
+      <GoogleMapReact
+        style={{ height: "100vh", width: "100%" }}
+        defaultZoom={zoom}
+        defaultCenter={center}
+        //   bootstrapURLKeys={{ key: "AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0" }}
+      >
+        {markerOldData.map((item, index) => {
+          return (
+            <CustomMarker
+              key={index}
+              lat={item.latitude}
+              lng={item.longitude}
+              marker={item}
+              index={index}
+            />
+          );
+        })}
+      </GoogleMapReact>
     );
   }
+
+  function shouldComponentUpdate(currentMarkers, newMarkers) {
+    //check if markers have different length
+    if (currentMarkers.length != newMarkers.length) {
+      return true;
+    }
+    //check if markers have same latitude & latitude
+    else {
+      for (let i = 0; i < currentMarkers.length; i++) {
+        if (currentMarkers[i].latitude != newMarkers[i].latitude) {
+          return true;
+        } else if (currentMarkers[i].longitude != newMarkers[i].longitude) {
+          return true;
+        }
+      }
+      return false;
+    }
+  }
+
   //query database for certain animal
   const getDocs = (animal, direction) => {
     console.log(backAnchorKeyVerified);
@@ -313,31 +338,31 @@ const StaffPage = ({ navigation }) => {
     //console.log(direction);
     //console.log("front keys: " + frontAnchorKeysVerified);
     const reference =
-        direction === "switch"
-            ? query(
+      direction === "switch"
+        ? query(
             ref(db, `/${animal}/documents`),
             orderByKey(),
             limitToFirst(itemsPerPage)
-            )
-            : direction === "forward"
-            ? query(
-                ref(db, `/${animal}/documents`),
-                orderByKey(),
-                startAfter(backAnchorKeyVerified),
-                limitToFirst(itemsPerPage)
-            )
-            : query(
-                ref(db, `/${animal}/documents`),
-                orderByKey(),
-                startAt(frontAnchorKeysVerified[pageVerifiedTable - 1]),
-                limitToFirst(itemsPerPage)
-            );
+          )
+        : direction === "forward"
+        ? query(
+            ref(db, `/${animal}/documents`),
+            orderByKey(),
+            startAfter(backAnchorKeyVerified),
+            limitToFirst(itemsPerPage)
+          )
+        : query(
+            ref(db, `/${animal}/documents`),
+            orderByKey(),
+            startAt(frontAnchorKeysVerified[pageVerifiedTable - 1]),
+            limitToFirst(itemsPerPage)
+          );
     onChildAdded(reference, (snapshot) => {
       setBackAnchorKeyVerified(snapshot.key);
       docCounter++;
       if (
-          docCounter === 1 &&
-          (direction === "forward" || direction === "switch")
+        docCounter === 1 &&
+        (direction === "forward" || direction === "switch")
       ) {
         frontAnchorKeysVerified.push(snapshot.key);
         console.log(frontAnchorKeysVerified);
@@ -346,8 +371,12 @@ const StaffPage = ({ navigation }) => {
       }
     });
     onValue(reference, (snapshot) => {
-      snapshot.val() === null ? null :
-          setTableDataVerified(Object.entries(snapshot.val()));
+      var data = [];
+      data = Object.entries(snapshot.val());
+      snapshot.val() === null
+        ? null
+        : setTableDataVerified(Object.entries(snapshot.val()));
+      handleMapChange(data);
     });
   };
 
@@ -359,31 +388,31 @@ const StaffPage = ({ navigation }) => {
     });
     var docCounter = 0;
     const reference =
-        direction === "switch"
-            ? query(
+      direction === "switch"
+        ? query(
             ref(db, `Unverified/documents`),
             orderByKey(),
             limitToFirst(itemsPerPage)
-            )
-            : direction === "forward"
-            ? query(
-                ref(db, `/Unverified/documents`),
-                orderByKey(),
-                startAfter(backAnchorKeyNew),
-                limitToFirst(itemsPerPage)
-            )
-            : query(
-                ref(db, `/Unverified/documents`),
-                orderByKey(),
-                startAt(frontAnchorKeysNew[pageNewTable - 1]),
-                limitToFirst(itemsPerPage)
-            );
+          )
+        : direction === "forward"
+        ? query(
+            ref(db, `/Unverified/documents`),
+            orderByKey(),
+            startAfter(backAnchorKeyNew),
+            limitToFirst(itemsPerPage)
+          )
+        : query(
+            ref(db, `/Unverified/documents`),
+            orderByKey(),
+            startAt(frontAnchorKeysNew[pageNewTable - 1]),
+            limitToFirst(itemsPerPage)
+          );
     onChildAdded(reference, (snapshot) => {
       setBackAnchorKeyNew(snapshot.key);
       docCounter++;
       if (
-          docCounter === 1 &&
-          (direction === "forward" || direction === "switch")
+        docCounter === 1 &&
+        (direction === "forward" || direction === "switch")
       ) {
         frontAnchorKeysNew.push(snapshot.key);
         console.log(frontAnchorKeysNew);
@@ -393,21 +422,38 @@ const StaffPage = ({ navigation }) => {
     });
     onValue(reference, (snapshot) => {
       snapshot.val() === null
-          ? setTableDataNew([])
-          : setTableDataNew(Object.entries(snapshot.val()));
+        ? setTableDataNew([])
+        : setTableDataNew(Object.entries(snapshot.val()));
     });
   };
 
   const handlePageChange = (page, callback) => {
     page > pageVerifiedTable
-        ? getDocs(animalDisplayType, "forward")
-        : getDocs(animalDisplayType, "back");
+      ? getDocs(animalDisplayType, "forward")
+      : getDocs(animalDisplayType, "back");
     setPageVerifiedTable(page);
   };
 
   const handlePageChangeNew = (page) => {
     page > pageNewTable ? getNewDocs("forward") : getNewDocs("back");
     setPageNewTable(page);
+  };
+
+  const handleMapChange = (data) => {
+    var markers = [];
+    data.map((element) => {
+      markers.push({
+        ticketNum: element[1].Ticket_Number,
+        latitude: element[1].GPS_Coordinate.latitude,
+        longitude: element[1].GPS_Coordinate.longitude,
+      });
+    });
+
+    //convert GPS coordinate to postal address and update marker array
+    //convertToAddress(markers);
+    //pass the GPS coordinate object to the MarkerData array
+    markerData = markers;
+    setMarkerDataState(markerData);
   };
 
   const handleRadioChange = (animal) => {
@@ -516,13 +562,13 @@ const StaffPage = ({ navigation }) => {
         longitude: obj.longitude,
       }).then((address) => {
         string =
-            address[0]["name"] +
-            ". " +
-            address[0]["city"] +
-            ", " +
-            address[0]["region"] +
-            " " +
-            address[0]["postalCode"];
+          address[0]["name"] +
+          ". " +
+          address[0]["city"] +
+          ", " +
+          address[0]["region"] +
+          " " +
+          address[0]["postalCode"];
 
         arrayOfMarker[index]["info"] = string;
       });
@@ -530,216 +576,223 @@ const StaffPage = ({ navigation }) => {
   }
   console.log(newChecked);
   return (
-      //Can only return 1 view object for Andriod
-      <ScrollView>
-        <View style={styles.container}>
-          {Platform.OS === "web" ? (
-              <Surface style={styles.surface}>
-                <Text style={styles.header}>New Reports</Text>
-                <DataTable>
-                  <DataTable.Header>
-                    <DataTable.Title></DataTable.Title>
-                    <DataTable.Title>Ticket Number</DataTable.Title>
-                    <DataTable.Title>Ticket Type</DataTable.Title>
-
-                    <DataTable.Title style={styles.columns}>Date</DataTable.Title>
-                    <DataTable.Title style={styles.columns}>Time</DataTable.Title>
-                    <DataTable.Title style={styles.columns}>
-                      Location
-                    </DataTable.Title>
-                  </DataTable.Header>
-                  {/* Loop over new reports to make rows */}
-
-                  {tableDataNew.map((element, index) => (
-                      <DataTable.Row key={index}>
-                        <DataTable.Cell style={styles.columns} key={index}>
-                        <Checkbox
-                            status={newChecked[index] ? "checked" : "unchecked"}
-                            onPress={() => {
-                              handleNewCheckedChange(index);
-                            }}
-                        ></Checkbox>
-                        </DataTable.Cell>
-                        <DataTable.Cell numeric style={styles.row}>
-                          {element[1].Ticket_Number}
-                        </DataTable.Cell>
-                        <DataTable.Cell style={styles.row}>
-                          {element[1].ticket_type}
-                        </DataTable.Cell>
-
-                        <DataTable.Cell numeric style={styles.row}>
-                          {element[1].Date}
-                        </DataTable.Cell>
-                        <DataTable.Cell numeric style={styles.row}>
-                          {element[1].Time}
-                        </DataTable.Cell>
-                        <DataTable.Cell style={styles.row}>
-                          {element[1].Location}
-                        </DataTable.Cell>
-                      </DataTable.Row>
-                  ))}
-
-                  <DataTable.Pagination
-                      page={pageNewTable}
-                      numberOfPages={totalPagesNew}
-                      onPageChange={(page) => handlePageChangeNew(page)}
-                      label={pageNewTable + 1 + "of " + totalPagesNew}
-                      // optionsPerPage={optionsPerPage}
-                      // itemsPerPage={itemsPerPage}
-                      // setItemsPerPage={setItemsPerPage}
-                      showFastPagination
-                      optionsLabel={"Rows per page"}
-                  />
-                </DataTable>
-                <Button
-                    mode="contained"
-                    onPress={() => handleVerify()}
-                    style={styles.Exportbtn}
-                >
-                  Verify
-                </Button>
-              </Surface>
-          ) : null}
-          <View />
+    //Can only return 1 view object for Andriod
+    <ScrollView>
+      <View style={styles.container}>
+        {Platform.OS === "web" ? (
           <Surface style={styles.surface}>
-            <Text style={styles.secondaryheader}>Verified Reports</Text>
-            <RadioButton.Group
-                onValueChange={(value) => handleRadioChange(value)}
-                value={animalDisplayType}
-            >
-              {Platform.OS === "web" ? (
-                  <View style={{ flexDirection: "row" }}>
-                    {animalTypes.map((x, index) => (
-                        <View style={{ flexDirection: "column" }} key={index}>
-                          <RadioButton.Item key={index} label={x} value={x} />
-                        </View>
-                    ))}
-                  </View>
-              ) : (
-                  animalTypes.map((x, index) => (
-                      <RadioButton.Item key={index} label={x} value={x} />
-                  ))
-              )}
-            </RadioButton.Group>
-            <View>
-              <List.Section title="Entries per Page">
-                <List.Accordion
-                    title={itemsPerPage}
-                    expanded={showItemNumDropdown}
-                    onPress={closeItemNumDropdown}
-                >
-                  {optionsPerPage.map((x, index) => (
-                      <List.Item
-                          key={index}
-                          title={x}
-                          onPress={() => {
-                            frontAnchorKeysNew = [];
-                            setItemsPerPage(x);
-                            closeItemNumDropdown();
-                            getDocs(animalDisplayType, "switch");
-                            getNewDocs("switch");
-                            setPageNewTable(0);
-                            setPageVerifiedTable(0);
-                          }}
-                      />
-                  ))}
-                </List.Accordion>
-              </List.Section>
-            </View>
-            {/* Display map with pins for ALL new reports */}
+            <Text style={styles.header}>New Reports</Text>
             <DataTable>
               <DataTable.Header>
                 <DataTable.Title></DataTable.Title>
                 <DataTable.Title>Ticket Number</DataTable.Title>
                 <DataTable.Title>Ticket Type</DataTable.Title>
 
-                {Platform.OS === "web" ? (
-                    <>
-                      <DataTable.Title style={styles.columns}>Date</DataTable.Title>
-                      <DataTable.Title style={styles.columns}>Time</DataTable.Title>
-                      <DataTable.Title style={styles.columns}>
-                        Location
-                      </DataTable.Title>
-                    </>
-                ) : null}
+                <DataTable.Title style={styles.columns}>Date</DataTable.Title>
+                <DataTable.Title style={styles.columns}>Time</DataTable.Title>
+                <DataTable.Title style={styles.columns}>
+                  Location
+                </DataTable.Title>
               </DataTable.Header>
               {/* Loop over new reports to make rows */}
 
-              {tableDataVerified.map((element, index) => (
-                  <DataTable.Row key={index} onPress={ () => navigation.navigate(
-                      'ViewReport', {table: element[1], animal: animalDisplayType, documentID: element[0], }
-                  )}>
-                    <DataTable.Cell style={styles.row}>
+              {tableDataNew.map((element, index) => (
+                <DataTable.Row key={index}>
+                  <DataTable.Cell style={styles.columns} key={index}>
                     <Checkbox
-                        status={newChecked[index] ? "checked" : "unchecked"}
-                        onPress={() => {
-                          handleNewCheckedChange(index);
-                        }}
+                      status={newChecked[index] ? "checked" : "unchecked"}
+                      onPress={() => {
+                        handleNewCheckedChange(index);
+                      }}
                     ></Checkbox>
-                    </DataTable.Cell>
-                    <DataTable.Cell numeric style={styles.row}>
-                      {element[1].Ticket_Number}
-                    </DataTable.Cell>
-                    <DataTable.Cell style={styles.row}>
-                      {element[1].ticket_type}
-                    </DataTable.Cell>
-                    {Platform.OS === "web" ? (
-                        <>
-                          <DataTable.Cell numeric style={styles.row}>
-                            {element[1].Date}
-                          </DataTable.Cell>
-                          <DataTable.Cell numeric style={styles.row}>
-                            {element[1].Time}
-                          </DataTable.Cell>
-                          <DataTable.Cell style={styles.row}>
-                            {element[1].Location}
-                          </DataTable.Cell>
-                        </>
-                    ) : null}
-                  </DataTable.Row>
+                  </DataTable.Cell>
+                  <DataTable.Cell numeric style={styles.row}>
+                    {element[1].Ticket_Number}
+                  </DataTable.Cell>
+                  <DataTable.Cell style={styles.row}>
+                    {element[1].ticket_type}
+                  </DataTable.Cell>
+
+                  <DataTable.Cell numeric style={styles.row}>
+                    {element[1].Date}
+                  </DataTable.Cell>
+                  <DataTable.Cell numeric style={styles.row}>
+                    {element[1].Time}
+                  </DataTable.Cell>
+                  <DataTable.Cell style={styles.row}>
+                    {element[1].Location}
+                  </DataTable.Cell>
+                </DataTable.Row>
               ))}
 
               <DataTable.Pagination
-                  page={pageVerifiedTable}
-                  numberOfPages={totalPages}
-                  onPageChange={(page) => handlePageChange(page)}
-                  label={pageVerifiedTable + 1 + "of " + totalPages}
-                  // optionsPerPage={optionsPerPage}
-                  // itemsPerPage={itemsPerPage}
-                  // setItemsPerPage={setItemsPerPage}
-                  showFastPagination
-                  optionsLabel={"Rows per page"}
+                page={pageNewTable}
+                numberOfPages={totalPagesNew}
+                onPageChange={(page) => handlePageChangeNew(page)}
+                label={pageNewTable + 1 + "of " + totalPagesNew}
+                // optionsPerPage={optionsPerPage}
+                // itemsPerPage={itemsPerPage}
+                // setItemsPerPage={setItemsPerPage}
+                showFastPagination
+                optionsLabel={"Rows per page"}
               />
             </DataTable>
             <Button
-                mode="contained"
-                onPress={() => handleRelated()}
-                style={styles.Exportbtn}
+              mode="contained"
+              onPress={() => handleVerify()}
+              style={styles.Exportbtn}
             >
-              Related
+              Verify
             </Button>
           </Surface>
-          <View>
-            <Button
-                mode="contained"
-                onPress={() => ExportDatabase(animalDisplayType)}
-                style={styles.Exportbtn}
-            >
-              Export Database
-            </Button>
-          </View>
-          {/* map */}
-          <View style={styles.map}>
+        ) : null}
+        <View />
+        <Surface style={styles.surface}>
+          <Text style={styles.secondaryheader}>Verified Reports</Text>
+          <RadioButton.Group
+            onValueChange={(value) => handleRadioChange(value)}
+            value={animalDisplayType}
+          >
             {Platform.OS === "web" ? (
-                <GoogleMap
-                    center={mapProps.center}
-                    zoom={mapProps.zoom}
-                    data={markers}
-                />
-            ) : null}
+              <View style={{ flexDirection: "row" }}>
+                {animalTypes.map((x, index) => (
+                  <View style={{ flexDirection: "column" }} key={index}>
+                    <RadioButton.Item key={index} label={x} value={x} />
+                  </View>
+                ))}
+              </View>
+            ) : (
+              animalTypes.map((x, index) => (
+                <RadioButton.Item key={index} label={x} value={x} />
+              ))
+            )}
+          </RadioButton.Group>
+          <View>
+            <List.Section title="Entries per Page">
+              <List.Accordion
+                title={itemsPerPage}
+                expanded={showItemNumDropdown}
+                onPress={closeItemNumDropdown}
+              >
+                {optionsPerPage.map((x, index) => (
+                  <List.Item
+                    key={index}
+                    title={x}
+                    onPress={() => {
+                      frontAnchorKeysNew = [];
+                      setItemsPerPage(x);
+                      closeItemNumDropdown();
+                      getDocs(animalDisplayType, "switch");
+                      getNewDocs("switch");
+                      setPageNewTable(0);
+                      setPageVerifiedTable(0);
+                    }}
+                  />
+                ))}
+              </List.Accordion>
+            </List.Section>
           </View>
+          {/* Display map with pins for ALL new reports */}
+          <DataTable>
+            <DataTable.Header>
+              <DataTable.Title></DataTable.Title>
+              <DataTable.Title>Ticket Number</DataTable.Title>
+              <DataTable.Title>Ticket Type</DataTable.Title>
+
+              {Platform.OS === "web" ? (
+                <>
+                  <DataTable.Title style={styles.columns}>Date</DataTable.Title>
+                  <DataTable.Title style={styles.columns}>Time</DataTable.Title>
+                  <DataTable.Title style={styles.columns}>
+                    Location
+                  </DataTable.Title>
+                </>
+              ) : null}
+            </DataTable.Header>
+            {/* Loop over new reports to make rows */}
+
+            {tableDataVerified.map((element, index) => (
+              <DataTable.Row
+                key={index}
+                onPress={() =>
+                  navigation.navigate("ViewReport", {
+                    table: element[1],
+                    animal: animalDisplayType,
+                    documentID: element[0],
+                  })
+                }
+              >
+                <DataTable.Cell style={styles.row}>
+                  <Checkbox
+                    status={newChecked[index] ? "checked" : "unchecked"}
+                    onPress={() => {
+                      handleNewCheckedChange(index);
+                    }}
+                  ></Checkbox>
+                </DataTable.Cell>
+                <DataTable.Cell numeric style={styles.row}>
+                  {element[1].Ticket_Number}
+                </DataTable.Cell>
+                <DataTable.Cell style={styles.row}>
+                  {element[1].ticket_type}
+                </DataTable.Cell>
+                {Platform.OS === "web" ? (
+                  <>
+                    <DataTable.Cell numeric style={styles.row}>
+                      {element[1].Date}
+                    </DataTable.Cell>
+                    <DataTable.Cell numeric style={styles.row}>
+                      {element[1].Time}
+                    </DataTable.Cell>
+                    <DataTable.Cell style={styles.row}>
+                      {element[1].Location}
+                    </DataTable.Cell>
+                  </>
+                ) : null}
+              </DataTable.Row>
+            ))}
+
+            <DataTable.Pagination
+              page={pageVerifiedTable}
+              numberOfPages={totalPages}
+              onPageChange={(page) => handlePageChange(page)}
+              label={pageVerifiedTable + 1 + "of " + totalPages}
+              // optionsPerPage={optionsPerPage}
+              // itemsPerPage={itemsPerPage}
+              // setItemsPerPage={setItemsPerPage}
+              showFastPagination
+              optionsLabel={"Rows per page"}
+            />
+          </DataTable>
+          <Button
+            mode="contained"
+            onPress={() => handleRelated()}
+            style={styles.Exportbtn}
+          >
+            Related
+          </Button>
+        </Surface>
+        <View>
+          <Button
+            mode="contained"
+            onPress={() => ExportDatabase(animalDisplayType)}
+            style={styles.Exportbtn}
+          >
+            Export Database
+          </Button>
         </View>
-      </ScrollView>
+        {/* map */}
+        <View style={styles.map}>
+          {Platform.OS === "web" ? (
+            <GoogleMap
+              center={mapProps.center}
+              zoom={mapProps.zoom}
+              data={markers}
+            />
+          ) : null}
+        </View>
+      </View>
+    </ScrollView>
   );
 };
 
