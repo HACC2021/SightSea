@@ -1,4 +1,10 @@
-import React, { useState, useEffect, Component } from "react";
+import React, {
+  useState,
+  useEffect,
+  Component,
+  useMemo,
+  useCallback,
+} from "react";
 import {
   StyleSheet,
   Text,
@@ -112,10 +118,10 @@ const styles = StyleSheet.create({
     // padding: 7,
   },
   Box: {
-    width: windowWidth * 0.18,
-    height: 100,
-    marginLeft: -windowWidth * 0.18 * 0.4,
-    marginTop: -windowWidth * 0.18 * 0.45,
+    width: windowWidth * 0.2,
+    height: 120,
+    marginLeft: -windowWidth * 0.2 * 0.4,
+    marginTop: -windowWidth * 0.2 * 0.45,
     alignItems: "center",
     justifyContent: "center",
     elevation: 4,
@@ -165,16 +171,22 @@ const StaffPage = ({ navigation }) => {
   const [pageVerifiedTable, setPageVerifiedTable] = React.useState(0);
   const [tableDataVerified, setTableDataVerified] = React.useState([]);
   const [tableDataNew, setTableDataNew] = React.useState([]);
-  const [markerData, setMarkerData] = React.useState([]);
+  const [markerDataState, setMarkerDataState] = React.useState([]);
   const [animalDisplayType, setAnimalDisplayType] = React.useState(null);
   const [backAnchorKeyVerified, setBackAnchorKeyVerified] =
     React.useState(null);
   const [backAnchorKeyNew, setBackAnchorKeyNew] = React.useState(null);
   const [search, setSearch] = React.useState(false);
-  const [newChecked, setNewChecked] = React.useState(new Array(optionsPerPage[0]).fill(false));
+  const [newChecked, setNewChecked] = React.useState(
+    new Array(optionsPerPage[0]).fill(false)
+  );
+
+  var markerOldData = [];
+  var markerData = [];
 
   React.useEffect(() => {
     const auth = getAuth();
+
     onAuthStateChanged(auth, (user) => {
       if (!user) {
         navigation.navigate("SightSea");
@@ -184,7 +196,7 @@ const StaffPage = ({ navigation }) => {
     //setPageNewTable(0);
     //setPageVerifiedTable(0);
     getNewDocs("switch");
-  }, [itemsPerPage]);
+  }, [itemsPerPage, shouldComponentUpdate(markerOldData, markerDataState)]);
 
   // ##########adding Firebase query ##########
   // Firebase data query
@@ -197,6 +209,7 @@ const StaffPage = ({ navigation }) => {
     console.log("Assign to volunteer");
   };
 
+  //test data for markers
   var markers = [
     {
       ticketNum: 12345,
@@ -208,20 +221,35 @@ const StaffPage = ({ navigation }) => {
       ticketNum: 12345,
       latitude: 21.315601,
       longitude: -157.95813,
-      info: "828R+6P Joint Base Pearl Harbor-Hickam. Joint Base Pearl Harbor-Hickam, Hawaii undefined",
+      info: "56 N Vineyard Blvd. Honolulu, Hawaii 96817",
     },
   ];
 
+  var markers2 = [
+    {
+      ticketNum: 12345,
+      latitude: 21.315601,
+      longitude: -157.85813,
+      info: "56 N Vineyard Blvd. Honolulu, Hawaii 96817",
+    },
+    {
+      ticketNum: 12345,
+      latitude: 21.315601,
+      longitude: -157.95813,
+      info: "56 N Vineyard Blvd. Honolulu, Hawaii 96817",
+    },
+  ];
   const markerURL =
     "http://icons.iconarchive.com/icons/paomedia/small-n-flat/256/map-marker-icon.png";
   const [checked, setChecked] = React.useState(false);
 
+  // 21.4389° N, 158.0001°
   const mapProps = {
     center: {
-      lat: 21.315601,
-      lng: -157.85809,
+      lat: 21.4389,
+      lng: -158.0001,
     },
-    zoom: 12,
+    zoom: 11,
   };
 
   //define marker info
@@ -248,7 +276,7 @@ const StaffPage = ({ navigation }) => {
   };
 
   //define marker
-  function CustomMarker({ lat, lng, onMarkerClick, marker, index }) {
+  const CustomMarker = ({ lat, lng, onMarkerClick, marker, index }) => {
     //allow user to open/close info window by clicking the info window
     const [show, setShow] = React.useState(false);
     function onMarkerClick() {
@@ -262,10 +290,13 @@ const StaffPage = ({ navigation }) => {
         <Image source={markerURL} style={styles.img} lat={lat} lng={lng} />
       </div>
     );
-  }
+  };
 
   //initialize map
-  function GoogleMap({ center, zoom, data }) {
+  function GoogleMap({ center, zoom, update }) {
+    markerOldData = markerDataState;
+    console.log("renders");
+
     return (
       <GoogleMapReact
         style={{ height: "100vh", width: "100%" }}
@@ -273,7 +304,7 @@ const StaffPage = ({ navigation }) => {
         defaultCenter={center}
         //   bootstrapURLKeys={{ key: "AIzaSyA-3F902_biObW4BKO0VgIuZpBeS9Ptrn0" }}
       >
-        {data.map((item, index) => {
+        {markerOldData.map((item, index) => {
           return (
             <CustomMarker
               key={index}
@@ -287,15 +318,34 @@ const StaffPage = ({ navigation }) => {
       </GoogleMapReact>
     );
   }
+
+  function shouldComponentUpdate(currentMarkers, newMarkers) {
+    //check if markers have different length
+    if (currentMarkers.length != newMarkers.length) {
+      return true;
+    }
+    //check if markers have same latitude & latitude
+    else {
+      for (let i = 0; i < currentMarkers.length; i++) {
+        if (currentMarkers[i].latitude != newMarkers[i].latitude) {
+          return true;
+        } else if (currentMarkers[i].longitude != newMarkers[i].longitude) {
+          return true;
+        }
+      }
+      return false;
+    }
+  }
+
   //query database for certain animal
   const getDocs = (animal, direction) => {
-    console.log(backAnchorKeyVerified);
+    //console.log(backAnchorKeyVerified);
     const db = getDatabase();
     const pageref = ref(db, `${animal}/count`);
     onValue(pageref, (snapshot) => {
-      console.log(snapshot.val());
-      console.log(itemsPerPage);
-      console.log(Number(snapshot.val()) / itemsPerPage);
+      //console.log(snapshot.val());
+      //console.log(itemsPerPage);
+      // console.log(Number(snapshot.val()) / itemsPerPage);
       setTotalPages(Math.ceil(Number(snapshot.val()) / itemsPerPage));
     });
     var docCounter = 0;
@@ -336,7 +386,10 @@ const StaffPage = ({ navigation }) => {
       }
     });
     onValue(reference, (snapshot) => {
+      var data = [];
+      data = Object.entries(snapshot.val());
       setTableDataVerified(Object.entries(snapshot.val()));
+      handleMapChange(data);
     });
   };
 
@@ -348,25 +401,25 @@ const StaffPage = ({ navigation }) => {
     });
     var docCounter = 0;
     const reference =
-    direction === "switch"
-      ? query(
-          ref(db, `Unverified/documents`),
-          orderByKey(),
-          limitToFirst(itemsPerPage)
-        )
-      : direction === "forward"
-      ? query(
-          ref(db, `/Unverified/documents`),
-          orderByKey(),
-          startAfter(backAnchorKeyNew),
-          limitToFirst(itemsPerPage)
-        )
-      : query(
-          ref(db, `/Unverified/documents`),
-          orderByKey(),
-          startAt(frontAnchorKeysNew[pageNewTable - 1]),
-          limitToFirst(itemsPerPage)
-        );
+      direction === "switch"
+        ? query(
+            ref(db, `Unverified/documents`),
+            orderByKey(),
+            limitToFirst(itemsPerPage)
+          )
+        : direction === "forward"
+        ? query(
+            ref(db, `/Unverified/documents`),
+            orderByKey(),
+            startAfter(backAnchorKeyNew),
+            limitToFirst(itemsPerPage)
+          )
+        : query(
+            ref(db, `/Unverified/documents`),
+            orderByKey(),
+            startAt(frontAnchorKeysNew[pageNewTable - 1]),
+            limitToFirst(itemsPerPage)
+          );
     onChildAdded(reference, (snapshot) => {
       setBackAnchorKeyNew(snapshot.key);
       docCounter++;
@@ -375,18 +428,17 @@ const StaffPage = ({ navigation }) => {
         (direction === "forward" || direction === "switch")
       ) {
         frontAnchorKeysNew.push(snapshot.key);
-        console.log(frontAnchorKeysNew);
+        //console.log(frontAnchorKeysNew);
       } else if (docCounter === 1 && direction === "back") {
         frontAnchorKeysNew.pop();
       }
     });
     onValue(reference, (snapshot) => {
-      snapshot.val() === null ? setTableDataNew([]) :
-      setTableDataNew(Object.entries(snapshot.val()));
-
+      snapshot.val() === null
+        ? setTableDataNew([])
+        : setTableDataNew(Object.entries(snapshot.val()));
     });
-
-  }
+  };
 
   const handlePageChange = (page, callback) => {
     page > pageVerifiedTable
@@ -398,27 +450,31 @@ const StaffPage = ({ navigation }) => {
   const handlePageChangeNew = (page) => {
     page > pageNewTable ? getNewDocs("forward") : getNewDocs("back");
     setPageNewTable(page);
-  }
+  };
+
+  const handleMapChange = (data) => {
+    var markers = [];
+    data.map((element) => {
+      markers.push({
+        ticketNum: element[0],
+        latitude: element[1].GPS_Coordinate.latitude,
+        longitude: element[1].GPS_Coordinate.longitude,
+      });
+    });
+
+    //convert GPS coordinate to postal address and update marker array
+    //convertToAddress(markers);
+    //pass the GPS coordinate object to the MarkerData array
+    markerData = markers;
+    setMarkerDataState(markerData);
+  };
 
   const handleRadioChange = (animal) => {
-    var markers = [];
     setAnimalDisplayType(animal);
     setPageVerifiedTable(0);
     setBackAnchorKeyVerified(null);
     frontAnchorKeysVerified = [];
     getDocs(animal, "switch");
-    // tableDataVerified.map((element) => {
-    //   markers.push({
-    //     ticketNum: element[1].Ticket_Number,
-    //     latitude: element[1].GPS_Coordinate.latitude,
-    //     longitude: element[1].GPS_Coordinate.longitude,
-    //   });
-    // });
-
-    // //convert GPS coordinate to postal address and update marker array
-    // convertToAddress(markers);
-    // //pass the GPS coordinate object to the MarkerData array
-    // setMarkerData(markers);
   };
 
   const handleNewCheckedChange = (position) => {
@@ -426,10 +482,10 @@ const StaffPage = ({ navigation }) => {
     const newState = new Array(itemsPerPage);
     newChecked.map((x, index) => {
       console.log(x);
-      newState[index] = index === position ? !x : x
+      newState[index] = index === position ? !x : x;
     });
     setNewChecked(newState);
-  }
+  };
 
   const handleVerify = () => {
     newChecked.map((checked, index) => {
@@ -441,7 +497,7 @@ const StaffPage = ({ navigation }) => {
         const addCountRef = ref(db, `${item[1].AnimalType}/`);
         runTransaction(addCountRef, (post) => {
           if (post) {
-            if(post.count) {
+            if (post.count) {
               post.count++;
             }
           }
@@ -452,17 +508,15 @@ const StaffPage = ({ navigation }) => {
         const removeCountRef = ref(db, `Unverified/`);
         runTransaction(removeCountRef, (post) => {
           if (post) {
-            if(post.count) {
+            if (post.count) {
               post.count--;
             }
           }
           return post;
         });
       }
-    })
-  }
-
-  //console.log(markerData);
+    });
+  };
   //convert location coordinate to address
   function convertToAddress(arrayOfMarker) {
     /*************************Enable api key when using reverseGeocodeAsync function ************************/
@@ -487,7 +541,7 @@ const StaffPage = ({ navigation }) => {
       });
     });
   }
-console.log(newChecked);
+  //console.log(newChecked);
   return (
     //Can only return 1 view object for Andriod
     <ScrollView>
@@ -512,11 +566,11 @@ console.log(newChecked);
               {tableDataNew.map((element, index) => (
                 <DataTable.Row key={index}>
                   <Checkbox
-                  status={newChecked[index] ? "checked" : "unchecked"}
-                  onPress={() => {
-                    handleNewCheckedChange(index);
-                  }}
-                ></Checkbox>
+                    status={newChecked[index] ? "checked" : "unchecked"}
+                    onPress={() => {
+                      handleNewCheckedChange(index);
+                    }}
+                  ></Checkbox>
                   <DataTable.Cell
                     style={styles.columns}
                     key={index}
@@ -553,20 +607,21 @@ console.log(newChecked);
               />
             </DataTable>
             <Button
-            mode="contained"
-            onPress={() => handleVerify()}
-            style={styles.Exportbtn}
-          >
-            Verify
-          </Button>
-
+              mode="contained"
+              onPress={() => handleVerify()}
+              style={styles.Exportbtn}
+            >
+              Verify
+            </Button>
           </Surface>
         ) : null}
         <View />
         <Surface style={styles.surface}>
           <Text style={styles.secondaryheader}>Verified Reports</Text>
           <RadioButton.Group
-            onValueChange={(value) => handleRadioChange(value)}
+            onValueChange={(value) => {
+              handleRadioChange(value);
+            }}
             value={animalDisplayType}
           >
             {Platform.OS === "web" ? (
@@ -637,7 +692,9 @@ console.log(newChecked);
             <DataTable.Pagination
               page={pageVerifiedTable}
               numberOfPages={totalPages}
-              onPageChange={(page) => handlePageChange(page)}
+              onPageChange={(page) => {
+                handlePageChange(page);
+              }}
               label={pageVerifiedTable + 1 + "of " + totalPages}
               // optionsPerPage={optionsPerPage}
               // itemsPerPage={itemsPerPage}
@@ -662,7 +719,8 @@ console.log(newChecked);
             <GoogleMap
               center={mapProps.center}
               zoom={mapProps.zoom}
-              data={markers}
+              //data={markerDataState}
+              update={shouldComponentUpdate(markerOldData, markerDataState)}
             />
           ) : null}
         </View>
