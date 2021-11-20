@@ -85,6 +85,7 @@ const styles = StyleSheet.create({
     width: 100,
     flex: 1,
     justifyContent: "space-between",
+    textAlign: "center",
   },
   map: {
     alignContent: "center",
@@ -602,18 +603,16 @@ const StaffPage = ({ navigation }) => {
 
                   {tableDataNew.map((element, index) => (
                       <DataTable.Row key={index}>
+                        <DataTable.Cell style={styles.columns} key={index}>
                         <Checkbox
                             status={newChecked[index] ? "checked" : "unchecked"}
                             onPress={() => {
                               handleNewCheckedChange(index);
                             }}
                         ></Checkbox>
-                        <DataTable.Cell
-                            style={styles.columns}
-                            key={index}
-                        ></DataTable.Cell>
+                        </DataTable.Cell>
                         <DataTable.Cell numeric style={styles.row}>
-                          {element[0]}
+                          {element[1].Ticket_Number}
                         </DataTable.Cell>
                         <DataTable.Cell style={styles.row}>
                           {element[1].ticket_type}
@@ -721,16 +720,16 @@ const StaffPage = ({ navigation }) => {
                   <DataTable.Row key={index} onPress={ () => navigation.navigate(
                       'ViewReport', {table: element[1], animal: animalDisplayType, documentID: element[0], }
                   )}>
+                    <DataTable.Cell style={styles.row}>
                     <Checkbox
                         status={relatedChecked[index] ? "checked" : "unchecked"}
                         onPress={() => {
                           handleRelatedCheckedChange(index);
                         }}
                     ></Checkbox>
-                    <DataTable.Cell style={styles.columns} key={index}>
                     </DataTable.Cell>
                     <DataTable.Cell numeric style={styles.row}>
-                      {element[0]}
+                      {element[1].Ticket_Number}
                     </DataTable.Cell>
                     <DataTable.Cell style={styles.row}>
                       {element[1].ticket_type}
@@ -774,7 +773,7 @@ const StaffPage = ({ navigation }) => {
           <View>
             <Button
                 mode="contained"
-                onPress={ExportDatabase}
+                onPress={() => ExportDatabase(animalDisplayType)}
                 style={styles.Exportbtn}
             >
               Export Database
