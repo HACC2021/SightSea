@@ -495,7 +495,7 @@ const SightForm = ({ navigation }) => {
       })
           .then(() => {
             window.alert("Report Submitted Successfully!");
-            sendEmail('felixclyde@gmail.com',
+            sendEmail('patrick.mccrindle@gmail.com',
                 'New Report, Staff action required!!!',
                 `New report! See ticket number: ${"XX" + "" + currentday + "" + currenttime}`).
             then(()=>{
@@ -553,7 +553,7 @@ const SightForm = ({ navigation }) => {
               window.alert("Report Submitted Successfully!");
               beach = "";
               console.log(coordinate);
-              sendEmail('felixclyde@gmail.com',
+              sendEmail('patrick.mccrindle@gmail.com',
                   'New Report, Staff action required!!!',
                   `New report! See ticket number: ${"XX" + "" + currentday + "" + currenttime}`).
               then(()=>{
@@ -601,7 +601,7 @@ const SightForm = ({ navigation }) => {
           })
               .then(() => {
                 window.alert("Report Submitted Successfully!");
-                sendEmail('felixclyde@gmail.com',
+                sendEmail('patrick.mccrindle@gmail.com',
                     'New Report, Staff action required!!!',
                     `New report! See ticket number: ${"XX" + "" + currentday + "" + currenttime}`).
                 then(()=>{
