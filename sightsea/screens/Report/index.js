@@ -594,7 +594,9 @@ const ViewReport = ({route, navigation}) => {
 
                   <Surface>
                     <Text style={styles.input}>Date: {table.Date}</Text>
+                    {Platform.OS === "web" ? (
                     <img id="image" src={table.Image}/>
+                    ) : null}
                     <TextInput
                         id="birdDate"
                         style={styles.input}
@@ -966,7 +968,9 @@ const ViewReport = ({route, navigation}) => {
                                                                                               defaultValue={table.ticket_type}
                                                                                           ></TextInput>
                     <div id="image">
-                      <img id="image" src={table.Image}/>
+                      {Platform.OS === "web" ? (
+                          <img id="image" src={table.Image}/>
+                      ) : null}
                     </div>
                   </Surface>
                 </View>
@@ -1121,7 +1125,9 @@ const ViewReport = ({route, navigation}) => {
               defaultValue={table.ticket_type}
               ></TextInput>
                     <div id="image">
-                      <img id="image" src={table.Image}/>
+                      {Platform.OS === "web" ? (
+                          <img id="image" src={table.Image}/>
+                      ) : null}
                     </div>
                   </Surface>
                 </View>
