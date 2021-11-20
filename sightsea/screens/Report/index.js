@@ -3,6 +3,8 @@ import { getDatabase, ref, onValue, once, set, update, query, orderByKey,
   startAt, startAfter, endAt,
   limitToFirst,
   onChildAdded,
+    equalTo,
+    orderByChild,
 } from "firebase/database";
 import {
   StyleSheet,
@@ -335,50 +337,60 @@ const ViewReport = ({route, navigation}) => {
   };
 
   const getNewDocs = (direction) => {
+    console.log("Test" + table.Related);
     const db = getDatabase();
-    const pageref = ref(db, `Unverified/count`);
+    const pageref = ref(db, `${animal}/count`);
     onValue(pageref, (snapshot) => {
       setTotalPagesNew(Math.ceil(Number(snapshot.val()) / itemsPerPage));
     });
     var docCounter = 0;
     const reference =
-        direction === "switch"
-            ? query(
-            ref(db, `Unverified/documents`),
-            orderByKey(),
-            limitToFirst(itemsPerPage)
+            query(
+            ref(db, `${animal}/documents`),
+            orderByChild('Related'),
+            equalTo(table.Related),
             )
-            : direction === "forward"
-            ? query(
-                ref(db, `/Unverified/documents`),
-                orderByKey(),
-                startAfter(backAnchorKeyNew),
-                limitToFirst(itemsPerPage)
-            )
-            : query(
-                ref(db, `/Unverified/documents`),
-                orderByKey(),
-                startAt(frontAnchorKeysNew[pageNewTable - 1]),
-                limitToFirst(itemsPerPage)
-            );
-    onChildAdded(reference, (snapshot) => {
-      setBackAnchorKeyNew(snapshot.key);
-      docCounter++;
-      if (
-          docCounter === 1 &&
-          (direction === "forward" || direction === "switch")
-      ) {
-        frontAnchorKeysNew.push(snapshot.key);
-        console.log(frontAnchorKeysNew);
-      } else if (docCounter === 1 && direction === "back") {
-        frontAnchorKeysNew.pop();
-      }
-    });
-    onValue(reference, (snapshot) => {
-      snapshot.val() === null
-          ? setTableDataNew([])
-          : setTableDataNew(Object.entries(snapshot.val()));
-    });
+
+    //     direction === "switch"
+    //         ? query(
+    //         ref(db, `${animal}/documents`),
+    //         orderByChild('Related'),
+    //         equalTo(table.Related),
+    //         limitToFirst(itemsPerPage)
+    //         )
+    //         : direction === "forward"
+    //         ? query(
+    //             ref(db, `/${animal}/documents`),
+    //             orderByChild('Related'),
+    //             equalTo(table.Related),
+    //             startAfter(backAnchorKeyNew),
+    //             limitToFirst(itemsPerPage)
+    //         )
+    //         : query(
+    //             ref(db, `/${animal}/documents`),
+    //             orderByChild('Related'),
+    //             equalTo(table.Related),
+    //             startAt(frontAnchorKeysNew[pageNewTable - 1]),
+    //             limitToFirst(itemsPerPage)
+    //         );
+    // onChildAdded(reference, (snapshot) => {
+    //   setBackAnchorKeyNew(snapshot.key);
+    //   docCounter++;
+    //   if (
+    //       docCounter === 1 &&
+    //       (direction === "forward" || direction === "switch")
+    //   ) {
+    //     frontAnchorKeysNew.push(snapshot.key);
+    //     console.log(frontAnchorKeysNew);
+    //   } else if (docCounter === 1 && direction === "back") {
+    //     frontAnchorKeysNew.pop();
+    //   }
+    // });
+      onValue(reference, (snapshot) => {
+        snapshot.val() === null
+            ? setTableDataNew([])
+            : setTableDataNew(Object.entries(snapshot.val()));
+      });
   };
 
   const handlePageChange = (page, callback) => {
@@ -1137,7 +1149,7 @@ const ViewReport = ({route, navigation}) => {
                         key={index}
                     ></DataTable.Cell>
                     <DataTable.Cell numeric style={styles.row}>
-                      {element[0]}
+                      {element[1].Ticket_Number}
                     </DataTable.Cell>
                     <DataTable.Cell style={styles.row}>
                       {element[1].ticket_type}
@@ -1155,17 +1167,18 @@ const ViewReport = ({route, navigation}) => {
                   </DataTable.Row>
               ))}
 
-              <DataTable.Pagination
-                  page={pageNewTable}
-                  numberOfPages={totalPagesNew}
-                  onPageChange={(page) => handlePageChangeNew(page)}
-                  label={pageNewTable + 1 + "of " + totalPagesNew}
-                  // optionsPerPage={optionsPerPage}
-                  // itemsPerPage={itemsPerPage}
-                  // setItemsPerPage={setItemsPerPage}
-                  showFastPagination
-                  optionsLabel={"Rows per page"}
-              />
+              {/*<DataTable.Pagination*/}
+              {/*    page={pageNewTable}*/}
+              {/*    numberOfPages={totalPagesNew}*/}
+              {/*    onPageChange={(page) => handlePageChangeNew(page)}*/}
+              {/*    label={pageNewTable + 1 + "of " + totalPagesNew}*/}
+              {/*    // optionsPerPage={optionsPerPage}*/}
+              {/*    // itemsPerPage={itemsPerPage}*/}
+              {/*    // setItemsPerPage={setItemsPerPage}*/}
+              {/*    showFastPagination*/}
+              {/*    optionsLabel={"Rows per page"}*/}
+              {/*/>*/}
+
             </DataTable>
             {/*<Button*/}
             {/*    mode="contained"*/}

@@ -456,13 +456,6 @@ const StaffPage = ({ navigation }) => {
     setRelatedChecked(newState);
   };
 
-  //Generate random ID for related values
-  const generateRelatedID = () => {
-    const relatedID = Math.floor(Math.random() * 100000).toString();
-    //TODO need to pull the database to see if the random id exists before return
-    return relatedID;
-  };
-
   const handleRelated = () => {
     var localID = null;
     relatedChecked.map((checked, index) => {
@@ -472,7 +465,6 @@ const StaffPage = ({ navigation }) => {
         if (localID === null) {
           localID = tableDataVerified[index][0];
         }
-        // const localRelatedID = generateRelatedID();
         const db = getDatabase();
         if (animalDisplayType === "Seal") {
           const reference = ref(db, `${animalDisplayType}/documents/` + tableDataVerified[index][0]);
@@ -502,7 +494,6 @@ const StaffPage = ({ navigation }) => {
               });
         } else if (animalDisplayType === "Bird") {
           const reference = ref(db, `${animalDisplayType}/documents/` + tableDataVerified[index][0]);
-          console.log(localRelated);
           update(reference, {
             Related: localID,
           })
@@ -698,6 +689,8 @@ const StaffPage = ({ navigation }) => {
                           key={index}
                           title={x}
                           onPress={() => {
+                            setNewChecked(new Array(x).fill(false));
+                            setRelatedChecked(new Array(x).fill(false));
                             frontAnchorKeysNew = [];
                             setItemsPerPage(x);
                             closeItemNumDropdown();
