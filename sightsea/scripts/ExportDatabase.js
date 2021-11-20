@@ -4,7 +4,7 @@ import { getDatabase, ref, onValue, once } from "firebase/database";
 import * as FileSystem from "expo-file-system";
 import * as MediaLibrary from "expo-media-library";
 
-const ExportDatabase = () => {
+const ExportDatabase = (animalType) => {
   const testJson = {
     Bird: {
       5618: {
@@ -181,14 +181,21 @@ const ExportDatabase = () => {
       },
     },
   };
+  console.log(animalType);
   var dataJson = {};
   const db = getDatabase();
-  const reference = ref(db, "/Bird/documents");
+  const reference = ref(db, `/${animalType}/documents`);
   var ready = 0;
   var csv = "";
   onValue(reference, (snapshot) => {
     const json = snapshot.val();
     const docArray = Object.entries(json);
+    docArray.map((item, index) => {
+      delete item[1].AnimalType;
+      delete item[1].GPS_Coordinate;
+      delete item[1].Image;
+      delete item[1].Verified;
+    })
     console.log(docArray);
     var fields = Object.keys(docArray[0][1]);
     var replacer = function (key, value) {
